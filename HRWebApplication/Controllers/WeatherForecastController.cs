@@ -24,7 +24,7 @@ namespace HRWebApplication.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetAllWeather")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
