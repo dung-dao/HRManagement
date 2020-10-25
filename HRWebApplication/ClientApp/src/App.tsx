@@ -8,8 +8,11 @@ import {ApiClient, WeatherForecast} from './services/ApiClient';
 
 export default class App extends Component {
     componentDidMount() {
+        // const client = new ApiClient();
+        // client.getAllWeather().then(res => console.log(res)).catch(err => console.log("acess denied"));
+
         const client = new ApiClient();
-        client.getAllWeather().then(res => console.log(res)).catch(err => console.log("acess denied"));
+        client.getAllWeather();
     }
 
     static displayName = App.name;

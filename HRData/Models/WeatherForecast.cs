@@ -1,8 +1,13 @@
+﻿using HRData.Data;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace HRWebApplication
+namespace HRData.Models
 {
-    public class WeatherForecast
+    public class WeatherForecast : EntityBase
     {
         public DateTime Date { get; set; }
 

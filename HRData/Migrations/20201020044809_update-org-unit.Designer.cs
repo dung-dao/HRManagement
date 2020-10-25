@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201020044809_update-org-unit")]
+    partial class updateorgunit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,22 +21,7 @@ namespace HRData.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0-rc.2.20475.6");
 
-            modelBuilder.Entity("HRData.Data.BOD", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BODs");
-                });
-
-            modelBuilder.Entity("HRData.Data.Branch", b =>
+            modelBuilder.Entity("HRData.Data.OrganizationUnit", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -47,134 +34,14 @@ namespace HRData.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StatusId")
+                    b.Property<int?>("ParentUnitId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StatusId");
+                    b.HasIndex("ParentUnitId");
 
-                    b.ToTable("Branches");
-                });
-
-            modelBuilder.Entity("HRData.Data.BranchStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BranchStatuses");
-                });
-
-            modelBuilder.Entity("HRData.Data.Department", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("BranchId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BranchId");
-
-                    b.ToTable("Departments");
-                });
-
-            modelBuilder.Entity("HRData.Data.DepartmentStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DepartmentStatuses");
-                });
-
-            modelBuilder.Entity("HRData.Data.Employee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("BODId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BODId");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.ToTable("Employee");
-                });
-
-            modelBuilder.Entity("HRData.Data.WorkPlace", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("BODId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BranchId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BODId");
-
-                    b.HasIndex("BranchId");
-
-                    b.ToTable("WorkPlaces");
+                    b.ToTable("Units");
                 });
 
             modelBuilder.Entity("HRData.Models.ApplicationUser", b =>
@@ -240,27 +107,6 @@ namespace HRData.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("HRData.Models.WeatherForecast", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Summary")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TemperatureC")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WeatherForecasts");
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -501,46 +347,13 @@ namespace HRData.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("HRData.Data.Branch", b =>
+            modelBuilder.Entity("HRData.Data.OrganizationUnit", b =>
                 {
-                    b.HasOne("HRData.Data.BranchStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId");
+                    b.HasOne("HRData.Data.OrganizationUnit", "ParentUnit")
+                        .WithMany("ChildUnits")
+                        .HasForeignKey("ParentUnitId");
 
-                    b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("HRData.Data.Department", b =>
-                {
-                    b.HasOne("HRData.Data.Branch", "Branch")
-                        .WithMany("Departments")
-                        .HasForeignKey("BranchId");
-
-                    b.Navigation("Branch");
-                });
-
-            modelBuilder.Entity("HRData.Data.Employee", b =>
-                {
-                    b.HasOne("HRData.Data.BOD", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("BODId");
-
-                    b.HasOne("HRData.Data.Department", "Department")
-                        .WithMany("Employees")
-                        .HasForeignKey("DepartmentId");
-
-                    b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("HRData.Data.WorkPlace", b =>
-                {
-                    b.HasOne("HRData.Data.BOD", null)
-                        .WithMany("WorkPlaces")
-                        .HasForeignKey("BODId");
-
-                    b.HasOne("HRData.Data.Branch", null)
-                        .WithMany("WorkPlaces")
-                        .HasForeignKey("BranchId");
+                    b.Navigation("ParentUnit");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -594,23 +407,9 @@ namespace HRData.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HRData.Data.BOD", b =>
+            modelBuilder.Entity("HRData.Data.OrganizationUnit", b =>
                 {
-                    b.Navigation("Employees");
-
-                    b.Navigation("WorkPlaces");
-                });
-
-            modelBuilder.Entity("HRData.Data.Branch", b =>
-                {
-                    b.Navigation("Departments");
-
-                    b.Navigation("WorkPlaces");
-                });
-
-            modelBuilder.Entity("HRData.Data.Department", b =>
-                {
-                    b.Navigation("Employees");
+                    b.Navigation("ChildUnits");
                 });
 #pragma warning restore 612, 618
         }
