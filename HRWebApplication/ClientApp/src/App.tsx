@@ -10,6 +10,7 @@ import ConfirmProductsPage from './pages/private/ConfirmProducts/ConfirmProducts
 import DetailConfirmProducts from './pages/private/ConfirmProducts/DetailConfirmProducts';
 import MerchantList from './pages/private/Merchants/MerchantList';
 import MerchantDetail from './pages/private/Merchants/MerchantDetail';
+import OrganizationStructure from './pages/OrganizationStructure';
 
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -19,6 +20,7 @@ export default function App() {
       <ErrorBoundary>
         <Switch>
           <Route exact path={['/', '/login']} component={LoginPage} />
+          <Route exact path={'/organization'} component={OrganizationStructure} />
           <Route exact path={'/admin'} component={OverviewPage} />
           <Route exact path={'/admin/category'} component={CategoryPage} />
           <Route exact path={'/admin/attributes'} component={AttributePage} />
