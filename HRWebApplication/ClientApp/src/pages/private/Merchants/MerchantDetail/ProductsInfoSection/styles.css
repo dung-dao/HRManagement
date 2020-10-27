@@ -1,0 +1,3 @@
+.ant-select-dropdown {
+    z-index: 1061; /*  To bring the 'Sản phẩm sẽ kinh doanh' dropdown higher than the 'Độ tuổi' slider's tooltip */
+}

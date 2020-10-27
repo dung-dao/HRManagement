@@ -4,14 +4,15 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 //import registerServiceWorker from './registerServiceWorker';
 
-const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
-const rootElement = document.getElementById('root');
+// styles
+import 'antd/dist/antd.css';
 
 ReactDOM.render(
-  <BrowserRouter basename={baseUrl}>
+  <BrowserRouter basename={process.env.PUBLIC_URL}>
     <App />
   </BrowserRouter>,
-  rootElement);
+  document.getElementById('root'),
+);
 
 // Uncomment the line above that imports the registerServiceWorker function
 // and the line below to register the generated service worker.
@@ -21,4 +22,3 @@ ReactDOM.render(
 // disabled by default when Identity is being used.
 //
 //registerServiceWorker();
-
