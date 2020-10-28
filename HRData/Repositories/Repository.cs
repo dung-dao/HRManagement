@@ -1,4 +1,5 @@
 ﻿using HRData.Data;
+using HRData.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,15 +9,13 @@ using System.Threading.Tasks;
 
 namespace HRData.Repositories
 {
-    public class Repository<T> where T: EntityBase
+    public class Repository
     {
         protected readonly ApplicationDbContext context;
-        protected readonly DbSet<T> table;
 
         public Repository(ApplicationDbContext context)
         {
             this.context = context;
-            this.table = context.Set<T>();
         }
     }
 }

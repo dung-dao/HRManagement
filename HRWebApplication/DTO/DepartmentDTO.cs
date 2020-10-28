@@ -6,5 +6,8 @@ using System.Threading.Tasks;
 
 namespace HRWebApplication.DTO
 {
-    public class DTOBase : EntityBase { }
+    public class DepartmentDTO : NamedEntity
+    {
+        public string Status { get; set; }
+    }
 }

@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201026115925_create-branch-department-model")]
+    partial class createbranchdepartmentmodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,7 +110,7 @@ namespace HRData.Migrations
                     b.ToTable("Branches");
                 });
 
-            modelBuilder.Entity("HRData.Models.OrganizationUnit", b =>
+            modelBuilder.Entity("HRData.Models.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -126,7 +128,7 @@ namespace HRData.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("OrganizationUnitId")
+                    b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -137,7 +139,7 @@ namespace HRData.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.HasIndex("OrganizationUnitId");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Departments");
                 });
@@ -401,17 +403,19 @@ namespace HRData.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("HRData.Models.OrganizationUnit", b =>
+            modelBuilder.Entity("HRData.Models.Department", b =>
                 {
                     b.HasOne("HRData.Models.Branch", "Branch")
                         .WithMany()
                         .HasForeignKey("BranchId");
 
-                    b.HasOne("HRData.Models.OrganizationUnit", null)
-                        .WithMany("Children")
-                        .HasForeignKey("OrganizationUnitId");
+                    b.HasOne("HRData.Models.Department", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
 
                     b.Navigation("Branch");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -463,11 +467,6 @@ namespace HRData.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("HRData.Models.OrganizationUnit", b =>
-                {
-                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }
