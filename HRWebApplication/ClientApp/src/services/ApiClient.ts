@@ -1088,7 +1088,6 @@ export class WorkTypesClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
      * @return Success
      */
     workTypes3(id: number, body: WorkType | undefined): Promise<void> {
@@ -1098,13 +1097,9 @@ export class WorkTypesClient extends ApiClientBase {
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_ = <RequestInit>{
-            body: content_,
-            method: "PUT",
+            method: "DELETE",
             headers: {
-                "Content-Type": "application/json",
             }
         };
 
@@ -1129,6 +1124,7 @@ export class WorkTypesClient extends ApiClientBase {
         }
         return Promise.resolve<void>(<any>null);
     }
+}
 
     /**
      * @return Success
@@ -1140,11 +1136,14 @@ export class WorkTypesClient extends ApiClientBase {
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
         url_ = url_.replace(/[?&]$/, "");
 
-        let options_ = <RequestInit>{
-            method: "DELETE",
-            headers: {
-            }
-        };
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.address = _data["address"];
+            this.status = _data["status"];
+        }
+    }
 
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);

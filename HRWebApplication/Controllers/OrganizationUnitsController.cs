@@ -22,14 +22,14 @@ namespace HRWebApplication.Controllers
         }
 
         // GET: api/OrganizationUnits
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrganizationUnit>>> GetOrganizationUnits()
+        [HttpGet(Name = "[controller]_GetAll")]
+        public async Task<ActionResult<IEnumerable<OrganizationUnit>>> GetDepartments()
         {
             return await _context.OrganizationUnits.ToListAsync();
         }
 
         // GET: api/OrganizationUnits/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "[controller]_GetById")]
         public async Task<ActionResult<OrganizationUnit>> GetOrganizationUnit(int id)
         {
             var organizationUnit = await _context.OrganizationUnits.FindAsync(id);
@@ -74,8 +74,7 @@ namespace HRWebApplication.Controllers
         }
 
         // POST: api/OrganizationUnits
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost(Name = "[controller]_Create")]
         public async Task<ActionResult<OrganizationUnit>> PostOrganizationUnit(OrganizationUnit organizationUnit)
         {
             _context.OrganizationUnits.Add(organizationUnit);
@@ -85,7 +84,7 @@ namespace HRWebApplication.Controllers
         }
 
         // DELETE: api/OrganizationUnits/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "[controller]_Delete")]
         public async Task<IActionResult> DeleteOrganizationUnit(int id)
         {
             var organizationUnit = await _context.OrganizationUnits.FindAsync(id);
