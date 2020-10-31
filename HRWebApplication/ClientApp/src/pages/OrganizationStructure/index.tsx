@@ -1,34 +1,62 @@
 import React from 'react';
 import { Table } from 'antd';
 import AppBody from 'components/Layouts/AppBody';
-import { columns, getDataTable } from './util';
+import { Api } from './mock-api';
+import { OrganizationUnit } from './mock-data';
+import { calculateAllExpandedRowKeys } from './util';
 
-// rowSelection objects indicates the need for row selection
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+const columns = [
+  {
+    title: 'Tên tổ chức',
+    dataIndex: 'organizationName',
   },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(record, selected, selectedRows);
+  {
+    title: 'Số thành viên',
+    dataIndex: 'numberOfPeople',
+    width: '12%',
   },
-  onSelectAll: (selected, selectedRows, changeRows) => {
-    console.log(selected, selectedRows, changeRows);
+  {
+    title: 'Trưởng tổ chức',
+    dataIndex: 'leader',
+    width: '30%',
   },
-};
+];
 
 export default function () {
-  const [data, setData] = React.useState<any>();
+  const [data, setData] = React.useState<OrganizationUnit[]>();
+  const [expandedRowKeys, setExpandedRowKeys] = React.useState<string[]>([]);
 
   React.useEffect(() => {
-    getDataTable().then((data) => {
-      console.log('> : data', data)
+    const api = new Api();
+    api.getOrganizationUnits().then((data) => {
       setData(data);
     });
   }, []);
 
+  React.useEffect(() => {
+    setExpandedRowKeys(calculateAllExpandedRowKeys(data, { level: -1, key: 'id' }));
+  }, [data]);
+
+  const onExpand = React.useCallback((expanded: boolean, record: OrganizationUnit) => {
+    if (expanded) {
+      setExpandedRowKeys((old) => old.concat(record.id));
+    } else {
+      setExpandedRowKeys((old) => old.filter((it) => it !== record.id));
+    }
+  }, []);
+
   return (
     <AppBody>
-      <Table columns={columns} rowSelection={rowSelection} dataSource={data} />
+      <Table
+        columns={columns}
+        dataSource={data}
+        loading={!data}
+        onExpand={onExpand}
+        rowKey={(record) => record.id}
+        expandedRowKeys={expandedRowKeys}
+        pagination={false} 
+        // defaultExpandAllRows={true}
+      />
     </AppBody>
   );
 }
