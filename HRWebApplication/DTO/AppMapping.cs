@@ -8,7 +8,7 @@ namespace HRWebApplication.DTO
         public AppMapping()
         {
             //CreateMap<Category, CategoryDTO>().ReverseMap();
-            CreateMap<OrganizationUnit, DepartmentDTO>().ReverseMap();
+            //CreateMap<OrganizationUnit, DepartmentDTO>().ReverseMap();
         }
     }
 }

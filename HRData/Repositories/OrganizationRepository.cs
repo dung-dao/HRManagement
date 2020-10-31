@@ -23,7 +23,7 @@ namespace HRData.Repositories
 
         public List<OrganizationUnit> GetOrgTree()
         {
-            return context.Departments.ToList();
+            return context.OrganizationUnits.ToList();
         }
     }
 }
