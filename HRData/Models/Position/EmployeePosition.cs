@@ -8,8 +8,8 @@ namespace HRData.Models
 {
     class EmployeePosition : EntityBase
     {
-        public List<Employee> Employees { get; set; }
-        public List<Position> Positions { get; set; }
+        public virtual List<Employee> Employees { get; set; }
+        public virtual List<Position> Positions { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
     }

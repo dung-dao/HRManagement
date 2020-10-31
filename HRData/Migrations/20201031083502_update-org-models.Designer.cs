@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201031083502_update-org-models")]
+    partial class updateorgmodels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,12 +121,14 @@ namespace HRData.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("OrganizationUnitId")
+                    b.Property<int?>("ParentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -134,7 +138,7 @@ namespace HRData.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.HasIndex("OrganizationUnitId");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("OrganizationUnits");
                 });
@@ -383,11 +387,13 @@ namespace HRData.Migrations
                         .WithMany()
                         .HasForeignKey("BranchId");
 
-                    b.HasOne("HRData.Models.OrganizationUnit", null)
+                    b.HasOne("HRData.Models.OrganizationUnit", "Parent")
                         .WithMany("Children")
-                        .HasForeignKey("OrganizationUnitId");
+                        .HasForeignKey("ParentId");
 
                     b.Navigation("Branch");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -19,6 +19,6 @@ namespace HRData.Models
         public string Phone { get; set; }
         public DateTime DateOfBirth { get; set; }
         [Column(TypeName = "varchar(10)")]
-        public Sex Sex { get; set; }
+        public virtual Sex Sex { get; set; }
     }
 }
