@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace HRData.Models
 {
-    /// <summary>
-    /// Loại hình nhân sự
-    /// </summary>
-    public class EmployeeType : NamedEntity
+    public class TestModel : NamedEntity
     {
 
     }

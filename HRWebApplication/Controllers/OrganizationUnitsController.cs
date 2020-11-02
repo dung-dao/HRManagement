@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRData.Data;
 using HRData.Models;
+using HRData.Models.Organization;
 
 namespace HRWebApplication.Controllers
 {
@@ -42,9 +43,7 @@ namespace HRWebApplication.Controllers
             return organizationUnit;
         }
 
-        // PUT: api/OrganizationUnits/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "[controller]_Update")]
         public async Task<IActionResult> PutOrganizationUnit(int id, OrganizationUnit organizationUnit)
         {
             if (id != organizationUnit.Id)

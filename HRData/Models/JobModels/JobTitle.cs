@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRData.Models
+namespace HRData.Models.JobModels
 {
     /// <summary>
     /// Vị trí công việc nhân viên bán hàng, nhân viên thu ngân...
     /// </summary>
-    public class JobCategory : NamedEntity  
+    public class JobTitle : NamedEntity
     {
+
     }
 }

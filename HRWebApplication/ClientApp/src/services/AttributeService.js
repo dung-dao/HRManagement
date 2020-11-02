@@ -6,8 +6,7 @@ const SERVICE_NAME = '/ares';
 
 class AttributeService extends BaseService {
   updateAttribute(body, id) {
-    OrganizationUnit unit = new OrganizationUnit();
-    const client = new OrganizationUnitsClient();
+    return null;
   }
 
   createAttribute(body) {
