@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { EyeOutlined } from '@ant-design/icons';
+import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Space, Tag, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 
@@ -15,68 +15,51 @@ import DecisionContextMenu from './DecisionContextMenu';
 // columns of <Table />
 
 export const columns = [
+  // { title: 'STT', key: 'index', render: (value, item, index) => index + 1 },
+  { title: 'Mã nhân viên', dataIndex: 'code' },
+  { title: 'Họ và Tên lót', dataIndex: 'firstName' },
+  { title: 'Tên', dataIndex: 'lastName' },
+  { title: 'Email cá nhân', dataIndex: 'personalEmail' },
+  { title: 'Email công việc', dataIndex: 'workEmail' },
+  { title: 'Sđt', dataIndex: 'phone' },
+  { title: 'Ngày sinh', dataIndex: 'dateOfBirth' },
+  { title: 'Giới tính', dataIndex: 'sex' },
+  { title: 'Bộ phận', dataIndex: 'department' },
+  { title: 'Loại hình nhân sự', dataIndex: 'employeeType' },
+  { title: 'Vị trí', dataIndex: 'jobTitle' },
+  { title: 'Lương', dataIndex: 'salary' },
+  { title: 'Ngày bắt đầu', dataIndex: 'dateStarted' },
+  { title: 'Loại hình làm việc', dataIndex: 'workType' },
+  { title: 'Chi nhánh', dataIndex: 'branch' },
+  { title: 'Địa chỉ hiện tại', dataIndex: 'currentAddress' },
+  { title: 'Địa chỉ thường trú', dataIndex: 'permanentAddress' },
+  { title: 'Số CMND', dataIndex: 'nationalId' },
+  { title: 'Ngày cấp', dataIndex: 'licenseDate' },
+  { title: 'Nơi cấp', dataIndex: 'licensePlace' },
+  { title: 'Tình trạng hôn nhân', dataIndex: 'maritalStatus' },
   {
-    title: 'Mã nhân viên',
-    dataIndex: ['code'],
-  },
-  {
-    title: 'Họ và tên lót',
-    dataIndex: ['firstName'],
-  },
-  {
-    title: 'Tên',
-    dataIndex: ['lastName'],
-  },
-  {
-    title: 'Avatar',
-    dataIndex: ['avatar'],
-  },
-
-  {
-    title: 'Thời gian vào làm',
-    dataIndex: ['dateStarted'],
-  },
-  {
-    title: 'Vị trí công việc',
-    dataIndex: ['jobTitle'],
-  },
-  {
-    title: 'Phòng ban',
-    dataIndex: ['department'],
-  },
-  {
-    title: 'Chi nhánh',
-    dataIndex: ['Branch'],
-  },
-  {
-    title: 'Loại làm việc',
-    dataIndex: ['workType'],
-  },
-  {
-    title: 'Số điện thoại',
-    dataIndex: ['phone'],
-  },
-
-  {
-    title: 'Email',
-    dataIndex: ['email'],
-  },
-
-  {
-    title: 'Facebook',
-    dataIndex: ['facebook'],
-  },
-  {
-    title: 'Ngày sinh',
-    dataIndex: ['dateOfBirth'],
-  },
-  {
-    title: 'Giới tính',
-    dataIndex: ['sex'],
-  },
-  {
-    title: 'Hợp đồng',
-    dataIndex: ['contract'],
+    title: 'Thao tác',
+    key: 'action',
+    fixed: 'right',
+    render: (_, record) => (
+      <Space size="small">
+        <Link to={'merchant-detail/' + record?.id} title="Xem chi tiết">
+          <Button size="small" type="dashed">
+            <EyeOutlined />
+          </Button>
+        </Link>
+        <Link to={'merchant-detail/' + record?.id} title="Chỉnh sửa trực tiếp">
+          <Button size="small" type="primary">
+            <EditOutlined />
+          </Button>
+        </Link>
+        <Link to={'merchant-detail/' + record?.id} title="Xoá">
+          <Button size="small" danger>
+            <DeleteOutlined />
+          </Button>
+        </Link>
+      </Space>
+    ),
   },
   // {
   //   title: 'Tên thương hiệu',
@@ -184,27 +167,5 @@ export const columns = [
   //   key: 'acceptStatus',
   //   dataIndex: 'acceptStatus',
   //   render: (acceptStatus) => <Tag {...acceptStatusToTagProps(acceptStatus)} key={acceptStatus} />,
-  // },
-  // {
-  //   title: 'Thao tác',
-  //   key: 'action',
-  //   width: 190,
-  //   fixed: 'right',
-  //   render: (_, record) => (
-  //     <Space size="small">
-  //       <Link to={'merchant-detail/' + record?.id} title="Xem chi tiết">
-  //         <Button>
-  //           <EyeOutlined />
-  //         </Button>
-  //       </Link>
-  //       <Dropdown
-  //         overlay={<DecisionContextMenu record={record} />}
-  //         trigger={['click']}
-  //         placement="bottomLeft"
-  //       >
-  //         <Button>Quyết định ...</Button>
-  //       </Dropdown>
-  //     </Space>
-  //   ),
   // },
 ];
