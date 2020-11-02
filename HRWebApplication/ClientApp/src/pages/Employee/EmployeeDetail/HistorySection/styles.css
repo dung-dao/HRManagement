@@ -1,0 +1,8 @@
+.HistorySection-time-line > :first-child {
+  margin-top: 10px;
+}
+
+.HistorySection-time-line > :last-child {
+  padding-bottom: 0;
+  margin-bottom: -20px;
+}
