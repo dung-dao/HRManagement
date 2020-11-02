@@ -9,7 +9,7 @@
 
 import {ApiClientBase} from './ApiClientBase';
 
-export class BranchesClient extends ApiClientBase {
+export class EmployeesClient extends ApiClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -23,8 +23,8 @@ export class BranchesClient extends ApiClientBase {
     /**
      * @return Success
      */
-    branchesAll(): Promise<Branch[]> {
-        let url_ = this.baseUrl + "/api/Branches";
+    employees_GetAll(): Promise<Employee[]> {
+        let url_ = this.baseUrl + "/api/Employees";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
@@ -37,11 +37,11 @@ export class BranchesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processBranchesAll(_response);
+            return this.processEmployees_GetAll(_response);
         });
     }
 
-    protected processBranchesAll(response: Response): Promise<Branch[]> {
+    protected processEmployees_GetAll(response: Response): Promise<Employee[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -51,7 +51,7 @@ export class BranchesClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(Branch.fromJS(item));
+                    result200!.push(Employee.fromJS(item));
             }
             return result200;
             });
@@ -60,15 +60,15 @@ export class BranchesClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Branch[]>(<any>null);
+        return Promise.resolve<Employee[]>(<any>null);
     }
 
     /**
      * @param body (optional) 
      * @return Success
      */
-    branches(body: Branch | undefined): Promise<Branch> {
-        let url_ = this.baseUrl + "/api/Branches";
+    employees_Create(body: Employee | undefined): Promise<Employee> {
+        let url_ = this.baseUrl + "/api/Employees";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -85,18 +85,18 @@ export class BranchesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processBranches(_response);
+            return this.processEmployees_Create(_response);
         });
     }
 
-    protected processBranches(response: Response): Promise<Branch> {
+    protected processEmployees_Create(response: Response): Promise<Employee> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Branch.fromJS(resultData200);
+            result200 = Employee.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -104,14 +104,14 @@ export class BranchesClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Branch>(<any>null);
+        return Promise.resolve<Employee>(<any>null);
     }
 
     /**
      * @return Success
      */
-    branches2(id: number): Promise<Branch> {
-        let url_ = this.baseUrl + "/api/Branches/{id}";
+    employees_GetById(id: number): Promise<Employee> {
+        let url_ = this.baseUrl + "/api/Employees/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -127,18 +127,18 @@ export class BranchesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processBranches2(_response);
+            return this.processEmployees_GetById(_response);
         });
     }
 
-    protected processBranches2(response: Response): Promise<Branch> {
+    protected processEmployees_GetById(response: Response): Promise<Employee> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Branch.fromJS(resultData200);
+            result200 = Employee.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -146,15 +146,15 @@ export class BranchesClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Branch>(<any>null);
+        return Promise.resolve<Employee>(<any>null);
     }
 
     /**
      * @param body (optional) 
      * @return Success
      */
-    branches3(id: number, body: Branch | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Branches/{id}";
+    employees_Update(id: number, body: Employee | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Employees/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -173,11 +173,11 @@ export class BranchesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processBranches3(_response);
+            return this.processEmployees_Update(_response);
         });
     }
 
-    protected processBranches3(response: Response): Promise<void> {
+    protected processEmployees_Update(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -195,8 +195,8 @@ export class BranchesClient extends ApiClientBase {
     /**
      * @return Success
      */
-    branches4(id: number): Promise<void> {
-        let url_ = this.baseUrl + "/api/Branches/{id}";
+    employees_Delete(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/Employees/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -211,455 +211,11 @@ export class BranchesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processBranches4(_response);
+            return this.processEmployees_Delete(_response);
         });
     }
 
-    protected processBranches4(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-}
-
-export class EmployeeTypesClient extends ApiClientBase {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        super();
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    employeeTypesAll(): Promise<EmployeeType[]> {
-        let url_ = this.baseUrl + "/api/EmployeeTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processEmployeeTypesAll(_response);
-        });
-    }
-
-    protected processEmployeeTypesAll(response: Response): Promise<EmployeeType[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(EmployeeType.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<EmployeeType[]>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    employeeTypes(body: EmployeeType | undefined): Promise<EmployeeType> {
-        let url_ = this.baseUrl + "/api/EmployeeTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processEmployeeTypes(_response);
-        });
-    }
-
-    protected processEmployeeTypes(response: Response): Promise<EmployeeType> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = EmployeeType.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<EmployeeType>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    employeeTypes2(id: number): Promise<EmployeeType> {
-        let url_ = this.baseUrl + "/api/EmployeeTypes/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processEmployeeTypes2(_response);
-        });
-    }
-
-    protected processEmployeeTypes2(response: Response): Promise<EmployeeType> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = EmployeeType.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<EmployeeType>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    employeeTypes3(id: number, body: EmployeeType | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/EmployeeTypes/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processEmployeeTypes3(_response);
-        });
-    }
-
-    protected processEmployeeTypes3(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    employeeTypes4(id: number): Promise<void> {
-        let url_ = this.baseUrl + "/api/EmployeeTypes/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "DELETE",
-            headers: {
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processEmployeeTypes4(_response);
-        });
-    }
-
-    protected processEmployeeTypes4(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-}
-
-export class JobCategoriesClient extends ApiClientBase {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        super();
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    jobCategoriesAll(): Promise<JobCategory[]> {
-        let url_ = this.baseUrl + "/api/JobCategories";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processJobCategoriesAll(_response);
-        });
-    }
-
-    protected processJobCategoriesAll(response: Response): Promise<JobCategory[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(JobCategory.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<JobCategory[]>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    jobCategories(body: JobCategory | undefined): Promise<JobCategory> {
-        let url_ = this.baseUrl + "/api/JobCategories";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processJobCategories(_response);
-        });
-    }
-
-    protected processJobCategories(response: Response): Promise<JobCategory> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = JobCategory.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<JobCategory>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    jobCategories2(id: number): Promise<JobCategory> {
-        let url_ = this.baseUrl + "/api/JobCategories/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processJobCategories2(_response);
-        });
-    }
-
-    protected processJobCategories2(response: Response): Promise<JobCategory> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = JobCategory.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<JobCategory>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    jobCategories3(id: number, body: JobCategory | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/JobCategories/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processJobCategories3(_response);
-        });
-    }
-
-    protected processJobCategories3(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    jobCategories4(id: number): Promise<void> {
-        let url_ = this.baseUrl + "/api/JobCategories/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "DELETE",
-            headers: {
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processJobCategories4(_response);
-        });
-    }
-
-    protected processJobCategories4(response: Response): Promise<void> {
+    protected processEmployees_Delete(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -739,7 +295,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
     /**
      * @return Success
      */
-    organizationUnitsAll(): Promise<OrganizationUnit[]> {
+    organizationUnits_GetAll(): Promise<OrganizationUnit[]> {
         let url_ = this.baseUrl + "/api/OrganizationUnits";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -753,11 +309,11 @@ export class OrganizationUnitsClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processOrganizationUnitsAll(_response);
+            return this.processOrganizationUnits_GetAll(_response);
         });
     }
 
-    protected processOrganizationUnitsAll(response: Response): Promise<OrganizationUnit[]> {
+    protected processOrganizationUnits_GetAll(response: Response): Promise<OrganizationUnit[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -783,7 +339,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    organizationUnits(body: OrganizationUnit | undefined): Promise<OrganizationUnit> {
+    organizationUnits_Create(body: OrganizationUnit | undefined): Promise<OrganizationUnit> {
         let url_ = this.baseUrl + "/api/OrganizationUnits";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -801,11 +357,11 @@ export class OrganizationUnitsClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processOrganizationUnits(_response);
+            return this.processOrganizationUnits_Create(_response);
         });
     }
 
-    protected processOrganizationUnits(response: Response): Promise<OrganizationUnit> {
+    protected processOrganizationUnits_Create(response: Response): Promise<OrganizationUnit> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -826,7 +382,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
     /**
      * @return Success
      */
-    organizationUnits2(id: number): Promise<OrganizationUnit> {
+    organizationUnits_GetById(id: number): Promise<OrganizationUnit> {
         let url_ = this.baseUrl + "/api/OrganizationUnits/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -843,11 +399,11 @@ export class OrganizationUnitsClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processOrganizationUnits2(_response);
+            return this.processOrganizationUnits_GetById(_response);
         });
     }
 
-    protected processOrganizationUnits2(response: Response): Promise<OrganizationUnit> {
+    protected processOrganizationUnits_GetById(response: Response): Promise<OrganizationUnit> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -869,7 +425,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    organizationUnits3(id: number, body: OrganizationUnit | undefined): Promise<void> {
+    organizationUnits_Update(id: number, body: OrganizationUnit | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/OrganizationUnits/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -889,11 +445,11 @@ export class OrganizationUnitsClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processOrganizationUnits3(_response);
+            return this.processOrganizationUnits_Update(_response);
         });
     }
 
-    protected processOrganizationUnits3(response: Response): Promise<void> {
+    protected processOrganizationUnits_Update(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -911,7 +467,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
     /**
      * @return Success
      */
-    organizationUnits4(id: number): Promise<void> {
+    organizationUnits_Delete(id: number): Promise<void> {
         let url_ = this.baseUrl + "/api/OrganizationUnits/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -927,11 +483,11 @@ export class OrganizationUnitsClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processOrganizationUnits4(_response);
+            return this.processOrganizationUnits_Delete(_response);
         });
     }
 
-    protected processOrganizationUnits4(response: Response): Promise<void> {
+    protected processOrganizationUnits_Delete(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -947,234 +503,22 @@ export class OrganizationUnitsClient extends ApiClientBase {
     }
 }
 
-export class WorkTypesClient extends ApiClientBase {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        super();
-        this.http = http ? http : <any>window;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    workTypesAll(): Promise<WorkType[]> {
-        let url_ = this.baseUrl + "/api/WorkTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processWorkTypesAll(_response);
-        });
-    }
-
-    protected processWorkTypesAll(response: Response): Promise<WorkType[]> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(WorkType.fromJS(item));
-            }
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<WorkType[]>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    workTypes(body: WorkType | undefined): Promise<WorkType> {
-        let url_ = this.baseUrl + "/api/WorkTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ = <RequestInit>{
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processWorkTypes(_response);
-        });
-    }
-
-    protected processWorkTypes(response: Response): Promise<WorkType> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = WorkType.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<WorkType>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    workTypes2(id: number): Promise<WorkType> {
-        let url_ = this.baseUrl + "/api/WorkTypes/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "GET",
-            headers: {
-                "Accept": "text/plain"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processWorkTypes2(_response);
-        });
-    }
-
-    protected processWorkTypes2(response: Response): Promise<WorkType> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = WorkType.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<WorkType>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    workTypes3(id: number, body: WorkType | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/WorkTypes/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <RequestInit>{
-            method: "DELETE",
-            headers: {
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processWorkTypes3(_response);
-        });
-    }
-
-    protected processWorkTypes3(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-}
-
-    /**
-     * @return Success
-     */
-    workTypes4(id: number): Promise<void> {
-        let url_ = this.baseUrl + "/api/WorkTypes/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.address = _data["address"];
-            this.status = _data["status"];
-        }
-    }
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processWorkTypes4(_response);
-        });
-    }
-
-    protected processWorkTypes4(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(<any>null);
-    }
-}
-
-export class Branch implements IBranch {
+export class Employee implements IEmployee {
     id?: number;
-    name?: string | undefined;
-    address?: string | undefined;
-    status?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    personalEmail?: string | undefined;
+    phone?: string | undefined;
+    dateOfBirth?: Date;
+    sex?: string | undefined;
+    idCardNo?: string | undefined;
+    issused?: Date;
+    date?: Date;
+    academicLevel?: string | undefined;
+    university?: string | undefined;
+    major?: string | undefined;
 
-    constructor(data?: IBranch) {
+    constructor(data?: IEmployee) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1186,15 +530,24 @@ export class Branch implements IBranch {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.name = _data["name"];
-            this.address = _data["address"];
-            this.status = _data["status"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.personalEmail = _data["personalEmail"];
+            this.phone = _data["phone"];
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+            this.sex = _data["sex"];
+            this.idCardNo = _data["idCardNo"];
+            this.issused = _data["issused"] ? new Date(_data["issused"].toString()) : <any>undefined;
+            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
+            this.academicLevel = _data["academicLevel"];
+            this.university = _data["university"];
+            this.major = _data["major"];
         }
     }
 
-    static fromJS(data: any): Branch {
+    static fromJS(data: any): Employee {
         data = typeof data === 'object' ? data : {};
-        let result = new Branch();
+        let result = new Employee();
         result.init(data);
         return result;
     }
@@ -1202,106 +555,36 @@ export class Branch implements IBranch {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["name"] = this.name;
-        data["address"] = this.address;
-        data["status"] = this.status;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["personalEmail"] = this.personalEmail;
+        data["phone"] = this.phone;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        data["sex"] = this.sex;
+        data["idCardNo"] = this.idCardNo;
+        data["issused"] = this.issused ? this.issused.toISOString() : <any>undefined;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["academicLevel"] = this.academicLevel;
+        data["university"] = this.university;
+        data["major"] = this.major;
         return data; 
     }
 }
 
-export interface IBranch {
+export interface IEmployee {
     id?: number;
-    name?: string | undefined;
-    address?: string | undefined;
-    status?: string | undefined;
-}
-
-export class EmployeeType implements IEmployeeType {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
-
-    constructor(data?: IEmployeeType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-        }
-    }
-
-    static fromJS(data: any): EmployeeType {
-        data = typeof data === 'object' ? data : {};
-        let result = new EmployeeType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        return data; 
-    }
-}
-
-export interface IEmployeeType {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
-}
-
-export class JobCategory implements IJobCategory {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
-
-    constructor(data?: IJobCategory) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-        }
-    }
-
-    static fromJS(data: any): JobCategory {
-        data = typeof data === 'object' ? data : {};
-        let result = new JobCategory();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        return data; 
-    }
-}
-
-export interface IJobCategory {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    personalEmail?: string | undefined;
+    phone?: string | undefined;
+    dateOfBirth?: Date;
+    sex?: string | undefined;
+    idCardNo?: string | undefined;
+    issused?: Date;
+    date?: Date;
+    academicLevel?: string | undefined;
+    university?: string | undefined;
+    major?: string | undefined;
 }
 
 export class OrganizationUnit implements IOrganizationUnit {
@@ -1309,7 +592,6 @@ export class OrganizationUnit implements IOrganizationUnit {
     name?: string | undefined;
     description?: string | undefined;
     status?: string | undefined;
-    branch?: Branch;
     children?: OrganizationUnit[] | undefined;
 
     constructor(data?: IOrganizationUnit) {
@@ -1327,7 +609,6 @@ export class OrganizationUnit implements IOrganizationUnit {
             this.name = _data["name"];
             this.description = _data["description"];
             this.status = _data["status"];
-            this.branch = _data["branch"] ? Branch.fromJS(_data["branch"]) : <any>undefined;
             if (Array.isArray(_data["children"])) {
                 this.children = [] as any;
                 for (let item of _data["children"])
@@ -1349,7 +630,6 @@ export class OrganizationUnit implements IOrganizationUnit {
         data["name"] = this.name;
         data["description"] = this.description;
         data["status"] = this.status;
-        data["branch"] = this.branch ? this.branch.toJSON() : <any>undefined;
         if (Array.isArray(this.children)) {
             data["children"] = [];
             for (let item of this.children)
@@ -1364,52 +644,7 @@ export interface IOrganizationUnit {
     name?: string | undefined;
     description?: string | undefined;
     status?: string | undefined;
-    branch?: Branch;
     children?: OrganizationUnit[] | undefined;
-}
-
-export class WorkType implements IWorkType {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
-
-    constructor(data?: IWorkType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-        }
-    }
-
-    static fromJS(data: any): WorkType {
-        data = typeof data === 'object' ? data : {};
-        let result = new WorkType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        return data; 
-    }
-}
-
-export interface IWorkType {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
 }
 
 export class ApiException extends Error {

@@ -1,5 +1,6 @@
 ﻿using HRData.Data;
 using HRData.Models;
+using HRData.Models.Organization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

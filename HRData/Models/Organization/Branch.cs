@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRData.Models
+namespace HRData.Models.Organization
 {
     public class Branch : EntityBase
     {
@@ -15,5 +15,6 @@ namespace HRData.Models
         public string Address { get; set; }
         [MaxLength(20)]
         public string Status { get; set; }
+        public virtual List<OrganizationUnit> Organization { get; set; }
     }
 }

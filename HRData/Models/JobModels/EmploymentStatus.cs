@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRData.Models
+namespace HRData.Models.JobModels
 {
     /// <summary>
-    /// Loại hình làm việc: full time/ parttime...
+    /// Part-time, fulltime, remote...
     /// </summary>
-    public class WorkType : NamedEntity
+    public class EmploymentStatus : NamedEntity
     {
-        
     }
 }
