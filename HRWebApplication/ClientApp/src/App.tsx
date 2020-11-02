@@ -11,7 +11,6 @@ import DetailConfirmProducts from './pages/private/ConfirmProducts/DetailConfirm
 import MerchantList from './pages/private/Merchants/MerchantList';
 import MerchantDetail from './pages/private/Merchants/MerchantDetail';
 import OrganizationStructure from './pages/OrganizationStructure';
-
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {

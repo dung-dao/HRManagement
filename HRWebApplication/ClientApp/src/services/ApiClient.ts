@@ -9,7 +9,229 @@
 
 import {ApiClientBase} from './ApiClientBase';
 
-export class ApiClient extends ApiClientBase {
+export class EmployeesClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    employees_GetAll(): Promise<Employee[]> {
+        let url_ = this.baseUrl + "/api/Employees";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_GetAll(_response);
+        });
+    }
+
+    protected processEmployees_GetAll(response: Response): Promise<Employee[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Employee.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Employee[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    employees_Create(body: Employee | undefined): Promise<Employee> {
+        let url_ = this.baseUrl + "/api/Employees";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_Create(_response);
+        });
+    }
+
+    protected processEmployees_Create(response: Response): Promise<Employee> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Employee.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Employee>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    employees_GetById(id: number): Promise<Employee> {
+        let url_ = this.baseUrl + "/api/Employees/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_GetById(_response);
+        });
+    }
+
+    protected processEmployees_GetById(response: Response): Promise<Employee> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Employee.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Employee>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    employees_Update(id: number, body: Employee | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Employees/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_Update(_response);
+        });
+    }
+
+    protected processEmployees_Update(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    employees_Delete(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/Employees/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_Delete(_response);
+        });
+    }
+
+    protected processEmployees_Delete(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+}
+
+export class OidcConfigurationClient extends ApiClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -57,12 +279,24 @@ export class ApiClient extends ApiClientBase {
         }
         return Promise.resolve<void>(<any>null);
     }
+}
+
+export class OrganizationUnitsClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
 
     /**
      * @return Success
      */
-    getAllWeather(): Promise<WeatherForecast[]> {
-        let url_ = this.baseUrl + "/WeatherForecast";
+    organizationUnits_GetAll(): Promise<OrganizationUnit[]> {
+        let url_ = this.baseUrl + "/api/OrganizationUnits";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
@@ -75,11 +309,11 @@ export class ApiClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processGetAllWeather(_response);
+            return this.processOrganizationUnits_GetAll(_response);
         });
     }
 
-    protected processGetAllWeather(response: Response): Promise<WeatherForecast[]> {
+    protected processOrganizationUnits_GetAll(response: Response): Promise<OrganizationUnit[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -89,7 +323,7 @@ export class ApiClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(WeatherForecast.fromJS(item));
+                    result200!.push(OrganizationUnit.fromJS(item));
             }
             return result200;
             });
@@ -98,17 +332,193 @@ export class ApiClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<WeatherForecast[]>(<any>null);
+        return Promise.resolve<OrganizationUnit[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    organizationUnits_Create(body: OrganizationUnit | undefined): Promise<OrganizationUnit> {
+        let url_ = this.baseUrl + "/api/OrganizationUnits";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processOrganizationUnits_Create(_response);
+        });
+    }
+
+    protected processOrganizationUnits_Create(response: Response): Promise<OrganizationUnit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = OrganizationUnit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<OrganizationUnit>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    organizationUnits_GetById(id: number): Promise<OrganizationUnit> {
+        let url_ = this.baseUrl + "/api/OrganizationUnits/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processOrganizationUnits_GetById(_response);
+        });
+    }
+
+    protected processOrganizationUnits_GetById(response: Response): Promise<OrganizationUnit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = OrganizationUnit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<OrganizationUnit>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    organizationUnits_Update(id: number, body: OrganizationUnit | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/OrganizationUnits/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processOrganizationUnits_Update(_response);
+        });
+    }
+
+    protected processOrganizationUnits_Update(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    organizationUnits_Delete(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/OrganizationUnits/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processOrganizationUnits_Delete(_response);
+        });
+    }
+
+    protected processOrganizationUnits_Delete(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
     }
 }
 
-export class WeatherForecast implements IWeatherForecast {
+export class Employee implements IEmployee {
+    id?: number;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    personalEmail?: string | undefined;
+    phone?: string | undefined;
+    dateOfBirth?: Date;
+    sex?: string | undefined;
+    idCardNo?: string | undefined;
+    issused?: Date;
     date?: Date;
-    temperatureC?: number;
-    readonly temperatureF?: number;
-    summary?: string | undefined;
+    academicLevel?: string | undefined;
+    university?: string | undefined;
+    major?: string | undefined;
 
-    constructor(data?: IWeatherForecast) {
+    constructor(data?: IEmployee) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -119,35 +529,122 @@ export class WeatherForecast implements IWeatherForecast {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.personalEmail = _data["personalEmail"];
+            this.phone = _data["phone"];
+            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
+            this.sex = _data["sex"];
+            this.idCardNo = _data["idCardNo"];
+            this.issused = _data["issused"] ? new Date(_data["issused"].toString()) : <any>undefined;
             this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
-            this.temperatureC = _data["temperatureC"];
-            (<any>this).temperatureF = _data["temperatureF"];
-            this.summary = _data["summary"];
+            this.academicLevel = _data["academicLevel"];
+            this.university = _data["university"];
+            this.major = _data["major"];
         }
     }
 
-    static fromJS(data: any): WeatherForecast {
+    static fromJS(data: any): Employee {
         data = typeof data === 'object' ? data : {};
-        let result = new WeatherForecast();
+        let result = new Employee();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["personalEmail"] = this.personalEmail;
+        data["phone"] = this.phone;
+        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
+        data["sex"] = this.sex;
+        data["idCardNo"] = this.idCardNo;
+        data["issused"] = this.issused ? this.issused.toISOString() : <any>undefined;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["temperatureC"] = this.temperatureC;
-        data["temperatureF"] = this.temperatureF;
-        data["summary"] = this.summary;
+        data["academicLevel"] = this.academicLevel;
+        data["university"] = this.university;
+        data["major"] = this.major;
         return data; 
     }
 }
 
-export interface IWeatherForecast {
+export interface IEmployee {
+    id?: number;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    personalEmail?: string | undefined;
+    phone?: string | undefined;
+    dateOfBirth?: Date;
+    sex?: string | undefined;
+    idCardNo?: string | undefined;
+    issused?: Date;
     date?: Date;
-    temperatureC?: number;
-    temperatureF?: number;
-    summary?: string | undefined;
+    academicLevel?: string | undefined;
+    university?: string | undefined;
+    major?: string | undefined;
+}
+
+export class OrganizationUnit implements IOrganizationUnit {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+    status?: string | undefined;
+    children?: OrganizationUnit[] | undefined;
+
+    constructor(data?: IOrganizationUnit) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.status = _data["status"];
+            if (Array.isArray(_data["children"])) {
+                this.children = [] as any;
+                for (let item of _data["children"])
+                    this.children!.push(OrganizationUnit.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): OrganizationUnit {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrganizationUnit();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["status"] = this.status;
+        if (Array.isArray(this.children)) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IOrganizationUnit {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+    status?: string | undefined;
+    children?: OrganizationUnit[] | undefined;
 }
 
 export class ApiException extends Error {

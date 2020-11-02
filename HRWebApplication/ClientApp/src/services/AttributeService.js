@@ -1,5 +1,7 @@
 import BaseService from './api/BaseService';
 
+import {OrganizationUnitsClient, OrganizationUnit} from './ApiClient';
+
 const SERVICE_NAME = '/ares';
 
 class AttributeService extends BaseService {

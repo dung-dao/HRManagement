@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201031083910_update-org-models-1")]
+    partial class updateorgmodels1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,66 +86,47 @@ namespace HRData.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("HRData.Models.Employee", b =>
+            modelBuilder.Entity("HRData.Models.Branch", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("AcademicLevel")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Address")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IdCardNo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Issused")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Major")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PersonalEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Sex")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("University")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Status")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Branch");
                 });
 
-            modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
+            modelBuilder.Entity("HRData.Models.OrganizationUnit", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("OrganizationUnitId")
                         .HasColumnType("int");
@@ -153,27 +136,11 @@ namespace HRData.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BranchId");
+
                     b.HasIndex("OrganizationUnitId");
 
                     b.ToTable("OrganizationUnits");
-                });
-
-            modelBuilder.Entity("HRData.Models.TestModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TestModels");
                 });
 
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -414,11 +381,17 @@ namespace HRData.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
+            modelBuilder.Entity("HRData.Models.OrganizationUnit", b =>
                 {
-                    b.HasOne("HRData.Models.Organization.OrganizationUnit", null)
+                    b.HasOne("HRData.Models.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("HRData.Models.OrganizationUnit", null)
                         .WithMany("Children")
                         .HasForeignKey("OrganizationUnitId");
+
+                    b.Navigation("Branch");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -472,7 +445,7 @@ namespace HRData.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
+            modelBuilder.Entity("HRData.Models.OrganizationUnit", b =>
                 {
                     b.Navigation("Children");
                 });

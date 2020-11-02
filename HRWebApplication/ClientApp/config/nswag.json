@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "json": "{\r\n  \"openapi\": \"3.0.1\",\r\n  \"info\": {\r\n    \"title\": \"HRWebApplication\",\r\n    \"version\": \"1.0\"\r\n  },\r\n  \"paths\": {\r\n    \"/_configuration/{clientId}\": {\r\n      \"get\": {\r\n        \"tags\": [\r\n          \"OidcConfiguration\"\r\n        ],\r\n        \"parameters\": [\r\n          {\r\n            \"name\": \"clientId\",\r\n            \"in\": \"path\",\r\n            \"required\": true,\r\n            \"schema\": {\r\n              \"type\": \"string\",\r\n              \"nullable\": true\r\n            }\r\n          }\r\n        ],\r\n        \"responses\": {\r\n          \"200\": {\r\n            \"description\": \"Success\"\r\n          }\r\n        }\r\n      }\r\n    },\r\n    \"/WeatherForecast\": {\r\n      \"get\": {\r\n        \"tags\": [\r\n          \"WeatherForecast\"\r\n        ],\r\n        \"operationId\": \"GetAllWeather\",\r\n        \"responses\": {\r\n          \"200\": {\r\n            \"description\": \"Success\",\r\n            \"content\": {\r\n              \"text/plain\": {\r\n                \"schema\": {\r\n                  \"type\": \"array\",\r\n                  \"items\": {\r\n                    \"$ref\": \"#/components/schemas/WeatherForecast\"\r\n                  }\r\n                }\r\n              },\r\n              \"application/json\": {\r\n                \"schema\": {\r\n                  \"type\": \"array\",\r\n                  \"items\": {\r\n                    \"$ref\": \"#/components/schemas/WeatherForecast\"\r\n                  }\r\n                }\r\n              },\r\n              \"text/json\": {\r\n                \"schema\": {\r\n                  \"type\": \"array\",\r\n                  \"items\": {\r\n                    \"$ref\": \"#/components/schemas/WeatherForecast\"\r\n                  }\r\n                }\r\n              }\r\n            }\r\n          }\r\n        }\r\n      }\r\n    }\r\n  },\r\n  \"components\": {\r\n    \"schemas\": {\r\n      \"WeatherForecast\": {\r\n        \"type\": \"object\",\r\n        \"properties\": {\r\n          \"date\": {\r\n            \"type\": \"string\",\r\n            \"format\": \"date-time\"\r\n          },\r\n          \"temperatureC\": {\r\n            \"type\": \"integer\",\r\n            \"format\": \"int32\"\r\n          },\r\n          \"temperatureF\": {\r\n            \"type\": \"integer\",\r\n            \"format\": \"int32\",\r\n            \"readOnly\": true\r\n          },\r\n          \"summary\": {\r\n            \"type\": \"string\",\r\n            \"nullable\": true\r\n          }\r\n        },\r\n        \"additionalProperties\": false\r\n      }\r\n    }\r\n  }\r\n}",
+      "json": "",
       "url": "https://localhost:44315/swagger/v1/swagger.json",
       "output": null,
       "newLineBehavior": "Auto"
@@ -11,7 +11,7 @@
   },
   "codeGenerators": {
     "openApiToTypeScriptClient": {
-      "className": "ApiClient",
+      "className": "{controller}Client",
       "moduleName": "",
       "namespace": "",
       "typeScriptVersion": 2.7,
@@ -40,7 +40,7 @@
       "useTransformOptionsMethod": true,
       "useTransformResultMethod": false,
       "generateDtoTypes": true,
-      "operationGenerationMode": "SingleClientFromOperationId",
+      "operationGenerationMode": "MultipleClientsFromFirstTagAndOperationId",
       "markOptionalProperties": true,
       "generateCloneMethod": false,
       "typeStyle": "Class",
