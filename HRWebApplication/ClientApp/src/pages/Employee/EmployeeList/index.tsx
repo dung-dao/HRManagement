@@ -7,10 +7,8 @@ import Table from './Table';
 function Index() {
   return (
     <AppBody>
-      <Space direction="vertical" className="flex">
-        <Header />
-        <Table />
-      </Space>
+      <Header />
+      <Table />
     </AppBody>
   );
 }
