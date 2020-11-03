@@ -1,5 +1,4 @@
 ﻿using HRData.Models;
-using HRData.Models.JobModels;
 using HRData.Models.Organization;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
@@ -13,7 +12,7 @@ namespace HRData.Data
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions) { }
-        
+
         //Organization
         public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
         //public DbSet<Branch> Branches { get; set; }
