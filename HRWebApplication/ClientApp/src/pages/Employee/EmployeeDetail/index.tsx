@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { Form, Row, Col, Button } from 'antd';
+import { Form, Row, Col, Button, Input, Upload } from 'antd';
 import AppBody from 'components/Layouts/AppBody';
 import HistorySection from './HistorySection';
 import RepresentiveSection from './RepresentiveSection';
@@ -9,7 +9,21 @@ import LoginInfoSection from './LoginInfoSection';
 import BrandInfoSection from './BrandInfoSection';
 import SocialSection from './SocialSection';
 import ProductsInfoSection from './ProductsInfoSection';
-import { getAllMerchants, apiAllMerchants } from './data'
+import { getAllMerchants, apiAllMerchants } from './data';
+import ImgCrop from 'antd-img-crop';
+
+const formItemLayout = {
+  labelCol: { span: 9 },
+  wrapperCol: { span: 15 },
+  labelAlign: 'left',
+};
+
+const required = (label) => ({
+  required: true,
+  message: label + ' không được bỏ trống!',
+});
+
+const phoneRegex = /^(\+84|0|84)\d{9}$/;
 
 function Index() {
   const [form] = Form.useForm();
@@ -17,9 +31,36 @@ function Index() {
   const [merchantData, setMerchantData] = React.useState(apiAllMerchants[0]);
 
   React.useEffect(() => {
-    getAllMerchants().then(data => setMerchantData(data[0]))
-  }, [])
+    getAllMerchants().then((data) => setMerchantData(data[0]));
+  }, []);
 
+  const [fileList, setFileList] = React.useState([
+    {
+      uid: '-1',
+      name: 'image.png',
+      status: 'done',
+      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    },
+  ]);
+
+  const onChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+  const onPreview = async (file) => {
+    let src = file.url;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow.document.write(image.outerHTML);
+  };
 
   //
   // const handleSearch = useCallback(
@@ -63,42 +104,249 @@ function Index() {
       {isDetail && <HistorySection merchantData={merchantData} />}
 
       <Form form={form}>
-        {/*Row1: Đại diện, Địa chỉ kd, Thông tin đăng nhập*/}
         <Row gutter={40}>
-          {/*Block: Thông tin người đại diện*/}
-          <Col span={8}>
-            <RepresentiveSection isDetail={isDetail} merchantData={merchantData} />
+          <Col span={12}>
+            <fieldset>
+              <legend>Avatar:</legend>
+              <ImgCrop rotate>
+                <Upload
+                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  listType="picture-card"
+                  fileList={fileList}
+                  onChange={onChange}
+                  onPreview={onPreview}
+                >
+                  {fileList.length < 5 && '+ Upload'}
+                </Upload>
+              </ImgCrop>
+            </fieldset>
           </Col>
 
-          {/*Block: Địa chỉ kinh doanh*/}
-          <Col span={8}>
-            <AddressSection form={form} isDetail={isDetail} merchantData={merchantData} />
+          <Col span={12}>
+            <fieldset>
+              <legend>Thông tin cá nhân:</legend>
+              <Form.Item
+                {...formItemLayout}
+                label="Mã nhân viên"
+                name="employee-id"
+                rules={[required('Mã nhân viên')]}
+                readOnly={isDetail}
+              >
+                <Input placeholder="NV-001" defaultValue={'NV-001'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Họ và tên lót"
+                name="first-name"
+                rules={[required('Họ và tên lót')]}
+                readOnly={isDetail}
+              >
+                <Input placeholder="Nguyễn Văn" defaultValue={'Nguyễn Văn'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item {...formItemLayout} label="Tên" name="last-name" rules={[required('Tên')]}>
+                <Input placeholder="A" defaultValue={'A'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Ngày sinh"
+                name="date-of-birth"
+                rules={[required('Ngày sinh')]}
+              >
+                <Input placeholder="01/01/2000" defaultValue={'01/01/2000'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Giới tính"
+                name="sex"
+                rules={[required('Giới tính')]}
+              >
+                <Input placeholder="Nam" defaultValue={'Nam'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Tình trạng hôn nhân"
+                name="marital-status"
+                rules={[required('Tình trạng hôn nhân')]}
+              >
+                <Input placeholder="Độc thân" defaultValue={'Độc thân'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item {...formItemLayout} label="CMND" name="cmnd" rules={[required('CMND')]}>
+                <Input placeholder="123456789" defaultValue={'123456789'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Ngày cấ["
+                name="license-date"
+                rules={[required('Ngày cấp')]}
+              >
+                <Input placeholder="01/01/2000" defaultValue={'01/01/2000'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Nơi cấp"
+                name="license-place"
+                rules={[required('Nơi cấp')]}
+              >
+                <Input
+                  placeholder="CA Tp Hồ Chí Minh"
+                  defaultValue={'CA Tp Hồ Chí Minh'}
+                  readOnly={isDetail}
+                />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Ngày sinh"
+                name="date-of-birth"
+                rules={[required('Ngày sinh')]}
+              >
+                <Input placeholder="01/01/2000" defaultValue={'01/01/2000'} readOnly={isDetail} />
+              </Form.Item>
+            </fieldset>
           </Col>
-
-          {/*Block: Thông tin đăng nhập*/}
-          <Col span={8}>
-            <LoginInfoSection isDetail={isDetail} merchantData={merchantData} />
+          <Col span={12}>
+            <fieldset>
+              <legend>Thông tin liên lạc:</legend>
+              <Form.Item
+                {...formItemLayout}
+                label="Email cá nhân"
+                name="personal-email"
+                rules={[
+                  required('Email cá nhân'),
+                  { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
+                ]}
+              >
+                <Input
+                  placeholder="nguyenvana@gmail.com"
+                  type="email"
+                  defaultValue={'nguyenvana@gmail.com'}
+                  readOnly={isDetail}
+                />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Email công việc"
+                name="email"
+                rules={[
+                  required('Email công việc'),
+                  { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
+                ]}
+              >
+                <Input
+                  placeholder="nguyenvana@gmail.com"
+                  type="email"
+                  defaultValue={'nguyenvana@gmail.com'}
+                  readOnly={isDetail}
+                />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Địa chỉ hiện tại"
+                name="current-address"
+                rules={[required('Địa chỉ')]}
+                readOnly={isDetail}
+              >
+                <Input
+                  placeholder="147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM"
+                  defaultValue={'147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM'}
+                  readOnly={isDetail}
+                />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Địa chỉ thường trú"
+                name="permanent-address"
+                rules={[required('Địa chỉ')]}
+                readOnly={isDetail}
+              >
+                <Input
+                  placeholder="147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM"
+                  defaultValue={'147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM'}
+                  readOnly={isDetail}
+                />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Số điện thoại"
+                name="phone"
+                rules={[
+                  required('Số điện thoại'),
+                  {
+                    pattern: phoneRegex,
+                    min: 9,
+                    max: 12,
+                    message: 'Số điện thoại phải bắt dầu bằng (0|84|+84) và theo sau 9 chữ số`',
+                  },
+                ]}
+              >
+                <Input placeholder="0123456789" defaultValue={'0123456789'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item {...formItemLayout} label="Facebook" name="facebook">
+                <Input placeholder="fb.com/hrm" defaultValue={'fb.com/hrm'} readOnly={isDetail} />
+              </Form.Item>
+            </fieldset>
+          </Col>
+          <Col span={12}>
+            <fieldset>
+              <legend>Thông tin nhân sự</legend>
+              <Form.Item
+                {...formItemLayout}
+                label="Bộ phận"
+                name="department"
+                rules={[required('Bộ phận')]}
+              >
+                <Input placeholder="Sales" defaultValue={'Sales'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Loại hình nhân sự"
+                name="employee-type"
+                rules={[required('Loại hình nhân sự')]}
+              >
+                <Input placeholder="Nhân viên" defaultValue={'Nhân viên'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Chức vụ"
+                name="job-title"
+                rules={[required('Chức vụ')]}
+              >
+                <Input
+                  placeholder="Chuyên viên sales"
+                  defaultValue={'Chuyên viên sales'}
+                  readOnly={isDetail}
+                />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Lương"
+                name="salary"
+                rules={[required('Lương')]}
+                readOnly={isDetail}
+              >
+                <Input placeholder="9000000" defaultValue={'9000000'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Ngày bắt đầu"
+                name="date-started"
+                readOnly={isDetail}
+              >
+                <Input placeholder="01/01/2020" defaultValue={'01/01/2020'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item {...formItemLayout} label="Loại hình làm việc" name="work-type">
+                <Input placeholder="Full-time" defaultValue={'Full-time'} readOnly={isDetail} />
+              </Form.Item>
+              <Form.Item {...formItemLayout} label="Chi nhánh" name="branch">
+                <Input
+                  placeholder="Cơ sở Nguyễn Tuân"
+                  defaultValue={'Cơ sở Nguyễn Tuân'}
+                  readOnly={isDetail}
+                />
+              </Form.Item>
+            </fieldset>
           </Col>
         </Row>
 
-        {/*Row2: Thông tin cửa hàng, sản phẩm, MXH  */}
-        <Row gutter={40}>
-          {/*Col: Thông tin cửa hàng, Thông tin sản phẩm*/}
-          <Col span={16}>
-            {/*Block: Thông tin cửa hàng*/}
-            <BrandInfoSection isDetail={isDetail} merchantData={merchantData} />
-
-            {/*Block: Thông tin sản phẩm*/}
-            <ProductsInfoSection isDetail={isDetail} merchantData={merchantData} />
-          </Col>
-
-          {/*Block: Mạng xã hội*/}
-          <Col span={8}>
-            <SocialSection isDetail={isDetail} merchantData={merchantData} />
-          </Col>
-        </Row>
-
-        {/*Row3: Submit*/}
         {!isDetail && (
           <Row>
             <Col span={8}>

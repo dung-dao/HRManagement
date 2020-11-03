@@ -43,17 +43,17 @@ export const columns = [
     fixed: 'right',
     render: (_, record) => (
       <Space size="small">
-        <Link to={'merchant-detail/' + record?.id} title="Xem chi tiết">
+        <Link to={'employee-detail/' + record?.id} title="Xem chi tiết">
           <Button size="small" type="dashed">
             <EyeOutlined />
           </Button>
         </Link>
-        <Link to={'merchant-detail/' + record?.id} title="Chỉnh sửa trực tiếp">
+        <Link to={'employee-edit/' + record?.id} title="Chỉnh sửa trực tiếp">
           <Button size="small" type="primary">
             <EditOutlined />
           </Button>
         </Link>
-        <Link to={'merchant-detail/' + record?.id} title="Xoá">
+        <Link to={'employee-add/' + record?.id} title="Xoá">
           <Button size="small" danger>
             <DeleteOutlined />
           </Button>
