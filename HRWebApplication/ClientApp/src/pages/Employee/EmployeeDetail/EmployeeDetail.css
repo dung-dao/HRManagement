@@ -1,0 +1,8 @@
+.EmployeeDetail-history-section > :first-child {
+  margin-top: 10px;
+}
+
+.EmployeeDetail-history-section > :last-child {
+  padding-bottom: 0;
+  margin-bottom: -20px;
+}
