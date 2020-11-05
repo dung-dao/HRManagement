@@ -12,7 +12,7 @@ import MerchantList from './pages/private/Merchants/MerchantList';
 import MerchantDetail from './pages/private/Merchants/MerchantDetail';
 import OrganizationStructure from './pages/OrganizationStructure';
 import EmployeeList from './pages/Employee/EmployeeList';
-import EmployeeDetail from './pages/Employee/EmployeeDetail';
+import EmployeeDetail from './pages/Employee/EmployeeDetail/EmployeeDetail';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {

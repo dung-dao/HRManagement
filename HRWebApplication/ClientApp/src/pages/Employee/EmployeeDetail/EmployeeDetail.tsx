@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { Form, Row, Col, Button, Input, Upload } from 'antd';
+import { Form, Row, Col, Button, Input, Upload, Collapse, Timeline } from 'antd';
 import AppBody from 'components/Layouts/AppBody';
 import HistorySection from './HistorySection';
 import RepresentiveSection from './RepresentiveSection';
@@ -11,6 +11,15 @@ import SocialSection from './SocialSection';
 import ProductsInfoSection from './ProductsInfoSection';
 import { getAllMerchants, apiAllMerchants } from './data';
 import ImgCrop from 'antd-img-crop';
+import { useLocation } from 'react-router-dom';
+import format from 'date-fns/format';
+import './EmployeeDetail.css'
+
+export const removeSlug = (url) => {
+  return url.substring(0, /:|\/:/.exec(url)?.index);
+  // The regex "/:|\/:/" means ": or /:"
+  // Eg: /staff/merchant-detail/:id will become /staff/merchant-detail
+};
 
 const formItemLayout = {
   labelCol: { span: 9 },
@@ -27,7 +36,6 @@ const phoneRegex = /^(\+84|0|84)\d{9}$/;
 
 function Index() {
   const [form] = Form.useForm();
-  const isDetail = false;
   const [merchantData, setMerchantData] = React.useState(apiAllMerchants[0]);
 
   React.useEffect(() => {
@@ -35,17 +43,13 @@ function Index() {
   }, []);
 
   const [fileList, setFileList] = React.useState([
-    {
-      uid: '-1',
-      name: 'image.png',
-      status: 'done',
-      url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    },
+    // {
+    //   uid: '-1',
+    //   name: 'image.png',
+    //   status: 'done',
+    //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    // },
   ]);
-
-  const onChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
 
   const onPreview = async (file) => {
     let src = file.url;
@@ -98,14 +102,28 @@ function Index() {
   //     );
   //   });
   // };
+  const { pathname } = useLocation();
+
+  type DetailPageType = 'detail' | 'add' | 'edit' | 'unknown';
+  const mapPageTypeToTitle: Record<DetailPageType, string> = {
+    detail: 'Chi tiết nhân viên',
+    add: 'Thêm mới nhân viên',
+    edit: 'Chỉnh sửa nhân viên',
+  };
+
+  const detailPageType: DetailPageType = pathname.includes('detail')
+    ? 'detail'
+    : pathname.includes('add')
+    ? 'add'
+    : pathname.includes('edit')
+    ? 'edit'
+    : 'unknown';
 
   return (
-    <AppBody title={isDetail ? 'Chi tiết đối tác' : 'Thêm mới đối tác'}>
-      {isDetail && <HistorySection merchantData={merchantData} />}
-
+    <AppBody title={mapPageTypeToTitle[detailPageType]}>
       <Form form={form}>
         <Row gutter={40}>
-          <Col span={12}>
+          <Col span={8}>
             <fieldset>
               <legend>Avatar:</legend>
               <ImgCrop rotate>
@@ -113,16 +131,41 @@ function Index() {
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                   listType="picture-card"
                   fileList={fileList}
-                  onChange={onChange}
+                  onChange={({ file, fileList }) => {
+                    if (file.status !== 'uploading') {
+                      setFileList(fileList.splice(-1));
+                      console.log(file);
+                    }
+                  }}
                   onPreview={onPreview}
                 >
-                  {fileList.length < 5 && '+ Upload'}
+                  +Upload
                 </Upload>
               </ImgCrop>
             </fieldset>
           </Col>
 
-          <Col span={12}>
+          <Col span={16}>
+            <fieldset>
+              <legend>Lịch sử công tác:</legend>
+              <Collapse style={{ marginBottom: 20 }}>
+                <Collapse.Panel header="Lịch sử">
+                  <Timeline mode="left" className="EmployeeDetail-history-section">
+                    {[...merchantData.history].reverse().map((each, index) => (
+                      <Timeline.Item
+                        color={index ? 'gray' : undefined}
+                        label={format(new Date(each.time), 'dd-MM-yyyy HH:mm:SS')}
+                      >
+                        {each.type}
+                      </Timeline.Item>
+                    ))}
+                  </Timeline>
+                </Collapse.Panel>
+              </Collapse>
+            </fieldset>
+          </Col>
+
+          <Col span={8}>
             <fieldset>
               <legend>Thông tin cá nhân:</legend>
               <Form.Item
@@ -130,21 +173,29 @@ function Index() {
                 label="Mã nhân viên"
                 name="employee-id"
                 rules={[required('Mã nhân viên')]}
-                readOnly={isDetail}
+                readOnly={detailPageType === 'detail'}
               >
-                <Input placeholder="NV-001" defaultValue={'NV-001'} readOnly={isDetail} />
+                <Input
+                  placeholder="NV-001"
+                  defaultValue={'NV-001'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
                 label="Họ và tên lót"
                 name="first-name"
                 rules={[required('Họ và tên lót')]}
-                readOnly={isDetail}
+                readOnly={detailPageType === 'detail'}
               >
-                <Input placeholder="Nguyễn Văn" defaultValue={'Nguyễn Văn'} readOnly={isDetail} />
+                <Input
+                  placeholder="Nguyễn Văn"
+                  defaultValue={'Nguyễn Văn'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item {...formItemLayout} label="Tên" name="last-name" rules={[required('Tên')]}>
-                <Input placeholder="A" defaultValue={'A'} readOnly={isDetail} />
+                <Input placeholder="A" defaultValue={'A'} readOnly={detailPageType === 'detail'} />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
@@ -152,7 +203,11 @@ function Index() {
                 name="date-of-birth"
                 rules={[required('Ngày sinh')]}
               >
-                <Input placeholder="01/01/2000" defaultValue={'01/01/2000'} readOnly={isDetail} />
+                <Input
+                  placeholder="01/01/2000"
+                  defaultValue={'01/01/2000'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
@@ -160,7 +215,11 @@ function Index() {
                 name="sex"
                 rules={[required('Giới tính')]}
               >
-                <Input placeholder="Nam" defaultValue={'Nam'} readOnly={isDetail} />
+                <Input
+                  placeholder="Nam"
+                  defaultValue={'Nam'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
@@ -168,18 +227,30 @@ function Index() {
                 name="marital-status"
                 rules={[required('Tình trạng hôn nhân')]}
               >
-                <Input placeholder="Độc thân" defaultValue={'Độc thân'} readOnly={isDetail} />
+                <Input
+                  placeholder="Độc thân"
+                  defaultValue={'Độc thân'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item {...formItemLayout} label="CMND" name="cmnd" rules={[required('CMND')]}>
-                <Input placeholder="123456789" defaultValue={'123456789'} readOnly={isDetail} />
+                <Input
+                  placeholder="123456789"
+                  defaultValue={'123456789'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
-                label="Ngày cấ["
+                label="Ngày cấp"
                 name="license-date"
                 rules={[required('Ngày cấp')]}
               >
-                <Input placeholder="01/01/2000" defaultValue={'01/01/2000'} readOnly={isDetail} />
+                <Input
+                  placeholder="01/01/2000"
+                  defaultValue={'01/01/2000'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
@@ -190,7 +261,7 @@ function Index() {
                 <Input
                   placeholder="CA Tp Hồ Chí Minh"
                   defaultValue={'CA Tp Hồ Chí Minh'}
-                  readOnly={isDetail}
+                  readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
@@ -199,11 +270,15 @@ function Index() {
                 name="date-of-birth"
                 rules={[required('Ngày sinh')]}
               >
-                <Input placeholder="01/01/2000" defaultValue={'01/01/2000'} readOnly={isDetail} />
+                <Input
+                  placeholder="01/01/2000"
+                  defaultValue={'01/01/2000'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
             </fieldset>
           </Col>
-          <Col span={12}>
+          <Col span={8}>
             <fieldset>
               <legend>Thông tin liên lạc:</legend>
               <Form.Item
@@ -219,7 +294,7 @@ function Index() {
                   placeholder="nguyenvana@gmail.com"
                   type="email"
                   defaultValue={'nguyenvana@gmail.com'}
-                  readOnly={isDetail}
+                  readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
@@ -235,7 +310,7 @@ function Index() {
                   placeholder="nguyenvana@gmail.com"
                   type="email"
                   defaultValue={'nguyenvana@gmail.com'}
-                  readOnly={isDetail}
+                  readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
@@ -243,12 +318,12 @@ function Index() {
                 label="Địa chỉ hiện tại"
                 name="current-address"
                 rules={[required('Địa chỉ')]}
-                readOnly={isDetail}
+                readOnly={detailPageType === 'detail'}
               >
                 <Input
                   placeholder="147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM"
                   defaultValue={'147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM'}
-                  readOnly={isDetail}
+                  readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
@@ -256,12 +331,12 @@ function Index() {
                 label="Địa chỉ thường trú"
                 name="permanent-address"
                 rules={[required('Địa chỉ')]}
-                readOnly={isDetail}
+                readOnly={detailPageType === 'detail'}
               >
                 <Input
                   placeholder="147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM"
                   defaultValue={'147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM'}
-                  readOnly={isDetail}
+                  readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
@@ -278,14 +353,22 @@ function Index() {
                   },
                 ]}
               >
-                <Input placeholder="0123456789" defaultValue={'0123456789'} readOnly={isDetail} />
+                <Input
+                  placeholder="0123456789"
+                  defaultValue={'0123456789'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item {...formItemLayout} label="Facebook" name="facebook">
-                <Input placeholder="fb.com/hrm" defaultValue={'fb.com/hrm'} readOnly={isDetail} />
+                <Input
+                  placeholder="fb.com/hrm"
+                  defaultValue={'fb.com/hrm'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
             </fieldset>
           </Col>
-          <Col span={12}>
+          <Col span={8}>
             <fieldset>
               <legend>Thông tin nhân sự</legend>
               <Form.Item
@@ -294,7 +377,11 @@ function Index() {
                 name="department"
                 rules={[required('Bộ phận')]}
               >
-                <Input placeholder="Sales" defaultValue={'Sales'} readOnly={isDetail} />
+                <Input
+                  placeholder="Sales"
+                  defaultValue={'Sales'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
@@ -302,7 +389,11 @@ function Index() {
                 name="employee-type"
                 rules={[required('Loại hình nhân sự')]}
               >
-                <Input placeholder="Nhân viên" defaultValue={'Nhân viên'} readOnly={isDetail} />
+                <Input
+                  placeholder="Nhân viên"
+                  defaultValue={'Nhân viên'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
@@ -313,7 +404,7 @@ function Index() {
                 <Input
                   placeholder="Chuyên viên sales"
                   defaultValue={'Chuyên viên sales'}
-                  readOnly={isDetail}
+                  readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
@@ -321,33 +412,45 @@ function Index() {
                 label="Lương"
                 name="salary"
                 rules={[required('Lương')]}
-                readOnly={isDetail}
+                readOnly={detailPageType === 'detail'}
               >
-                <Input placeholder="9000000" defaultValue={'9000000'} readOnly={isDetail} />
+                <Input
+                  placeholder="9000000"
+                  defaultValue={'9000000'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
                 label="Ngày bắt đầu"
                 name="date-started"
-                readOnly={isDetail}
+                readOnly={detailPageType === 'detail'}
               >
-                <Input placeholder="01/01/2020" defaultValue={'01/01/2020'} readOnly={isDetail} />
+                <Input
+                  placeholder="01/01/2020"
+                  defaultValue={'01/01/2020'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item {...formItemLayout} label="Loại hình làm việc" name="work-type">
-                <Input placeholder="Full-time" defaultValue={'Full-time'} readOnly={isDetail} />
+                <Input
+                  placeholder="Full-time"
+                  defaultValue={'Full-time'}
+                  readOnly={detailPageType === 'detail'}
+                />
               </Form.Item>
               <Form.Item {...formItemLayout} label="Chi nhánh" name="branch">
                 <Input
                   placeholder="Cơ sở Nguyễn Tuân"
                   defaultValue={'Cơ sở Nguyễn Tuân'}
-                  readOnly={isDetail}
+                  readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
             </fieldset>
           </Col>
         </Row>
 
-        {!isDetail && (
+        {
           <Row>
             <Col span={8}>
               <Row>
@@ -361,7 +464,7 @@ function Index() {
               </Row>
             </Col>
           </Row>
-        )}
+        }
       </Form>
     </AppBody>
   );
