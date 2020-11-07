@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HRData.Models.JobModels;
+using System;
+using System.Collections.Generic;
 
 namespace HRData.Models
 {
@@ -7,18 +9,23 @@ namespace HRData.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PersonalEmail { get; set; }
+        public string WorkEmail { get; set; }
         public string Phone { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Sex { get; set; }
 
-        public string IdCardNo { get; set; }
-        public DateTime Issused { get; set; }
-        public DateTime Date { get; set; }
+        public string Address { get; set; }
+        public string CurrentAddress { get; set; }
+
+        public string NationalId { get; set; }
 
         #region Education
         public string AcademicLevel { get; set; }
         public string University { get; set; }
         public string Major { get; set; }
+        #endregion
+        #region Navigation
+        public virtual List<Position> Positions { get; set; }
         #endregion
     }
 }

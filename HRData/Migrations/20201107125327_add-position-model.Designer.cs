@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201107125327_add-position-model")]
+    partial class addpositionmodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,7 +198,7 @@ namespace HRData.Migrations
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<int?>("JobCategoryId")
@@ -509,10 +511,8 @@ namespace HRData.Migrations
             modelBuilder.Entity("HRData.Models.JobModels.Position", b =>
                 {
                     b.HasOne("HRData.Models.Employee", "Employee")
-                        .WithMany("Positions")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("HRData.Models.JobModels.JobCategory", "JobCategory")
                         .WithMany()
@@ -591,11 +591,6 @@ namespace HRData.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("HRData.Models.Employee", b =>
-                {
-                    b.Navigation("Positions");
                 });
 
             modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
