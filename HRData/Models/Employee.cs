@@ -1,4 +1,5 @@
 ﻿using HRData.Models.JobModels;
+using HRData.Models.Organization;
 using System;
 using System.Collections.Generic;
 
@@ -19,6 +20,8 @@ namespace HRData.Models
 
         public string NationalId { get; set; }
 
+        public bool IsManager { get; set; }
+
         #region Education
         public string AcademicLevel { get; set; }
         public string University { get; set; }
@@ -26,6 +29,7 @@ namespace HRData.Models
         #endregion
         #region Navigation
         public virtual List<Position> Positions { get; set; }
+        public virtual OrganizationUnit Unit { get; set; }
         #endregion
     }
 }
