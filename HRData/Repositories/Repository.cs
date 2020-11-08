@@ -2,7 +2,7 @@
 
 namespace HRData.Repositories
 {
-    public class Repository
+    public abstract class Repository
     {
         protected readonly ApplicationDbContext context;
 

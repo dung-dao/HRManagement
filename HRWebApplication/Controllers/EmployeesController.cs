@@ -1,5 +1,6 @@
 ﻿using HRData.Data;
 using HRData.Models;
+using HRData.Models.JobModels;
 using HRWebApplication.Controllers.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,12 @@ namespace HRWebApplication.Controllers
     {
         public EmployeesController(ApplicationDbContext context) : base(context)
         {
+        }
+
+        [HttpGet("{id}/Position", Name = "[controller]_GetCurrentPosition")]
+        public ActionResult<Position> GetCurrentPosition()
+        {
+            return new Position();
         }
     }
 }

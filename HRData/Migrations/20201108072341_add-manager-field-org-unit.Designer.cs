@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201108072341_add-manager-field-org-unit")]
+    partial class addmanagerfieldorgunit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,9 +108,6 @@ namespace HRData.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsManager")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
@@ -127,9 +126,6 @@ namespace HRData.Migrations
                     b.Property<string>("Sex")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("int");
-
                     b.Property<string>("University")
                         .HasColumnType("nvarchar(max)");
 
@@ -137,8 +133,6 @@ namespace HRData.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UnitId");
 
                     b.ToTable("Employees");
                 });
@@ -259,12 +253,17 @@ namespace HRData.Migrations
                     b.Property<int?>("OrganizationUnitId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SectionManagerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationUnitId");
+
+                    b.HasIndex("SectionManagerId");
 
                     b.ToTable("OrganizationUnits");
                 });
@@ -525,15 +524,6 @@ namespace HRData.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("HRData.Models.Employee", b =>
-                {
-                    b.HasOne("HRData.Models.Organization.OrganizationUnit", "Unit")
-                        .WithMany("Employees")
-                        .HasForeignKey("UnitId");
-
-                    b.Navigation("Unit");
-                });
-
             modelBuilder.Entity("HRData.Models.JobModels.Position", b =>
                 {
                     b.HasOne("HRData.Models.Employee", "Employee")
@@ -574,6 +564,12 @@ namespace HRData.Migrations
                     b.HasOne("HRData.Models.Organization.OrganizationUnit", null)
                         .WithMany("Children")
                         .HasForeignKey("OrganizationUnitId");
+
+                    b.HasOne("HRData.Models.Employee", "SectionManager")
+                        .WithMany()
+                        .HasForeignKey("SectionManagerId");
+
+                    b.Navigation("SectionManager");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -635,8 +631,6 @@ namespace HRData.Migrations
             modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
                 {
                     b.Navigation("Children");
-
-                    b.Navigation("Employees");
                 });
 #pragma warning restore 612, 618
         }

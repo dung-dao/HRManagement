@@ -96,11 +96,11 @@ namespace HRWebApplication
                 endpoints.MapRazorPages();
             });
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-                spa.UseReactDevelopmentServer(npmScript: "start");
-            });
+            //app.UseSpa(spa =>
+            //{
+            //    spa.Options.SourcePath = "ClientApp";
+            //    spa.UseReactDevelopmentServer(npmScript: "start");
+            //});
         }
     }
 }

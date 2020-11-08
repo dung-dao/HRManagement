@@ -43,6 +43,7 @@ namespace HRData.Data
 
                 //Relationship
                 entity.HasMany(e => e.Children);
+                entity.HasMany(u => u.Employees).WithOne(e => e.Unit);
             });
 
             //builder.Entity<Branch>(entity =>

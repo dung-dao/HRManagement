@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using HRData.Data;
 using HRData.Models;
 using HRData.Models.Organization;
+using HRWebApplication.DTO;
+using AutoMapper;
+using HRData.Repositories;
 
 namespace HRWebApplication.Controllers
 {
@@ -16,10 +19,14 @@ namespace HRWebApplication.Controllers
     public class OrganizationUnitsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IOrganizationRepository _orgRepo;
 
-        public OrganizationUnitsController(ApplicationDbContext context)
+        public OrganizationUnitsController(ApplicationDbContext context, IMapper mapper, IOrganizationRepository orgRepo)
         {
             _context = context;
+            _mapper = mapper;
+            _orgRepo = orgRepo;
         }
 
         // GET: api/OrganizationUnits
@@ -31,7 +38,7 @@ namespace HRWebApplication.Controllers
 
         // GET: api/OrganizationUnits/5
         [HttpGet("{id}", Name = "[controller]_GetById")]
-        public async Task<ActionResult<OrganizationUnit>> GetOrganizationUnit(int id)
+        public async Task<ActionResult<OrganizationUnitDTO>> GetOrganizationUnit(int id)
         {
             var organizationUnit = await _context.OrganizationUnits.FindAsync(id);
 
@@ -40,7 +47,10 @@ namespace HRWebApplication.Controllers
                 return NotFound();
             }
 
-            return organizationUnit;
+            var unitDTO = _mapper.Map<OrganizationUnitDTO>(organizationUnit);
+            unitDTO.EmployeeNo = _orgRepo.GetEmployeeNumber(id);
+
+            return unitDTO;
         }
 
         [HttpPut("{id}", Name = "[controller]_Update")]
