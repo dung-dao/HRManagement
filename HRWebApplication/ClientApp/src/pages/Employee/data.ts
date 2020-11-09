@@ -21,7 +21,6 @@ export const employees = [
     nationalId: '142700000',
     licenseDate: '01/01/2016',
     licensePlace: 'CA Hải Dương',
-    maritalStatus: 'Độc thân',
   },
   {
     id: '2',
@@ -45,7 +44,6 @@ export const employees = [
     nationalId: '142700000',
     licenseDate: '02/01/2016',
     licensePlace: 'CA Hải Dương',
-    maritalStatus: 'Độc thân',
   },
   {
     id: '3',
@@ -69,7 +67,6 @@ export const employees = [
     nationalId: '142700000',
     licenseDate: '03/01/2016',
     licensePlace: 'CA Hải Dương',
-    maritalStatus: 'Độc thân',
   },
   {
     id: '4',
@@ -93,7 +90,6 @@ export const employees = [
     nationalId: '142700000',
     licenseDate: '04/01/2016',
     licensePlace: 'CA Hải Dương',
-    maritalStatus: 'Độc thân',
   },
   {
     id: '5',
@@ -117,7 +113,6 @@ export const employees = [
     nationalId: '142700000',
     licenseDate: '05/01/2016',
     licensePlace: 'CA Hải Dương',
-    maritalStatus: 'Độc thân',
   },
   {
     id: '6',
@@ -141,7 +136,6 @@ export const employees = [
     nationalId: '142700000',
     licenseDate: '06/01/2016',
     licensePlace: 'CA Hải Dương',
-    maritalStatus: 'Độc thân',
   },
   {
     id: '7',
@@ -165,7 +159,6 @@ export const employees = [
     nationalId: '142700000',
     licenseDate: '07/01/2016',
     licensePlace: 'CA Hải Dương',
-    maritalStatus: 'Độc thân',
   },
   {
     id: '8',
@@ -189,6 +182,5 @@ export const employees = [
     nationalId: '142700000',
     licenseDate: '08/01/2016',
     licensePlace: 'CA Hải Dương',
-    maritalStatus: 'Độc thân',
   },
 ];

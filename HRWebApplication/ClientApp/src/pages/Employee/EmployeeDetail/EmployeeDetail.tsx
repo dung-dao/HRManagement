@@ -123,7 +123,7 @@ function Index() {
     <AppBody title={mapPageTypeToTitle[detailPageType]}>
       <Form form={form}>
         <Row gutter={40}>
-          <Col span={8}>
+          {/* <Col span={8}>
             <fieldset>
               <legend>Avatar:</legend>
               <ImgCrop rotate>
@@ -143,27 +143,7 @@ function Index() {
                 </Upload>
               </ImgCrop>
             </fieldset>
-          </Col>
-
-          <Col span={16}>
-            <fieldset>
-              <legend>Lịch sử công tác:</legend>
-              <Collapse style={{ marginBottom: 20 }}>
-                <Collapse.Panel header="Lịch sử">
-                  <Timeline mode="left" className="EmployeeDetail-history-section">
-                    {[...merchantData.history].reverse().map((each, index) => (
-                      <Timeline.Item
-                        color={index ? 'gray' : undefined}
-                        label={format(new Date(each.time), 'dd-MM-yyyy HH:mm:SS')}
-                      >
-                        {each.type}
-                      </Timeline.Item>
-                    ))}
-                  </Timeline>
-                </Collapse.Panel>
-              </Collapse>
-            </fieldset>
-          </Col>
+          </Col> */}
 
           <Col span={8}>
             <fieldset>
@@ -218,18 +198,6 @@ function Index() {
                 <Input
                   placeholder="Nam"
                   defaultValue={'Nam'}
-                  readOnly={detailPageType === 'detail'}
-                />
-              </Form.Item>
-              <Form.Item
-                {...formItemLayout}
-                label="Tình trạng hôn nhân"
-                name="marital-status"
-                rules={[required('Tình trạng hôn nhân')]}
-              >
-                <Input
-                  placeholder="Độc thân"
-                  defaultValue={'Độc thân'}
                   readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
@@ -446,6 +414,25 @@ function Index() {
                   readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
+            </fieldset>
+          </Col>
+          <Col span={24}>
+            <fieldset>
+              <legend>Lịch sử công tác:</legend>
+              <Collapse style={{ marginBottom: 20 }}>
+                <Collapse.Panel header="Lịch sử">
+                  <Timeline mode="left" className="EmployeeDetail-history-section">
+                    {[...merchantData.history].reverse().map((each, index) => (
+                      <Timeline.Item
+                        color={index ? 'gray' : undefined}
+                        label={format(new Date(each.time), 'dd-MM-yyyy HH:mm:SS')}
+                      >
+                        {each.type}
+                      </Timeline.Item>
+                    ))}
+                  </Timeline>
+                </Collapse.Panel>
+              </Collapse>
             </fieldset>
           </Col>
         </Row>

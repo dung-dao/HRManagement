@@ -10,7 +10,7 @@ import ConfirmProductsPage from './pages/private/ConfirmProducts/ConfirmProducts
 import DetailConfirmProducts from './pages/private/ConfirmProducts/DetailConfirmProducts';
 import MerchantList from './pages/private/Merchants/MerchantList';
 import MerchantDetail from './pages/private/Merchants/MerchantDetail';
-import OrganizationStructure from './pages/OrganizationStructure';
+import OrganizationStructure from './pages/OrganizationStructure/OrganizationStructure';
 import EmployeeList from './pages/Employee/EmployeeList';
 import EmployeeDetail from './pages/Employee/EmployeeDetail/EmployeeDetail';
 import ErrorBoundary from './components/ErrorBoundary';
