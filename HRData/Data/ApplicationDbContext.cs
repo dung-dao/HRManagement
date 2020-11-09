@@ -36,14 +36,15 @@ namespace HRData.Data
             base.OnModelCreating(builder);
 
             #region Organization
-            builder.Entity<OrganizationUnit>(entity =>
+            builder.Entity<OrganizationUnit>(unit =>
             {
                 //Properties
-                entity.HasKey(e => e.Id);
+                unit.HasKey(e => e.Id);
 
                 //Relationship
-                entity.HasMany(e => e.Children);
-                entity.HasMany(u => u.Employees).WithOne(e => e.Unit);
+                unit.HasMany(e => e.Children).WithOne(e => e.Parent).HasForeignKey(e => e.ParentId).OnDelete(DeleteBehavior.NoAction);
+                //.HasForeignKey(e => e.ParentId).OnDelete(DeleteBehavior.ClientSetNull);
+                //unit.HasMany(u => u.Employees).WithOne(e => e.Unit).HasForeignKey(e => e.UnitId);
             });
 
             //builder.Entity<Branch>(entity =>

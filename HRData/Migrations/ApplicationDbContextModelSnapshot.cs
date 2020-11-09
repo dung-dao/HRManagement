@@ -91,9 +91,6 @@ namespace HRData.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<string>("AcademicLevel")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
@@ -106,13 +103,7 @@ namespace HRData.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsManager")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Major")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NationalId")
@@ -129,9 +120,6 @@ namespace HRData.Migrations
 
                     b.Property<int?>("UnitId")
                         .HasColumnType("int");
-
-                    b.Property<string>("University")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkEmail")
                         .HasColumnType("nvarchar(max)");
@@ -256,15 +244,12 @@ namespace HRData.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrganizationUnitId")
+                    b.Property<int?>("ParentId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganizationUnitId");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("OrganizationUnits");
                 });
@@ -571,9 +556,12 @@ namespace HRData.Migrations
 
             modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
                 {
-                    b.HasOne("HRData.Models.Organization.OrganizationUnit", null)
+                    b.HasOne("HRData.Models.Organization.OrganizationUnit", "Parent")
                         .WithMany("Children")
-                        .HasForeignKey("OrganizationUnitId");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

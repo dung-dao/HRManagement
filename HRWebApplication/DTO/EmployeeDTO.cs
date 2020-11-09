@@ -1,11 +1,12 @@
-﻿using HRData.Models.JobModels;
-using HRData.Models.Organization;
+﻿using HRData.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace HRData.Models
+namespace HRWebApplication.DTO
 {
-    public class Employee : EntityBase
+    public class EmployeeDTO : DTOBase
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -20,15 +21,6 @@ namespace HRData.Models
 
         public string NationalId { get; set; }
 
-
-        #region Education
-        //public string AcademicLevel { get; set; }
-        //public string University { get; set; }
-        //public string Major { get; set; }
-        #endregion
-        #region Navigation
-        public virtual List<Position> Positions { get; set; }
-        public virtual OrganizationUnit Unit { get; set; }
-        #endregion
+        public bool IsManager { get; set; }
     }
 }
