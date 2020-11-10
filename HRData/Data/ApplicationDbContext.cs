@@ -35,51 +35,36 @@ namespace HRData.Data
             //Use preconfigured api config
             base.OnModelCreating(builder);
 
+            #region PrimaryKeyReg
+            builder.Entity<OrganizationUnit>().HasKey(e => e.Id);
+            builder.Entity<JobTitle>().HasKey(e => e.Id);
+            builder.Entity<JobCategory>().HasKey(e => e.Id);
+            builder.Entity<EmploymentStatus>().HasKey(e => e.Id);
+            builder.Entity<OrganizationUnit>().HasKey(e => e.Id);
+            builder.Entity<Employee>().HasKey(e => e.Id);
+            builder.Entity<Position>().HasKey(e => e.Id);
+            builder.Entity<OrganizationUnit>().HasKey(e => e.Id);
+
+            #endregion
+
             #region Organization
-            builder.Entity<OrganizationUnit>(unit =>
-            {
-                //Properties
-                unit.HasKey(e => e.Id);
-
-                //Relationship
-                unit.HasMany(e => e.Children).WithOne(e => e.Parent).HasForeignKey(e => e.ParentId).OnDelete(DeleteBehavior.NoAction);
-                //.HasForeignKey(e => e.ParentId).OnDelete(DeleteBehavior.ClientSetNull);
-                //unit.HasMany(u => u.Employees).WithOne(e => e.Unit).HasForeignKey(e => e.UnitId);
-            });
-
-            //builder.Entity<Branch>(entity =>
-            //{
-            //    entity.HasKey(e => e.Id);
-            //    entity.HasMany(e => e.Organization).WithOne(e => e.Branch);
-            //});
+            builder.Entity<OrganizationUnit>()
+                .HasMany(e => e.Children).WithOne(e => e.Parent)
+                .HasForeignKey(e => e.ParentId)
+                .OnDelete(DeleteBehavior.NoAction);
             #endregion
 
             #region Employee
-            builder.Entity<JobTitle>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
+            builder.Entity<Employee>().HasMany(e => e.Positions).WithOne(p => p.Employee).OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Position>().HasOne(p => p.JobTitle);
+            builder.Entity<Position>().HasOne(p => p.EmploymentStatus);
+            builder.Entity<Position>().HasOne(p => p.JobCategory);
+            builder.Entity<Position>().HasOne(p => p.Unit);
 
-            builder.Entity<JobCategory>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
-
-            builder.Entity<EmploymentStatus>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
-
-            builder.Entity<Employee>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
-
-            builder.Entity<Position>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.HasOne(e => e.Employee).WithMany(ps => ps.Positions).HasForeignKey(e => e.EmployeeId).OnDelete(DeleteBehavior.Restrict);
-                entity.Property(e => e.Salery).HasColumnType("decimal(18,2)");
+            builder.Entity<Position>().Property(e => e.StartDate).IsRequired();
+            builder.Entity<Position>(po => {
+                po.Property(e => e.Salery).IsRequired();
+                po.Property(e => e.Salery).HasColumnType("decimal(18, 6)");
             });
             #endregion
         }
