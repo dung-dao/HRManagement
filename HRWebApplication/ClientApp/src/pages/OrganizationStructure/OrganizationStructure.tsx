@@ -3,6 +3,7 @@ import { Table, Modal, Button, Space, Popconfirm, message, Form, Input, AutoComp
 import AppBody from 'components/Layouts/AppBody';
 import { datasets, Entity } from './mock-data';
 import { calculateAllExpandedRowKeys } from './util';
+import { OrganizationUnitsClient } from 'services/ApiClient';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -29,30 +30,30 @@ const columns = ({ setIsModalVisible, setSelectedId, setModalType }) => [
       );
     },
   },
-  {
-    title: 'Người đứng đầu',
-    dataIndex: 'manager',
-    width: '30%',
-    // render: (text, record, index) => {
-    //   console.log(record);
-    //   return (
-    //     <Button
-    //       type="link"
-    //       children={text}
-    //       onClick={() => {
-    //         setModalVisible(true);
-    //         setSelectedRecord(record);
-    //       }}
-    //     />
-    //   );
-    // },
-  },
+  // {
+  //   title: 'Người đứng đầu',
+  //   dataIndex: 'manager',
+  //   width: '30%',
+  //   // render: (text, record, index) => {
+  //   //   console.log(record);
+  //   //   return (
+  //   //     <Button
+  //   //       type="link"
+  //   //       children={text}
+  //   //       onClick={() => {
+  //   //         setModalVisible(true);
+  //   //         setSelectedRecord(record);
+  //   //       }}
+  //   //     />
+  //   //   );
+  //   // },
+  // },
   {
     title: 'Thao tác',
     key: 'action',
     fixed: 'right',
-    align: 'right',
-    width: 'max-content',
+    // align: 'right',
+    width: '30%',
     render: (text, record, index) => (
       <Space size="small">
         <Button
@@ -109,192 +110,192 @@ const columns = ({ setIsModalVisible, setSelectedId, setModalType }) => [
   },
 ];
 
-const emps = [
-  {
-    id: '1',
-    code: 'MNV-001',
-    firstName: 'Nguyễn Văn',
-    lastName: 'A',
-    personalEmail: 'nguyenvana01@gmail.com',
-    workEmail: 'a.nguyen@base.vn',
-    phone: '0984000001',
-    dateOfBirth: '01/01/1996',
-    sex: 'Nam',
-    department: 'BOD',
-    employeeType: 'BOD',
-    jobTitle: 'Giám đốc',
-    salary: '9000000',
-    dateStarted: '01/01/2018',
-    workType: 'Full-Time',
-    branch: 'Cơ sở Nguyễn Tuân',
-    currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
-    permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
-    nationalId: '142700000',
-    licenseDate: '01/01/2016',
-    licensePlace: 'CA Hải Dương',
-  },
-  {
-    id: '2',
-    code: 'MNV-002',
-    firstName: 'Nguyễn Văn',
-    lastName: 'A',
-    personalEmail: 'nguyenvana01@gmail.com',
-    workEmail: 'a.nguyen@base.vn',
-    phone: '0984000002',
-    dateOfBirth: '02/01/1996',
-    sex: 'Nam',
-    department: 'Back Office',
-    employeeType: 'Nhân viên',
-    jobTitle: 'Thư ký giám đốc',
-    salary: '9000000',
-    dateStarted: '02/01/2018',
-    workType: 'Full-Time',
-    branch: 'Cơ sở Nguyễn Tuân',
-    currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
-    permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
-    nationalId: '142700000',
-    licenseDate: '02/01/2016',
-    licensePlace: 'CA Hải Dương',
-  },
-  {
-    id: '3',
-    code: 'MNV-003',
-    firstName: 'Nguyễn Văn',
-    lastName: 'A',
-    personalEmail: 'nguyenvana01@gmail.com',
-    workEmail: 'a.nguyen@base.vn',
-    phone: '0984000003',
-    dateOfBirth: '03/01/1996',
-    sex: 'Nam',
-    department: 'Back Office',
-    employeeType: 'Quản lý',
-    jobTitle: 'Trưởng phòng hành chính - nhân sự',
-    salary: '9000000',
-    dateStarted: '03/01/2018',
-    workType: 'Full-Time',
-    branch: 'Cơ sở Nguyễn Tuân',
-    currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
-    permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
-    nationalId: '142700000',
-    licenseDate: '03/01/2016',
-    licensePlace: 'CA Hải Dương',
-  },
-  {
-    id: '4',
-    code: 'MNV-004',
-    firstName: 'Nguyễn Văn',
-    lastName: 'A',
-    personalEmail: 'nguyenvana01@gmail.com',
-    workEmail: 'a.nguyen@base.vn',
-    phone: '0984000004',
-    dateOfBirth: '04/01/1996',
-    sex: 'Nam',
-    department: 'BOD',
-    employeeType: 'BOD',
-    jobTitle: 'Phó giám đốc khối nghiệp vụ',
-    salary: '9000000',
-    dateStarted: '04/01/2018',
-    workType: 'Full-Time',
-    branch: 'Cơ sở Nguyễn Tuân',
-    currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
-    permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
-    nationalId: '142700000',
-    licenseDate: '04/01/2016',
-    licensePlace: 'CA Hải Dương',
-  },
-  {
-    id: '5',
-    code: 'MNV-005',
-    firstName: 'Nguyễn Văn',
-    lastName: 'A',
-    personalEmail: 'nguyenvana01@gmail.com',
-    workEmail: 'a.nguyen@base.vn',
-    phone: '0984000005',
-    dateOfBirth: '05/01/1996',
-    sex: 'Nam',
-    department: 'BOD',
-    employeeType: 'BOD',
-    jobTitle: 'Phó giám đốc khối trường học',
-    salary: '9000000',
-    dateStarted: '05/01/2018',
-    workType: 'Full-Time',
-    branch: 'Cơ sở Nguyễn Tuân',
-    currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
-    permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
-    nationalId: '142700000',
-    licenseDate: '05/01/2016',
-    licensePlace: 'CA Hải Dương',
-  },
-  {
-    id: '6',
-    code: 'MNV-006',
-    firstName: 'Nguyễn Văn',
-    lastName: 'A',
-    personalEmail: 'nguyenvana01@gmail.com',
-    workEmail: 'a.nguyen@base.vn',
-    phone: '0984000006',
-    dateOfBirth: '06/01/1996',
-    sex: 'Nam',
-    department: 'Back Office',
-    employeeType: 'Nhân viên',
-    jobTitle: 'Chuyên viên tuyển dụng',
-    salary: '9000000',
-    dateStarted: '06/01/2018',
-    workType: 'Full-Time',
-    branch: 'Cơ sở Nguyễn Tuân',
-    currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
-    permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
-    nationalId: '142700000',
-    licenseDate: '06/01/2016',
-    licensePlace: 'CA Hải Dương',
-  },
-  {
-    id: '7',
-    code: 'MNV-007',
-    firstName: 'Nguyễn Văn',
-    lastName: 'A',
-    personalEmail: 'nguyenvana01@gmail.com',
-    workEmail: 'a.nguyen@base.vn',
-    phone: '0984000007',
-    dateOfBirth: '07/01/1996',
-    sex: 'Nam',
-    department: 'Back Office',
-    employeeType: 'Nhân viên',
-    jobTitle: 'Chuyên viên C&B',
-    salary: '9000000',
-    dateStarted: '07/01/2018',
-    workType: 'Full-Time',
-    branch: 'Cơ sở Nguyễn Tuân',
-    currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
-    permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
-    nationalId: '142700000',
-    licenseDate: '07/01/2016',
-    licensePlace: 'CA Hải Dương',
-  },
-  {
-    id: '8',
-    code: 'MNV-008',
-    firstName: 'Nguyễn Văn',
-    lastName: 'A',
-    personalEmail: 'nguyenvana01@gmail.com',
-    workEmail: 'a.nguyen@base.vn',
-    phone: '0984000008',
-    dateOfBirth: '08/01/1996',
-    sex: 'Nam',
-    department: 'Back Office',
-    employeeType: 'Nhân viên',
-    jobTitle: 'Admin',
-    salary: '9000000',
-    dateStarted: '08/01/2018',
-    workType: 'Full-Time',
-    branch: 'Cơ sở Nguyễn Tuân',
-    currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
-    permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
-    nationalId: '142700000',
-    licenseDate: '08/01/2016',
-    licensePlace: 'CA Hải Dương',
-  },
-];
+// const emps = [
+//   {
+//     id: '1',
+//     code: 'MNV-001',
+//     firstName: 'Nguyễn Văn',
+//     lastName: 'A',
+//     personalEmail: 'nguyenvana01@gmail.com',
+//     workEmail: 'a.nguyen@base.vn',
+//     phone: '0984000001',
+//     dateOfBirth: '01/01/1996',
+//     sex: 'Nam',
+//     department: 'BOD',
+//     employeeType: 'BOD',
+//     jobTitle: 'Giám đốc',
+//     salary: '9000000',
+//     dateStarted: '01/01/2018',
+//     workType: 'Full-Time',
+//     branch: 'Cơ sở Nguyễn Tuân',
+//     currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
+//     permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
+//     nationalId: '142700000',
+//     licenseDate: '01/01/2016',
+//     licensePlace: 'CA Hải Dương',
+//   },
+//   {
+//     id: '2',
+//     code: 'MNV-002',
+//     firstName: 'Nguyễn Văn',
+//     lastName: 'A',
+//     personalEmail: 'nguyenvana01@gmail.com',
+//     workEmail: 'a.nguyen@base.vn',
+//     phone: '0984000002',
+//     dateOfBirth: '02/01/1996',
+//     sex: 'Nam',
+//     department: 'Back Office',
+//     employeeType: 'Nhân viên',
+//     jobTitle: 'Thư ký giám đốc',
+//     salary: '9000000',
+//     dateStarted: '02/01/2018',
+//     workType: 'Full-Time',
+//     branch: 'Cơ sở Nguyễn Tuân',
+//     currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
+//     permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
+//     nationalId: '142700000',
+//     licenseDate: '02/01/2016',
+//     licensePlace: 'CA Hải Dương',
+//   },
+//   {
+//     id: '3',
+//     code: 'MNV-003',
+//     firstName: 'Nguyễn Văn',
+//     lastName: 'A',
+//     personalEmail: 'nguyenvana01@gmail.com',
+//     workEmail: 'a.nguyen@base.vn',
+//     phone: '0984000003',
+//     dateOfBirth: '03/01/1996',
+//     sex: 'Nam',
+//     department: 'Back Office',
+//     employeeType: 'Quản lý',
+//     jobTitle: 'Trưởng phòng hành chính - nhân sự',
+//     salary: '9000000',
+//     dateStarted: '03/01/2018',
+//     workType: 'Full-Time',
+//     branch: 'Cơ sở Nguyễn Tuân',
+//     currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
+//     permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
+//     nationalId: '142700000',
+//     licenseDate: '03/01/2016',
+//     licensePlace: 'CA Hải Dương',
+//   },
+//   {
+//     id: '4',
+//     code: 'MNV-004',
+//     firstName: 'Nguyễn Văn',
+//     lastName: 'A',
+//     personalEmail: 'nguyenvana01@gmail.com',
+//     workEmail: 'a.nguyen@base.vn',
+//     phone: '0984000004',
+//     dateOfBirth: '04/01/1996',
+//     sex: 'Nam',
+//     department: 'BOD',
+//     employeeType: 'BOD',
+//     jobTitle: 'Phó giám đốc khối nghiệp vụ',
+//     salary: '9000000',
+//     dateStarted: '04/01/2018',
+//     workType: 'Full-Time',
+//     branch: 'Cơ sở Nguyễn Tuân',
+//     currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
+//     permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
+//     nationalId: '142700000',
+//     licenseDate: '04/01/2016',
+//     licensePlace: 'CA Hải Dương',
+//   },
+//   {
+//     id: '5',
+//     code: 'MNV-005',
+//     firstName: 'Nguyễn Văn',
+//     lastName: 'A',
+//     personalEmail: 'nguyenvana01@gmail.com',
+//     workEmail: 'a.nguyen@base.vn',
+//     phone: '0984000005',
+//     dateOfBirth: '05/01/1996',
+//     sex: 'Nam',
+//     department: 'BOD',
+//     employeeType: 'BOD',
+//     jobTitle: 'Phó giám đốc khối trường học',
+//     salary: '9000000',
+//     dateStarted: '05/01/2018',
+//     workType: 'Full-Time',
+//     branch: 'Cơ sở Nguyễn Tuân',
+//     currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
+//     permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
+//     nationalId: '142700000',
+//     licenseDate: '05/01/2016',
+//     licensePlace: 'CA Hải Dương',
+//   },
+//   {
+//     id: '6',
+//     code: 'MNV-006',
+//     firstName: 'Nguyễn Văn',
+//     lastName: 'A',
+//     personalEmail: 'nguyenvana01@gmail.com',
+//     workEmail: 'a.nguyen@base.vn',
+//     phone: '0984000006',
+//     dateOfBirth: '06/01/1996',
+//     sex: 'Nam',
+//     department: 'Back Office',
+//     employeeType: 'Nhân viên',
+//     jobTitle: 'Chuyên viên tuyển dụng',
+//     salary: '9000000',
+//     dateStarted: '06/01/2018',
+//     workType: 'Full-Time',
+//     branch: 'Cơ sở Nguyễn Tuân',
+//     currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
+//     permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
+//     nationalId: '142700000',
+//     licenseDate: '06/01/2016',
+//     licensePlace: 'CA Hải Dương',
+//   },
+//   {
+//     id: '7',
+//     code: 'MNV-007',
+//     firstName: 'Nguyễn Văn',
+//     lastName: 'A',
+//     personalEmail: 'nguyenvana01@gmail.com',
+//     workEmail: 'a.nguyen@base.vn',
+//     phone: '0984000007',
+//     dateOfBirth: '07/01/1996',
+//     sex: 'Nam',
+//     department: 'Back Office',
+//     employeeType: 'Nhân viên',
+//     jobTitle: 'Chuyên viên C&B',
+//     salary: '9000000',
+//     dateStarted: '07/01/2018',
+//     workType: 'Full-Time',
+//     branch: 'Cơ sở Nguyễn Tuân',
+//     currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
+//     permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
+//     nationalId: '142700000',
+//     licenseDate: '07/01/2016',
+//     licensePlace: 'CA Hải Dương',
+//   },
+//   {
+//     id: '8',
+//     code: 'MNV-008',
+//     firstName: 'Nguyễn Văn',
+//     lastName: 'A',
+//     personalEmail: 'nguyenvana01@gmail.com',
+//     workEmail: 'a.nguyen@base.vn',
+//     phone: '0984000008',
+//     dateOfBirth: '08/01/1996',
+//     sex: 'Nam',
+//     department: 'Back Office',
+//     employeeType: 'Nhân viên',
+//     jobTitle: 'Admin',
+//     salary: '9000000',
+//     dateStarted: '08/01/2018',
+//     workType: 'Full-Time',
+//     branch: 'Cơ sở Nguyễn Tuân',
+//     currentAddress: 'Số 47, Quan Nhân, Thanh Xuân, Hà Nội',
+//     permanentAddress: 'Thanh Thuỷ, Thanh Hà, Hải Dương',
+//     nationalId: '142700000',
+//     licenseDate: '08/01/2016',
+//     licensePlace: 'CA Hải Dương',
+//   },
+// ];
 
 function filterSearch(dataSource, searchText: string) {
   return dataSource
@@ -317,7 +318,7 @@ export default function () {
   type ModalType = 'detail' | 'add' | 'edit';
   const [modalType, setModalType] = React.useState<ModalType>('detail');
 
-  const [autoCompleteOptions, setAutoCompleteOptions] = React.useState<any>([]); // list of employees to suggest
+  // const [autoCompleteOptions, setAutoCompleteOptions] = React.useState<any>([]); // list of employees to suggest
 
   const [form] = Form.useForm();
 
@@ -381,7 +382,7 @@ export default function () {
     if (modalType === 'add') {
       form.setFieldsValue({
         organizationName: '',
-        manager: '',
+        // manager: '',
         description: '',
       });
     }
@@ -391,7 +392,7 @@ export default function () {
 
       form.setFieldsValue({
         organizationName: data.find((it) => it.id === selectedId)?.organizationName,
-        manager: data.find((it) => it.id === selectedId)?.manager,
+        // manager: data.find((it) => it.id === selectedId)?.manager,
         description: data.find((it) => it.id === selectedId)?.description,
       });
     }
@@ -441,7 +442,7 @@ export default function () {
           <Form.Item name="organizationName" label="Tên bộ phận" rules={[{ required: true }]}>
             <Input readOnly={modalType === 'detail'} />
           </Form.Item>
-          <Form.Item name="manager" label="Người đứng đầu" rules={[{ required: true }]}>
+          {/* <Form.Item name="manager" label="Người đứng đầu" rules={[{ required: true }]}>
             {modalType === 'detail' ? (
               <Input readOnly />
             ) : (
@@ -455,7 +456,7 @@ export default function () {
                 notFoundContent="Tìm kiếm nhân viên"
               />
             )}
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item name="description" label="Mô tả">
             <Input.TextArea readOnly={modalType === 'detail'} />
           </Form.Item>

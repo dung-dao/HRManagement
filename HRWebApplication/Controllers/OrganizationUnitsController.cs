@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using HRData.Data;
 using HRData.Models;
 using HRData.Models.Organization;
+using HRWebApplication.DTO;
+using AutoMapper;
+using HRData.Repositories;
+using Microsoft.AspNetCore.Identity.UI.V4.Pages.Internal.Account.Manage;
 
 namespace HRWebApplication.Controllers
 {
@@ -16,22 +20,25 @@ namespace HRWebApplication.Controllers
     public class OrganizationUnitsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IOrganizationRepository _orgRepo;
 
-        public OrganizationUnitsController(ApplicationDbContext context)
+        public OrganizationUnitsController(ApplicationDbContext context, IMapper mapper, IOrganizationRepository orgRepo)
         {
             _context = context;
+            _mapper = mapper;
+            _orgRepo = orgRepo;
         }
 
-        // GET: api/OrganizationUnits
         [HttpGet(Name = "[controller]_GetAll")]
-        public async Task<ActionResult<IEnumerable<OrganizationUnit>>> GetDepartments()
+        public IEnumerable<OrganizationUnitDTO> GetDepartments()
         {
-            return await _context.OrganizationUnits.ToListAsync();
+            var data = _context.OrganizationUnits.ToList();
+            return _mapper.Map<List<OrganizationUnitDTO>>(data);
         }
 
-        // GET: api/OrganizationUnits/5
         [HttpGet("{id}", Name = "[controller]_GetById")]
-        public async Task<ActionResult<OrganizationUnit>> GetOrganizationUnit(int id)
+        public async Task<ActionResult<OrganizationUnitDTO>> GetOrganizationUnit(int id)
         {
             var organizationUnit = await _context.OrganizationUnits.FindAsync(id);
 
@@ -40,16 +47,40 @@ namespace HRWebApplication.Controllers
                 return NotFound();
             }
 
-            return organizationUnit;
+            var unitDTO = _mapper.Map<OrganizationUnitDTO>(organizationUnit);
+            unitDTO.EmployeeNo = organizationUnit.Employees.Count;
+            return unitDTO;
         }
 
+        //[HttpGet("{id}/manager", Name = "[controller]_GetManager")]
+        //public EmployeeDTO GetManager(int id)
+        //{
+        //    return Ok();
+        //}
+
+        //[HttpGet("{id}/manager", Name = "[controller]_ChangeManager")]
+        //public ActionResult PutManager(int id, EmployeeDTO manager)
+        //{
+        //    return Ok();
+        //}
+
+        //[HttpGet("{id}/employees", Name = "[controller]_UnitEmployees")]
+        //public IEnumerable<EmployeeDTO> GetUnitEmployees(int id)
+        //{
+        //    var unit = _context.OrganizationUnits.Find(id);
+        //    return from e in unit.Employees
+        //           select _mapper.Map<EmployeeDTO>(e);
+        //}
+
         [HttpPut("{id}", Name = "[controller]_Update")]
-        public async Task<IActionResult> PutOrganizationUnit(int id, OrganizationUnit organizationUnit)
+        public async Task<IActionResult> PutOrganizationUnit(int id, OrganizationUnitDTO data)
         {
-            if (id != organizationUnit.Id)
+            if (id != data.Id)
             {
                 return BadRequest();
             }
+
+            var organizationUnit = _mapper.Map<OrganizationUnit>(data);
 
             _context.Entry(organizationUnit).State = EntityState.Modified;
 
@@ -72,17 +103,36 @@ namespace HRWebApplication.Controllers
             return NoContent();
         }
 
-        // POST: api/OrganizationUnits
-        [HttpPost(Name = "[controller]_Create")]
-        public async Task<ActionResult<OrganizationUnit>> PostOrganizationUnit(OrganizationUnit organizationUnit)
+        [HttpPost(Name = "[controller]_CreateRootUnit")]
+        public async Task<ActionResult<OrganizationUnit>> PostOrganizationUnit(OrganizationUnitDTO data)
         {
+            var organizationUnit = ToEntity(data);
             _context.OrganizationUnits.Add(organizationUnit);
             await _context.SaveChangesAsync();
+            var res = _mapper.Map<OrganizationUnitDTO>(organizationUnit);
 
-            return CreatedAtAction("GetOrganizationUnit", new { id = organizationUnit.Id }, organizationUnit);
+            return CreatedAtAction("GetOrganizationUnit", new { id = organizationUnit.Id }, res);
         }
 
-        // DELETE: api/OrganizationUnits/5
+        [HttpPost("{id}/children", Name = "[controller]_CreateUnit")]
+        public ActionResult<OrganizationUnitDTO> CreateUnit(int id, OrganizationUnitDTO unit)
+        {
+            var parent = _context.OrganizationUnits.Find(id);
+            if (parent is null)
+                return NotFound("Parent not found");
+
+            var newUnit = _mapper.Map<OrganizationUnit>(unit);
+            parent.Children.Add(newUnit);
+            _context.SaveChanges();
+            var res = _mapper.Map<OrganizationUnitDTO>(newUnit);
+            return CreatedAtAction("GetOrganizationUnit", new { id = newUnit.Id }, res);
+        }
+
+        private OrganizationUnit ToEntity(OrganizationUnitDTO data)
+        {
+            return _mapper.Map<OrganizationUnit>(data);
+        }
+
         [HttpDelete("{id}", Name = "[controller]_Delete")]
         public async Task<IActionResult> DeleteOrganizationUnit(int id)
         {
@@ -92,7 +142,7 @@ namespace HRWebApplication.Controllers
                 return NotFound();
             }
 
-            DeleteOrgUnit(organizationUnit, _context);            
+            DeleteOrgUnit(organizationUnit, _context);
 
             await _context.SaveChangesAsync();
 

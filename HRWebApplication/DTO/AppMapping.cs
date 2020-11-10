@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HRData.Models;
+using HRData.Models.Organization;
 
 namespace HRWebApplication.DTO
 {
@@ -7,8 +8,8 @@ namespace HRWebApplication.DTO
     {
         public AppMapping()
         {
-            //CreateMap<Category, CategoryDTO>().ReverseMap();
-            //CreateMap<OrganizationUnit, DepartmentDTO>().ReverseMap();
+            CreateMap<OrganizationUnit, OrganizationUnitDTO>().ReverseMap();
+            CreateMap<Employee, EmployeeDTO>().ReverseMap();
         }
     }
 }
