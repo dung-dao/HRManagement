@@ -52,26 +52,6 @@ namespace HRWebApplication.Controllers
             return unitDTO;
         }
 
-        //[HttpGet("{id}/manager", Name = "[controller]_GetManager")]
-        //public EmployeeDTO GetManager(int id)
-        //{
-        //    return Ok();
-        //}
-
-        //[HttpGet("{id}/manager", Name = "[controller]_ChangeManager")]
-        //public ActionResult PutManager(int id, EmployeeDTO manager)
-        //{
-        //    return Ok();
-        //}
-
-        //[HttpGet("{id}/employees", Name = "[controller]_UnitEmployees")]
-        //public IEnumerable<EmployeeDTO> GetUnitEmployees(int id)
-        //{
-        //    var unit = _context.OrganizationUnits.Find(id);
-        //    return from e in unit.Employees
-        //           select _mapper.Map<EmployeeDTO>(e);
-        //}
-
         [HttpPut("{id}", Name = "[controller]_Update")]
         public async Task<IActionResult> PutOrganizationUnit(int id, OrganizationUnitDTO data)
         {
@@ -104,7 +84,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpPost(Name = "[controller]_CreateRootUnit")]
-        public async Task<ActionResult<OrganizationUnit>> PostOrganizationUnit(OrganizationUnitDTO data)
+        public async Task<ActionResult<OrganizationUnitDTO>> PostOrganizationUnit(OrganizationUnitDTO data)
         {
             var organizationUnit = ToEntity(data);
             _context.OrganizationUnits.Add(organizationUnit);
@@ -128,6 +108,24 @@ namespace HRWebApplication.Controllers
             return CreatedAtAction("GetOrganizationUnit", new { id = newUnit.Id }, res);
         }
 
+        [HttpPut("{id}/parent", Name = "[controller]_ChangeParent")]
+        public ActionResult<OrganizationUnitDTO> ChangeParent(int id, OrganizationUnitDTO newParent)
+        {
+            var unit = _context.OrganizationUnits.Find(id);
+            if (unit is null)
+                return NotFound();
+            
+            var parent = _context.OrganizationUnits.Find(newParent.Id);
+            if (parent is null)
+                return BadRequest();
+
+            parent.Children.Add(unit);
+            _context.SaveChanges();
+
+            var res = _mapper.Map<OrganizationUnitDTO>(unit);
+            return CreatedAtAction("GetOrganizationUnit", new { id = res.Id }, res);
+        }
+
         private OrganizationUnit ToEntity(OrganizationUnitDTO data)
         {
             return _mapper.Map<OrganizationUnit>(data);
@@ -136,32 +134,18 @@ namespace HRWebApplication.Controllers
         [HttpDelete("{id}", Name = "[controller]_Delete")]
         public async Task<IActionResult> DeleteOrganizationUnit(int id)
         {
-            var organizationUnit = await _context.OrganizationUnits.FindAsync(id);
-            if (organizationUnit == null)
+            var unit = await _context.OrganizationUnits.FindAsync(id);
+            if (unit == null)
             {
                 return NotFound();
             }
 
-            DeleteOrgUnit(organizationUnit, _context);
+            unit.Children.RemoveAll(p => true);
+            _context.OrganizationUnits.Remove(unit);
 
             await _context.SaveChangesAsync();
 
             return NoContent();
-
-            #region RecursiveDelete
-            void DeleteOrgUnit(OrganizationUnit unit, ApplicationDbContext context)
-            {
-                var children = unit.Children;
-                if (children.Count > 0)
-                {
-                    foreach (var child in children)
-                    {
-                        DeleteOrgUnit(child, context);
-                    }
-                }
-                context.OrganizationUnits.Remove(unit);
-            }
-            #endregion
         }
 
         private bool OrganizationUnitExists(int id)

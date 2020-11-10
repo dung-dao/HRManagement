@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201110080624_add-employee-model")]
+    partial class addemployeemodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,14 +194,14 @@ namespace HRData.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<int?>("EmploymentStatusId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("JobCategoryId")
                         .HasColumnType("int");
@@ -208,7 +210,7 @@ namespace HRData.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Salery")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -520,9 +522,10 @@ namespace HRData.Migrations
             modelBuilder.Entity("HRData.Models.JobModels.Position", b =>
                 {
                     b.HasOne("HRData.Models.Employee", "Employee")
-                        .WithMany("Positions")
+                        .WithMany()
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("HRData.Models.JobModels.EmploymentStatus", "EmploymentStatus")
                         .WithMany()
@@ -610,11 +613,6 @@ namespace HRData.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("HRData.Models.Employee", b =>
-                {
-                    b.Navigation("Positions");
                 });
 
             modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
