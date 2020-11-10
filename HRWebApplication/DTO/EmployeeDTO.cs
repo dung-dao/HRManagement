@@ -15,12 +15,8 @@ namespace HRWebApplication.DTO
         public string Phone { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Sex { get; set; }
-
         public string Address { get; set; }
         public string CurrentAddress { get; set; }
-
         public string NationalId { get; set; }
-
-        public bool IsManager { get; set; }
     }
 }

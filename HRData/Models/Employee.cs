@@ -20,15 +20,9 @@ namespace HRData.Models
 
         public string NationalId { get; set; }
 
-
-        #region Education
-        //public string AcademicLevel { get; set; }
-        //public string University { get; set; }
-        //public string Major { get; set; }
-        #endregion
         #region Navigation
         public virtual List<Position> Positions { get; set; }
-        public virtual OrganizationUnit Unit { get; set; }
+        //public virtual OrganizationUnit Unit { get; set; }
         #endregion
     }
 }
