@@ -120,11 +120,11 @@ namespace HRData.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrganizationUnits", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OrganizationUnits_OrganizationUnits_ParentId",
-                        column: x => x.ParentId,
-                        principalTable: "OrganizationUnits",
-                        principalColumn: "Id");
+                    //table.ForeignKey(
+                    //    name: "FK_OrganizationUnits_OrganizationUnits_ParentId",
+                    //    column: x => x.ParentId,
+                    //    principalTable: "OrganizationUnits",
+                    //    principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(

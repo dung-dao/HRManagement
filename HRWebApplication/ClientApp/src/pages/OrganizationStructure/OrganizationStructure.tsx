@@ -1,9 +1,9 @@
 import React from 'react';
 import { Table, Modal, Button, Space, Popconfirm, message, Form, Input, AutoComplete } from 'antd';
 import AppBody from 'components/Layouts/AppBody';
-import { datasets, Entity } from './mock-data';
+// import { datasets, Entity as OrganizationUnitDTO } from './mock-data';
 import { calculateAllExpandedRowKeys } from './util';
-import { OrganizationUnitsClient } from 'services/ApiClient';
+import { OrganizationUnitsClient, OrganizationUnitDTO } from 'services/ApiClient';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -11,11 +11,25 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import { maxBy } from 'lodash';
+import { setDate } from 'date-fns/esm';
 
-const columns = ({ setIsModalVisible, setSelectedId, setModalType }) => [
+const columns = ({
+  api,
+  setIsModalVisible,
+  setSelectedId,
+  setModalType,
+  setData,
+}: {
+  api: React.MutableRefObject<OrganizationUnitsClient>;
+  setIsModalVisible: Function;
+  setSelectedId: Function;
+  setModalType: Function;
+  setData: Function;
+}) => [
   {
     title: 'Tên bộ phận',
-    dataIndex: 'organizationName',
+    dataIndex: 'name',
     render: (text, record, index) => {
       return (
         <Button
@@ -30,30 +44,35 @@ const columns = ({ setIsModalVisible, setSelectedId, setModalType }) => [
       );
     },
   },
-  // {
-  //   title: 'Người đứng đầu',
-  //   dataIndex: 'manager',
-  //   width: '30%',
-  //   // render: (text, record, index) => {
-  //   //   console.log(record);
-  //   //   return (
-  //   //     <Button
-  //   //       type="link"
-  //   //       children={text}
-  //   //       onClick={() => {
-  //   //         setModalVisible(true);
-  //   //         setSelectedRecord(record);
-  //   //       }}
-  //   //     />
-  //   //   );
-  //   // },
-  // },
+  {
+    title: 'Số thành viên',
+    dataIndex: 'employeeNo',
+    align: 'center',
+    width: '20%',
+    // {
+    //   title: 'Người đứng đầu',
+    //   dataIndex: 'manager',
+    //   width: '30%',
+    //   // render: (text, record, index) => {
+    //   //   console.log(record);
+    //   //   return (
+    //   //     <Button
+    //   //       type="link"
+    //   //       children={text}
+    //   //       onClick={() => {
+    //   //         setModalVisible(true);
+    //   //         setSelectedRecord(record);
+    //   //       }}
+    //   //     />
+    //   //   );
+    //   // },
+  },
   {
     title: 'Thao tác',
     key: 'action',
     fixed: 'right',
-    // align: 'right',
-    width: '30%',
+    align: 'center',
+    width: '20%',
     render: (text, record, index) => (
       <Space size="small">
         <Button
@@ -84,7 +103,19 @@ const columns = ({ setIsModalVisible, setSelectedId, setModalType }) => [
           placement="right"
           title={'Bạn có chắc muốn xoá bộ phận này và các bộ phận con của nó?'}
           onConfirm={() => {
-            message.info('Xoá bộ phận thành công ' + record.id);
+            if (record.children?.length) {
+              message.error('Không thể xoá bộ phận không phải là node lá');
+            } else {
+              api.current
+                .organizationUnits_Delete(record.id)
+                .then(() => {
+                  message.info('Xoá bộ phận thành công ' + record.name);
+                  setData((prev) => prev.filter((it) => it.id !== record.id));
+                })
+                .catch((err) => {
+                  message.error(err);
+                });
+            }
           }}
           okText="Đồng ý"
           cancelText="Không"
@@ -309,8 +340,9 @@ function filterSearch(dataSource, searchText: string) {
 }
 
 export default function () {
-  const [data, setData] = React.useState<Entity[]>();
-  const [selectedId, setSelectedId] = React.useState<string>(); // selected organizationId
+  const api = React.useRef(new OrganizationUnitsClient());
+  const [data, setData] = React.useState<OrganizationUnitDTO[]>();
+  const [selectedId, setSelectedId] = React.useState<string | number>(); // selected organizationId
 
   const [expandedRowKeys, setExpandedRowKeys] = React.useState<string[]>([]);
 
@@ -324,46 +356,48 @@ export default function () {
 
   // initially get data from backend
   React.useEffect(() => {
-    async function callApi() {}
-    callApi().then(() => setData(datasets));
+    api.current.organizationUnits_GetAll().then((data) => setData(data));
   }, []);
 
   // recalculate expandedRowKeys
-  const onTableTreeExpand = React.useCallback((expanded: boolean, record: Entity) => {
+  const onTableTreeExpand = React.useCallback((expanded: boolean, record: OrganizationUnitDTO) => {
+    console.log('> : record', record);
     if (expanded) {
-      setExpandedRowKeys((old) => old.concat(record.id));
+      setExpandedRowKeys((old) => old.concat(String(record.id)));
     } else {
-      setExpandedRowKeys((old) => old.filter((it) => it !== record.id));
+      setExpandedRowKeys((old) => old.filter((it) => it !== String(record.id)));
     }
   }, []);
 
+  const getSelectedRecord = () => data?.find((it) => it.id === selectedId);
+
   // map modal type to ...
   const mapTypeTo: Record<ModalType, { title: string }> = {
-    add: { title: 'Thêm mới bộ phận' },
-    detail: { title: 'Chi tiết bộ phận' },
-    edit: { title: 'Chỉnh sửa bộ phận' },
+    add: { title: 'Thêm mới bộ phận con của' + getSelectedRecord()?.name },
+    detail: { title: 'Chi tiết bộ phận  ' + getSelectedRecord()?.name },
+    edit: { title: 'Chỉnh sửa bộ phận ' + getSelectedRecord()?.name },
   };
 
   // tree-like dataSource derived from flat-array data from backend
-  const dataSource = React.useMemo(() => {
+  const dataSource = React.useMemo<OrganizationUnitDTO[] | undefined>(() => {
     // How to convert flat array to tree array: https://stackoverflow.com/a/40732240/9787887
     // No need to worry about the algorithm detail
-    const createDataTree = (dataset: Entity[]) => {
+    const createDataTree = (dataset: OrganizationUnitDTO[]) => {
       const hashTable = {};
-      dataset.forEach((dataItem) => (hashTable[dataItem.id] = { ...dataItem }));
-      const dataTree: any[] = [];
+      dataset.forEach((dataItem) => (hashTable[String(dataItem.id)] = { ...dataItem }));
+      const dataTree: OrganizationUnitDTO[] = [];
       dataset.forEach((dataItem) => {
         if (dataItem.parentId) {
           const parentExist = hashTable[dataItem.parentId];
           if (parentExist) {
             if (parentExist?.children) {
-              parentExist.children.push(hashTable[dataItem.id]);
+              parentExist.children.push(hashTable[String(dataItem.id)]);
             } else {
-              parentExist.children = [hashTable[dataItem.id]];
+              parentExist.children = [hashTable[String(dataItem.id)]];
             }
           }
         } else {
-          dataTree.push(hashTable[dataItem.id]);
+          dataTree.push(hashTable[String(dataItem.id)]);
         }
       });
       return dataTree;
@@ -375,14 +409,16 @@ export default function () {
   // whenever datasource is changed, we recalculate the row keys,
   // and it's expanded by default
   React.useEffect(() => {
-    setExpandedRowKeys(calculateAllExpandedRowKeys(dataSource, { level: -1, key: 'id' }));
+    setExpandedRowKeys(
+      calculateAllExpandedRowKeys(dataSource, { level: -1, key: 'id' }).map((it) => String(it)),
+    );
   }, [dataSource]);
 
   React.useEffect(() => {
     if (modalType === 'add') {
       form.setFieldsValue({
-        organizationName: '',
-        // manager: '',
+        name: '',
+        // employee: '',
         description: '',
       });
     }
@@ -391,25 +427,41 @@ export default function () {
       if (!data) return;
 
       form.setFieldsValue({
-        organizationName: data.find((it) => it.id === selectedId)?.organizationName,
+        name: data.find((it) => it.id === selectedId)?.name,
         // manager: data.find((it) => it.id === selectedId)?.manager,
         description: data.find((it) => it.id === selectedId)?.description,
       });
     }
   }, [form, data, selectedId, modalType]);
 
+  const onEditFinish = () => {
+    api.current // TODO:  Chinh sua chua chay duoc
+      .organizationUnits_Update(Number(selectedId), form.getFieldsValue() as OrganizationUnitDTO)
+      .then(() => {
+        setData((prev) =>
+          prev?.map((it) => (it.id === selectedId ? { ...it, ...form.getFieldsValue() } : it)),
+        );
+        message.info(`Chỉnh sửa bộ phận ${getSelectedRecord()?.name} thành công`);
+      })
+      .catch((err) => {
+        message.error(err);
+      });
+  };
+
   return (
     <AppBody>
       <Table
         columns={columns({
+          api,
           setIsModalVisible,
           setSelectedId,
           setModalType,
+          setData,
         })}
         dataSource={dataSource}
         loading={!dataSource}
         onExpand={onTableTreeExpand}
-        rowKey={(record) => record.id}
+        rowKey={(record) => String(record.id)}
         expandedRowKeys={expandedRowKeys}
         pagination={false}
         // defaultExpandAllRows={true} // doesn't work for async data
@@ -421,13 +473,37 @@ export default function () {
         centered
         onOk={() => {
           if (modalType === 'add') {
-            const newEntity = {
-              parentId: selectedId,
-              ...form.getFieldsValue(),
-            };
-            message.info('Them moi bo phan cho' + JSON.stringify(newEntity));
+            const isNameFilled = form.isFieldsValidating(['name']);
+            if (isNameFilled) {
+            } else {
+              form
+                .validateFields()
+                .then((validatedData) => {
+                  const newId = maxBy(data, 'id').id + 1;
+                  const newEntity = {
+                    id: newId,
+                    parentId: selectedId,
+                    ...validatedData,
+                  } as OrganizationUnitDTO;
+                  console.log('> : maxBy(data,.id', maxBy(data, 'id').id + 1);
+                  api.current // TODO: Them chua duoc
+                    .organizationUnits_CreateUnit(newId, newEntity) // newId: 14 (trong khi database max la 13), newEntity la object ok ma
+                    .then(() => {
+                      setData((prev) => (prev ? prev.concat(newEntity) : prev));
+                      message.info(`Thêm mới bộ phận ${validatedData.name} thành công`);
+                      setIsModalVisible(false);
+                    })
+                    .catch();
+                })
+                .catch();
+            }
           }
-          setIsModalVisible(false);
+          if (modalType === 'edit') {
+            // TODO: CHinh sua: Them PopConfirm: Ban co muon luu lai chinh sua? Co, Khong, Dung lai
+            onEditFinish();
+          } else {
+            setIsModalVisible(false);
+          }
         }}
         onCancel={() => setIsModalVisible(false)}
       >
@@ -439,7 +515,11 @@ export default function () {
           form={form}
           onFinish={(values) => console.log(values)}
         >
-          <Form.Item name="organizationName" label="Tên bộ phận" rules={[{ required: true }]}>
+          <Form.Item
+            name="name"
+            label="Tên bộ phận"
+            rules={[{ required: true, message: 'Tên bộ phận không được bỏ trống' }]}
+          >
             <Input readOnly={modalType === 'detail'} />
           </Form.Item>
           {/* <Form.Item name="manager" label="Người đứng đầu" rules={[{ required: true }]}>
@@ -475,11 +555,7 @@ export default function () {
                 children={'Xong'}
                 onClick={() => {
                   setModalType('detail');
-                  setData((prev) =>
-                    prev?.map((it) =>
-                      it.id === selectedId ? { ...it, ...form.getFieldsValue() } : it,
-                    ),
-                  );
+                  onEditFinish();
                 }}
               />
             ) : null}
