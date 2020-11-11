@@ -67,7 +67,7 @@ export class EmployeesClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    employees(body: EmployeeDTO | undefined): Promise<EmployeeDTO> {
+    createEmployee(body: EmployeeDTO | undefined): Promise<EmployeeDTO> {
         let url_ = this.baseUrl + "/api/Employees";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -85,11 +85,11 @@ export class EmployeesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processEmployees(_response);
+            return this.processCreateEmployee(_response);
         });
     }
 
-    protected processEmployees(response: Response): Promise<EmployeeDTO> {
+    protected processCreateEmployee(response: Response): Promise<EmployeeDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -110,7 +110,7 @@ export class EmployeesClient extends ApiClientBase {
     /**
      * @return Success
      */
-    employees2(id: number): Promise<EmployeeDTO> {
+    getEmployeeById(id: number): Promise<EmployeeDTO> {
         let url_ = this.baseUrl + "/api/Employees/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -127,11 +127,11 @@ export class EmployeesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processEmployees2(_response);
+            return this.processGetEmployeeById(_response);
         });
     }
 
-    protected processEmployees2(response: Response): Promise<EmployeeDTO> {
+    protected processGetEmployeeById(response: Response): Promise<EmployeeDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -153,7 +153,7 @@ export class EmployeesClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    employees3(id: number, body: EmployeeDTO | undefined): Promise<void> {
+    updateEmployeeById(id: number, body: EmployeeDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Employees/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -173,11 +173,11 @@ export class EmployeesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processEmployees3(_response);
+            return this.processUpdateEmployeeById(_response);
         });
     }
 
-    protected processEmployees3(response: Response): Promise<void> {
+    protected processUpdateEmployeeById(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -195,7 +195,7 @@ export class EmployeesClient extends ApiClientBase {
     /**
      * @return Success
      */
-    employees4(id: number): Promise<void> {
+    deleteEmployeeById(id: number): Promise<void> {
         let url_ = this.baseUrl + "/api/Employees/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -211,11 +211,11 @@ export class EmployeesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processEmployees4(_response);
+            return this.processDeleteEmployeeById(_response);
         });
     }
 
-    protected processEmployees4(response: Response): Promise<void> {
+    protected processDeleteEmployeeById(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -233,7 +233,7 @@ export class EmployeesClient extends ApiClientBase {
     /**
      * @return Success
      */
-    positionsAll(id: number): Promise<PositionDTO[]> {
+    getPositionsByEmployeeId(id: number): Promise<PositionDTO[]> {
         let url_ = this.baseUrl + "/api/Employees/{id}/positions";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -250,11 +250,11 @@ export class EmployeesClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processPositionsAll(_response);
+            return this.processGetPositionsByEmployeeId(_response);
         });
     }
 
-    protected processPositionsAll(response: Response): Promise<PositionDTO[]> {
+    protected processGetPositionsByEmployeeId(response: Response): Promise<PositionDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {

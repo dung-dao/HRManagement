@@ -28,7 +28,7 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<List<EmployeeDTO>>(_employees.ToList());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetEmployeeById")]
         public ActionResult<EmployeeDTO> Get(int id)
         {
             var employee = _employees.Find(id);
@@ -37,7 +37,7 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<EmployeeDTO>(employee);
         }
 
-        [HttpGet("{id}/positions")]
+        [HttpGet("{id}/positions", Name = "GetPositionsByEmployeeId")]
         public ActionResult<IEnumerable<PositionDTO>> GetPosition(int id)
         {
             var employee = _employees.Find(id);
@@ -74,7 +74,7 @@ namespace HRWebApplication.Controllers
             return NoContent();
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreateEmployee")]
         public ActionResult<EmployeeDTO> Post([FromBody] EmployeeDTO data)
         {
             var newEmployee = _mapper.Map<Employee>(data);
@@ -83,7 +83,7 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<EmployeeDTO>(newEmployee);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "UpdateEmployeeById")]
         public ActionResult Put(int id, [FromBody] EmployeeDTO value)
         {
             if (value.Id != id)
@@ -103,7 +103,7 @@ namespace HRWebApplication.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeleteEmployeeById")]
         public ActionResult Delete(int id)
         {
             var em = _employees.Find(id);

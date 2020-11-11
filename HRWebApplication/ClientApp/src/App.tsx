@@ -23,7 +23,7 @@ export default function App() {
           <Route exact path={['/', '/login']} component={LoginPage} />
           <Route exact path={'/organization'} component={OrganizationStructure} />
           <Route exact path={'/employees'} component={EmployeeList} />
-          <Route exact path={'/employee-add/:employeeId'} component={EmployeeDetail} />
+          <Route exact path={'/employee-add'} component={EmployeeDetail} />
           <Route exact path={'/employee-edit/:employeeId'} component={EmployeeDetail} />
           <Route exact path={'/employee-detail/:employeeId'} component={EmployeeDetail} />
           <Route exact path={'/admin'} component={OverviewPage} />

@@ -3,27 +3,23 @@ import React from 'react';
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Space, Tag, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
-
-import {
-  acceptStatusToTagProps,
-  licenseToTagProps,
-  genderCodeToGender,
-  sortByField,
-} from './utils';
-import DecisionContextMenu from './DecisionContextMenu';
-
-// columns of <Table />
+import moment from 'moment';
 
 export const columns = [
   // { title: 'STT', key: 'index', render: (value, item, index) => index + 1 },
-  { title: 'Mã nhân viên', dataIndex: 'code' },
-  { title: 'Họ', dataIndex: 'firstName' },
-  { title: 'Tên', dataIndex: 'lastName' },
-  { title: 'Email cá nhân', dataIndex: 'personalEmail' },
-  { title: 'Email công việc', dataIndex: 'workEmail' },
-  { title: 'Sđt', dataIndex: 'phone' },
-  { title: 'Ngày sinh', dataIndex: 'dateOfBirth' },
-  { title: 'Giới tính', dataIndex: 'sex' },
+  // { title: 'Mã nhân viên', dataIndex: 'code' },
+  { title: 'Họ', key: 'firstName', dataIndex: 'firstName' },
+  { title: 'Tên', key: 'lastName', dataIndex: 'lastName' },
+  { title: 'Email cá nhân', key: 'personalEmail', dataIndex: 'personalEmail' },
+  { title: 'Email công việc', key: 'workEmail', dataIndex: 'workEmail' },
+  { title: 'Sđt', key: 'phone', dataIndex: 'phone' },
+  {
+    title: 'Ngày sinh',
+    key: 'dateOfBirth',
+    dataIndex: 'dateOfBirth',
+    render: (date) => moment(date).format('DD/MM/YYYY'),
+  },
+  { title: 'Giới tính', key: 'sex', dataIndex: 'sex' },
   // { title: 'Bộ phận', dataIndex: 'department' },
   // { title: 'Loại hình nhân sự', dataIndex: 'employeeType' },
   // { title: 'Vị trí', dataIndex: 'jobTitle' },
@@ -31,11 +27,11 @@ export const columns = [
   // { title: 'Ngày bắt đầu', dataIndex: 'dateStarted' },
   // { title: 'Loại hình làm việc', dataIndex: 'workType' },
   // { title: 'Chi nhánh', dataIndex: 'branch' },
-  { title: 'Địa chỉ hiện tại', dataIndex: 'currentAddress' },
-  { title: 'Địa chỉ thường trú', dataIndex: 'permanentAddress' },
-  { title: 'Số CMND', dataIndex: 'nationalId' },
-  { title: 'Ngày cấp', dataIndex: 'licenseDate' },
-  { title: 'Nơi cấp', dataIndex: 'licensePlace' },
+  { title: 'Địa chỉ hiện tại', key: 'currentAddress', dataIndex: 'currentAddress' },
+  { title: 'Địa chỉ thường trú', key: 'address', dataIndex: 'address' },
+  // { title: 'Số CMND', dataIndex: 'nationalId' },
+  // { title: 'Ngày cấp', dataIndex: 'licenseDate' },
+  // { title: 'Nơi cấp', dataIndex: 'licensePlace' },
   {
     title: 'Thao tác',
     key: 'action',
@@ -47,12 +43,12 @@ export const columns = [
             <EyeOutlined />
           </Button>
         </Link>
-        <Link to={'employee-edit/' + record?.id} title="Chỉnh sửa trực tiếp">
+        <Link to={'employee-edit/' + record?.id} title="Chỉnh sửa">
           <Button size="small" type="primary">
             <EditOutlined />
           </Button>
         </Link>
-        <Link to={'employee-add/' + record?.id} title="Xoá">
+        <Link title="Xoá">
           <Button size="small" danger>
             <DeleteOutlined />
           </Button>

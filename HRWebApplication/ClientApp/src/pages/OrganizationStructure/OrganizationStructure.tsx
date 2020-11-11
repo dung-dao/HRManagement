@@ -441,10 +441,11 @@ export default function () {
         setData((prev) =>
           prev?.map((it) => (it.id === selectedId ? { ...it, ...form.getFieldsValue() } : it)),
         );
+        // setModalType('detail');
         message.info(`Chỉnh sửa bộ phận ${getSelectedRecord()?.name} thành công`);
       })
-      .catch((err) => {
-        message.error(err);
+      .catch((err: Error) => {
+        message.error(err.message);
       });
   };
 
@@ -553,10 +554,7 @@ export default function () {
                 type="primary"
                 htmlType="submit"
                 children={'Xong'}
-                onClick={() => {
-                  setModalType('detail');
-                  onEditFinish();
-                }}
+                onClick={onEditFinish}
               />
             ) : null}
           </Form.Item>

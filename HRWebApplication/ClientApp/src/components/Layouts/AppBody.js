@@ -40,9 +40,7 @@ class AppBody extends Component {
             <Breadcrumb style={{ margin: '8px 0' }}>{breadCrumbArr}</Breadcrumb>
             <div style={{ padding: 16, background: '#fff' }}>{this.props.children}</div>
           </Layout.Content>
-          <Layout.Footer style={{ textAlign: 'center' }}>
-            © 2020 WeWear. All rights reserved
-          </Layout.Footer>
+          <Layout.Footer style={{ textAlign: 'center' }}>© 2020 HR Management</Layout.Footer>
         </Layout>
       </Layout>
     );

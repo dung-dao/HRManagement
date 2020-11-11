@@ -1,19 +1,23 @@
 // @ts-nocheck
 import React from 'react';
-import { Form, Row, Col, Button, Input, Upload, Collapse, Timeline } from 'antd';
+import {
+  Form,
+  Row,
+  Col,
+  Button,
+  Input,
+  Upload,
+  Collapse,
+  Timeline,
+  DatePicker,
+  Select,
+  message,
+} from 'antd';
 import AppBody from 'components/Layouts/AppBody';
-import HistorySection from './HistorySection';
-import RepresentiveSection from './RepresentiveSection';
-import AddressSection from './AddressSection';
-import LoginInfoSection from './LoginInfoSection';
-import BrandInfoSection from './BrandInfoSection';
-import SocialSection from './SocialSection';
-import ProductsInfoSection from './ProductsInfoSection';
-import { getAllMerchants, apiAllMerchants } from './data';
 import ImgCrop from 'antd-img-crop';
-import { useLocation } from 'react-router-dom';
-import format from 'date-fns/format';
-import './EmployeeDetail.css'
+import { useLocation, useParams, useHistory } from 'react-router-dom';
+import './EmployeeDetail.css';
+import { EmployeesClient } from 'services/ApiClient';
 
 export const removeSlug = (url) => {
   return url.substring(0, /:|\/:/.exec(url)?.index);
@@ -25,6 +29,7 @@ const formItemLayout = {
   labelCol: { span: 9 },
   wrapperCol: { span: 15 },
   labelAlign: 'left',
+  validateTrigger: 'onBlur',
 };
 
 const required = (label) => ({
@@ -36,35 +41,33 @@ const phoneRegex = /^(\+84|0|84)\d{9}$/;
 
 function Index() {
   const [form] = Form.useForm();
-  const [merchantData, setMerchantData] = React.useState(apiAllMerchants[0]);
+  const api = React.useRef(new EmployeesClient());
+  const history = useHistory();
+  // const [merchantData, setMerchantData] = React.useState(apiAllMerchants[0]);
 
-  React.useEffect(() => {
-    getAllMerchants().then((data) => setMerchantData(data[0]));
-  }, []);
+  // const [fileList, setFileList] = React.useState([
+  //   {
+  //     uid: '-1',
+  //     name: 'image.png',
+  //     status: 'done',
+  //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  //   },
+  // ]);
 
-  const [fileList, setFileList] = React.useState([
-    // {
-    //   uid: '-1',
-    //   name: 'image.png',
-    //   status: 'done',
-    //   url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    // },
-  ]);
-
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-      });
-    }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow.document.write(image.outerHTML);
-  };
+  // const onPreview = async (file) => {
+  //   let src = file.url;
+  //   if (!src) {
+  //     src = await new Promise((resolve) => {
+  //       const reader = new FileReader();
+  //       reader.readAsDataURL(file.originFileObj);
+  //       reader.onload = () => resolve(reader.result);
+  //     });
+  //   }
+  //   const image = new Image();
+  //   image.src = src;
+  //   const imgWindow = window.open(src);
+  //   imgWindow.document.write(image.outerHTML);
+  // };
 
   //
   // const handleSearch = useCallback(
@@ -103,12 +106,20 @@ function Index() {
   //   });
   // };
   const { pathname } = useLocation();
+  const { employeeId } = useParams();
 
   type DetailPageType = 'detail' | 'add' | 'edit' | 'unknown';
   const mapPageTypeToTitle: Record<DetailPageType, string> = {
     detail: 'Chi tiết nhân viên',
     add: 'Thêm mới nhân viên',
     edit: 'Chỉnh sửa nhân viên',
+    unknown: 'Lỗi xảy ra',
+  };
+  const mapPageTypeToButton: Record<DetailPageType, string> = {
+    detail: 'Quay lại',
+    add: 'Hoàn thành',
+    edit: 'Hoàn thành',
+    unknown: 'Lỗi xảy ra',
   };
 
   const detailPageType: DetailPageType = pathname.includes('detail')
@@ -119,9 +130,36 @@ function Index() {
     ? 'edit'
     : 'unknown';
 
+  React.useEffect(() => {
+    if (detailPageType === 'detail' || detailPageType === 'edit') {
+      api.current
+        .getEmployeeById(employeeId)
+        .then((data) => form.setFieldsValue(data))
+        .catch();
+    }
+  }, [form, detailPageType, employeeId]);
+
+  const onFinish = () => {
+    if (detailPageType === 'add') {
+      api.current
+        .createEmployee(form.getFieldsValue())
+        .then(() => {
+          message.info('Thêm mới nhân viên thành công');
+          form.resetFields();
+        })
+        .catch();
+    }
+  };
+
+  const onSubmitClick = () => {
+    if (detailPageType === 'detail') {
+      history.push('/employees');
+    }
+  };
+
   return (
     <AppBody title={mapPageTypeToTitle[detailPageType]}>
-      <Form form={form}>
+      <Form form={form} onFinish={onFinish}>
         <Row gutter={40}>
           {/* <Col span={8}>
             <fieldset>
@@ -145,10 +183,10 @@ function Index() {
             </fieldset>
           </Col> */}
 
-          <Col span={8}>
+          <Col span={12}>
             <fieldset>
               <legend>Thông tin cá nhân:</legend>
-              <Form.Item
+              {/* <Form.Item
                 {...formItemLayout}
                 label="Mã nhân viên"
                 name="employee-id"
@@ -160,34 +198,31 @@ function Index() {
                   defaultValue={'NV-001'}
                   readOnly={detailPageType === 'detail'}
                 />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 {...formItemLayout}
-                label="Họ và tên lót"
-                name="first-name"
-                rules={[required('Họ và tên lót')]}
+                label="Họ"
+                name="firstName"
+                rules={[required('Họ')]}
                 readOnly={detailPageType === 'detail'}
               >
-                <Input
-                  placeholder="Nguyễn Văn"
-                  defaultValue={'Nguyễn Văn'}
-                  readOnly={detailPageType === 'detail'}
-                />
+                <Input placeholder="Nguyễn" readOnly={detailPageType === 'detail'} />
               </Form.Item>
-              <Form.Item {...formItemLayout} label="Tên" name="last-name" rules={[required('Tên')]}>
-                <Input placeholder="A" defaultValue={'A'} readOnly={detailPageType === 'detail'} />
+              <Form.Item {...formItemLayout} label="Tên" name="lastName" rules={[required('Tên')]}>
+                <Input placeholder="Văn A" readOnly={detailPageType === 'detail'} />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
                 label="Ngày sinh"
-                name="date-of-birth"
+                name="dateOfBirth"
                 rules={[required('Ngày sinh')]}
               >
-                <Input
-                  placeholder="01/01/2000"
-                  defaultValue={'01/01/2000'}
-                  readOnly={detailPageType === 'detail'}
-                />
+                {detailPageType === 'detail' ? (
+                  // <Input  readOnly />
+                  <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }}  />
+                ) : (
+                  <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
+                )}
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
@@ -195,20 +230,36 @@ function Index() {
                 name="sex"
                 rules={[required('Giới tính')]}
               >
-                <Input
-                  placeholder="Nam"
-                  defaultValue={'Nam'}
-                  readOnly={detailPageType === 'detail'}
-                />
-              </Form.Item>
-              <Form.Item {...formItemLayout} label="CMND" name="cmnd" rules={[required('CMND')]}>
-                <Input
-                  placeholder="123456789"
-                  defaultValue={'123456789'}
-                  readOnly={detailPageType === 'detail'}
-                />
+                {detailPageType === 'detail' ? (
+                  <Input placeholder="Nam" readOnly />
+                ) : (
+                  <Select placeholder="Chọn giới tính">
+                    <Select.Option value="Male">Nam</Select.Option>
+                    <Select.Option value="Female">Nữ</Select.Option>
+                    <Select.Option value="Other">Khác</Select.Option>
+                  </Select>
+                )}
               </Form.Item>
               <Form.Item
+                {...formItemLayout}
+                label="CMND"
+                name="nationalId"
+                rules={[
+                  required('CMND'),
+                  {
+                    validator: (_, value: string) =>
+                      value === '' ||
+                      value === undefined || // "required" rule is already handled by above rule, so we will ignore this case to avoid 2 annoying messages
+                      (value && /^\d+$/.test(value) && (value.length === 9 || value.length === 12))
+                        ? Promise.resolve()
+                        : Promise.reject('CMND phải có 9 hoặc 12 chữ số'),
+                    validateTrigger: 'onBlur',
+                  },
+                ]}
+              >
+                <Input placeholder="123456789" readOnly={detailPageType === 'detail'} />
+              </Form.Item>
+              {/* <Form.Item
                 {...formItemLayout}
                 label="Ngày cấp"
                 name="license-date"
@@ -219,8 +270,8 @@ function Index() {
                   defaultValue={'01/01/2000'}
                   readOnly={detailPageType === 'detail'}
                 />
-              </Form.Item>
-              <Form.Item
+              </Form.Item> */}
+              {/* <Form.Item
                 {...formItemLayout}
                 label="Nơi cấp"
                 name="license-place"
@@ -231,28 +282,16 @@ function Index() {
                   defaultValue={'CA Tp Hồ Chí Minh'}
                   readOnly={detailPageType === 'detail'}
                 />
-              </Form.Item>
-              <Form.Item
-                {...formItemLayout}
-                label="Ngày sinh"
-                name="date-of-birth"
-                rules={[required('Ngày sinh')]}
-              >
-                <Input
-                  placeholder="01/01/2000"
-                  defaultValue={'01/01/2000'}
-                  readOnly={detailPageType === 'detail'}
-                />
-              </Form.Item>
+              </Form.Item> */}
             </fieldset>
           </Col>
-          <Col span={8}>
+          <Col span={12}>
             <fieldset>
               <legend>Thông tin liên lạc:</legend>
               <Form.Item
                 {...formItemLayout}
                 label="Email cá nhân"
-                name="personal-email"
+                name="personalEmail"
                 rules={[
                   required('Email cá nhân'),
                   { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
@@ -261,14 +300,13 @@ function Index() {
                 <Input
                   placeholder="nguyenvana@gmail.com"
                   type="email"
-                  defaultValue={'nguyenvana@gmail.com'}
                   readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
                 label="Email công việc"
-                name="email"
+                name="workEmail"
                 rules={[
                   required('Email công việc'),
                   { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
@@ -277,33 +315,30 @@ function Index() {
                 <Input
                   placeholder="nguyenvana@gmail.com"
                   type="email"
-                  defaultValue={'nguyenvana@gmail.com'}
                   readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
                 label="Địa chỉ hiện tại"
-                name="current-address"
+                name="currentAddress"
                 rules={[required('Địa chỉ')]}
                 readOnly={detailPageType === 'detail'}
               >
                 <Input
                   placeholder="147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM"
-                  defaultValue={'147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM'}
                   readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
               <Form.Item
                 {...formItemLayout}
                 label="Địa chỉ thường trú"
-                name="permanent-address"
+                name="address"
                 rules={[required('Địa chỉ')]}
                 readOnly={detailPageType === 'detail'}
               >
                 <Input
                   placeholder="147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM"
-                  defaultValue={'147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM'}
                   readOnly={detailPageType === 'detail'}
                 />
               </Form.Item>
@@ -321,22 +356,18 @@ function Index() {
                   },
                 ]}
               >
-                <Input
-                  placeholder="0123456789"
-                  defaultValue={'0123456789'}
-                  readOnly={detailPageType === 'detail'}
-                />
+                <Input placeholder="0123456789" readOnly={detailPageType === 'detail'} />
               </Form.Item>
-              <Form.Item {...formItemLayout} label="Facebook" name="facebook">
+              {/* <Form.Item {...formItemLayout} label="Facebook" name="facebook">
                 <Input
                   placeholder="fb.com/hrm"
                   defaultValue={'fb.com/hrm'}
                   readOnly={detailPageType === 'detail'}
                 />
-              </Form.Item>
+              </Form.Item> */}
             </fieldset>
           </Col>
-          <Col span={8}>
+          {/* <Col span={8}>
             <fieldset>
               <legend>Thông tin nhân sự</legend>
               <Form.Item
@@ -415,40 +446,37 @@ function Index() {
                 />
               </Form.Item>
             </fieldset>
-          </Col>
-          <Col span={24}>
-            <fieldset>
-              <legend>Lịch sử công tác:</legend>
-              <Collapse style={{ marginBottom: 20 }}>
-                <Collapse.Panel header="Lịch sử">
-                  <Timeline mode="left" className="EmployeeDetail-history-section">
-                    {[...merchantData.history].reverse().map((each, index) => (
-                      <Timeline.Item
-                        color={index ? 'gray' : undefined}
-                        label={format(new Date(each.time), 'dd-MM-yyyy HH:mm:SS')}
-                      >
-                        {each.type}
-                      </Timeline.Item>
-                    ))}
-                  </Timeline>
-                </Collapse.Panel>
-              </Collapse>
-            </fieldset>
-          </Col>
+          </Col> */}
+          {detailPageType !== 'add' ? (
+            <Col span={24}>
+              <fieldset>
+                <legend>Lịch sử công tác:</legend>
+                <Collapse style={{ marginBottom: 20 }}>
+                  <Collapse.Panel header="Lịch sử">
+                    <Timeline mode="left" className="EmployeeDetail-history-section">
+                      {/* {[...merchantData.history].reverse().map((each, index) => (
+                        <Timeline.Item
+                          color={index ? 'gray' : undefined}
+                          label={format(new Date(each.time), 'dd-MM-yyyy HH:mm:SS')}
+                        >
+                          {each.type}
+                        </Timeline.Item>
+                      ))} */}
+                    </Timeline>
+                  </Collapse.Panel>
+                </Collapse>
+              </fieldset>
+            </Col>
+          ) : null}
         </Row>
 
         {
           <Row>
+            <Col span={8} />
             <Col span={8}>
-              <Row>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ marginLeft: 'auto', marginRight: 25 }}
-                >
-                  Xác nhận
-                </Button>
-              </Row>
+              <Button type="primary" htmlType="submit" onClick={onSubmitClick}>
+                {mapPageTypeToButton[detailPageType]}
+              </Button>
             </Col>
           </Row>
         }
