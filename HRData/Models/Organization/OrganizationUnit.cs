@@ -1,5 +1,4 @@
-﻿using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace HRData.Models.Organization
 {

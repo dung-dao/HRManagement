@@ -1,10 +1,15 @@
 ﻿using HRData.Models.JobModels;
-using HRData.Models.Organization;
 using System;
 using System.Collections.Generic;
 
 namespace HRData.Models
 {
+    public enum EmployeeStatus
+    {
+        Pending,
+        Working,
+        Leaved
+    }
     public class Employee : EntityBase
     {
         public string FirstName { get; set; }
@@ -19,6 +24,8 @@ namespace HRData.Models
         public string CurrentAddress { get; set; }
 
         public string NationalId { get; set; }
+
+        public EmployeeStatus Status { get; set; }
 
         #region Navigation
         public virtual List<Position> Positions { get; set; }
