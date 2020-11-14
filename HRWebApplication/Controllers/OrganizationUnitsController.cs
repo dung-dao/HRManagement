@@ -1,17 +1,13 @@
-﻿using System;
+﻿using AutoMapper;
+using HRData.Data;
+using HRData.Models.Organization;
+using HRData.Repositories;
+using HRWebApplication.DTO;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HRData.Data;
-using HRData.Models;
-using HRData.Models.Organization;
-using HRWebApplication.DTO;
-using AutoMapper;
-using HRData.Repositories;
-using Microsoft.AspNetCore.Identity.UI.V4.Pages.Internal.Account.Manage;
 
 namespace HRWebApplication.Controllers
 {
@@ -21,13 +17,11 @@ namespace HRWebApplication.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IOrganizationRepository _orgRepo;
 
-        public OrganizationUnitsController(ApplicationDbContext context, IMapper mapper, IOrganizationRepository orgRepo)
+        public OrganizationUnitsController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _orgRepo = orgRepo;
         }
 
         [HttpGet(Name = "[controller]_GetAll")]
@@ -114,7 +108,7 @@ namespace HRWebApplication.Controllers
             var unit = _context.OrganizationUnits.Find(id);
             if (unit is null)
                 return NotFound();
-            
+
             var parent = _context.OrganizationUnits.Find(newParent.Id);
             if (parent is null)
                 return BadRequest();

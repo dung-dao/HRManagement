@@ -7,7 +7,6 @@ namespace HRData
     {
         public static void AddHRServices(this IServiceCollection services)
         {
-            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         }
     }
 }

@@ -15,6 +15,9 @@ namespace HRData.Models.JobModels
         public virtual EmploymentStatus EmploymentStatus { get; set; }
         public virtual JobCategory JobCategory { get; set; }
         public virtual OrganizationUnit Unit { get; set; }
+
+        public int LeaveDetailId { get; set; }
+        public virtual LeaveDetail LeaveDetail { get; set; }
         #endregion
     }
 }
