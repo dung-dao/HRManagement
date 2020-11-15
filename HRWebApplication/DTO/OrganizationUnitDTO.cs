@@ -1,4 +1,6 @@
-﻿namespace HRWebApplication.DTO
+﻿using HRData.Models;
+
+namespace HRWebApplication.DTO
 {
     public class OrganizationUnitDTO : NamedDTO
     {

@@ -1,5 +1,7 @@
-﻿using HRData.Data;
+﻿using AutoMapper;
+using HRData.Data;
 using HRData.Models;
+using HRWebApplication.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -10,47 +12,53 @@ namespace HRWebApplication.Controllers.Base
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GenericController<Entity> : ControllerBase where Entity : EntityBase
+    public class GenericController<Entity, DTO> : ControllerBase where Entity : EntityBase where DTO: DTOBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly DbSet<Entity> entities;
-        public GenericController(ApplicationDbContext context)
+        protected readonly ApplicationDbContext _context;
+        protected readonly DbSet<Entity> entities;
+        protected readonly IMapper _mapper;
+        public GenericController(ApplicationDbContext context, IMapper mapper)
         {
             this._context = context;
+            _mapper = mapper;
             this.entities = this._context.Set<Entity>();
         }
 
         [HttpGet(Name = "[controller]_GetAll")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public virtual async Task<ActionResult<IEnumerable<Entity>>> GetAll()
+        public virtual async Task<ActionResult<IEnumerable<DTO>>> GetAll()
         {
-            return await entities.ToListAsync();
+            var data = await entities.Where(e => e.RecordStatus == RecordStatus.Active).ToListAsync();
+            return _mapper.Map<List<DTO>>(data);
         }
 
         [HttpGet("{id}", Name = "[controller]_GetById")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public virtual async Task<ActionResult<Entity>> GetById(int id)
+        public virtual async Task<ActionResult<DTO>> GetById(int id)
         {
             var item = await entities.FindAsync(id);
 
-            if (item == null)
+            if (item == null || item.RecordStatus == RecordStatus.InActive)
             {
                 return NotFound();
             }
 
-            return item;
+            return _mapper.Map<DTO>(item);
         }
 
         [HttpPut("{id}", Name = "[controller]_Update")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
-        public virtual async Task<IActionResult> Put(int id, Entity entity)
+        public virtual async Task<IActionResult> Put(int id, DTO data)
         {
+            var entity = _mapper.Map<Entity>(data);
+
             if (id != entity.Id)
             {
                 return BadRequest();
             }
 
             _context.Entry(entity).State = EntityState.Modified;
+            _context.Entry(entity).Property(e => e.RecordStatus).IsModified = false;
 
             try
             {
@@ -73,11 +81,13 @@ namespace HRWebApplication.Controllers.Base
 
         [HttpPost(Name = "[controller]_Create")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
-        public virtual async Task<ActionResult<Entity>> Post(Entity entity)
+        public virtual async Task<ActionResult<DTO>> Post(DTO data)
         {
+            var entity = _mapper.Map<Entity>(data);
+            entity.RecordStatus = RecordStatus.Active;
             entities.Add(entity);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetById", new { id = entity.Id }, entity);
+            return CreatedAtAction("GetById", new { id = entity.Id }, _mapper.Map<DTO>(entity));
         }
 
         [HttpDelete("{id}", Name = "[controller]_Delete")]
@@ -90,7 +100,7 @@ namespace HRWebApplication.Controllers.Base
                 return NotFound();
             }
 
-            entities.Remove(entity);
+            entity.RecordStatus = RecordStatus.InActive;
             await _context.SaveChangesAsync();
 
             return NoContent();
