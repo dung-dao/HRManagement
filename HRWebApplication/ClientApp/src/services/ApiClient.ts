@@ -23,7 +23,7 @@ export class EmployeesClient extends ApiClientBase {
     /**
      * @return Success
      */
-    employees_GetAll(): Promise<Employee[]> {
+    employees_GetAll(): Promise<EmployeeDTO[]> {
         let url_ = this.baseUrl + "/api/Employees";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -41,7 +41,7 @@ export class EmployeesClient extends ApiClientBase {
         });
     }
 
-    protected processEmployees_GetAll(response: Response): Promise<Employee[]> {
+    protected processEmployees_GetAll(response: Response): Promise<EmployeeDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -51,7 +51,7 @@ export class EmployeesClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(Employee.fromJS(item));
+                    result200!.push(EmployeeDTO.fromJS(item));
             }
             return result200;
             });
@@ -60,14 +60,14 @@ export class EmployeesClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Employee[]>(<any>null);
+        return Promise.resolve<EmployeeDTO[]>(<any>null);
     }
 
     /**
      * @param body (optional) 
      * @return Success
      */
-    employees_Create(body: Employee | undefined): Promise<Employee> {
+    employees_Create(body: EmployeeDTO | undefined): Promise<EmployeeDTO> {
         let url_ = this.baseUrl + "/api/Employees";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -89,14 +89,14 @@ export class EmployeesClient extends ApiClientBase {
         });
     }
 
-    protected processEmployees_Create(response: Response): Promise<Employee> {
+    protected processEmployees_Create(response: Response): Promise<EmployeeDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Employee.fromJS(resultData200);
+            result200 = EmployeeDTO.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -104,13 +104,13 @@ export class EmployeesClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Employee>(<any>null);
+        return Promise.resolve<EmployeeDTO>(<any>null);
     }
 
     /**
      * @return Success
      */
-    employees_GetById(id: number): Promise<Employee> {
+    employees_GetById(id: number): Promise<EmployeeDTO> {
         let url_ = this.baseUrl + "/api/Employees/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -131,14 +131,14 @@ export class EmployeesClient extends ApiClientBase {
         });
     }
 
-    protected processEmployees_GetById(response: Response): Promise<Employee> {
+    protected processEmployees_GetById(response: Response): Promise<EmployeeDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Employee.fromJS(resultData200);
+            result200 = EmployeeDTO.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -146,14 +146,14 @@ export class EmployeesClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<Employee>(<any>null);
+        return Promise.resolve<EmployeeDTO>(<any>null);
     }
 
     /**
      * @param body (optional) 
      * @return Success
      */
-    employees_Update(id: number, body: Employee | undefined): Promise<void> {
+    employees_Update(id: number, body: EmployeeDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Employees/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -216,6 +216,1075 @@ export class EmployeesClient extends ApiClientBase {
     }
 
     protected processEmployees_Delete(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    employees_GetPosition(id: number): Promise<PositionDTO[]> {
+        let url_ = this.baseUrl + "/api/Employees/{id}/positions";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_GetPosition(_response);
+        });
+    }
+
+    protected processEmployees_GetPosition(response: Response): Promise<PositionDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(PositionDTO.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PositionDTO[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    employees_AddToPosition(id: number, body: PositionDTO | undefined): Promise<PositionDTO> {
+        let url_ = this.baseUrl + "/api/Employees/{id}/positions";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_AddToPosition(_response);
+        });
+    }
+
+    protected processEmployees_AddToPosition(response: Response): Promise<PositionDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PositionDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PositionDTO>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    employees_DeletePosition(id: number, positionId: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/Employees/{id}/positions/{positionId}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (positionId === undefined || positionId === null)
+            throw new Error("The parameter 'positionId' must be defined.");
+        url_ = url_.replace("{positionId}", encodeURIComponent("" + positionId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_DeletePosition(_response);
+        });
+    }
+
+    protected processEmployees_DeletePosition(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    employees_Leave(id: number, body: LeaveDetailDTO | undefined): Promise<PositionDTO> {
+        let url_ = this.baseUrl + "/api/Employees/{id}/positions/leave";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_Leave(_response);
+        });
+    }
+
+    protected processEmployees_Leave(response: Response): Promise<PositionDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PositionDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PositionDTO>(<any>null);
+    }
+}
+
+export class EmploymentStatusClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    employmentStatus_GetAll(): Promise<EmploymentStatus[]> {
+        let url_ = this.baseUrl + "/api/EmploymentStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmploymentStatus_GetAll(_response);
+        });
+    }
+
+    protected processEmploymentStatus_GetAll(response: Response): Promise<EmploymentStatus[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(EmploymentStatus.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<EmploymentStatus[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    employmentStatus_Create(body: EmploymentStatus | undefined): Promise<EmploymentStatus> {
+        let url_ = this.baseUrl + "/api/EmploymentStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmploymentStatus_Create(_response);
+        });
+    }
+
+    protected processEmploymentStatus_Create(response: Response): Promise<EmploymentStatus> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = EmploymentStatus.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<EmploymentStatus>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    employmentStatus_GetById(id: number): Promise<EmploymentStatus> {
+        let url_ = this.baseUrl + "/api/EmploymentStatus/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmploymentStatus_GetById(_response);
+        });
+    }
+
+    protected processEmploymentStatus_GetById(response: Response): Promise<EmploymentStatus> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = EmploymentStatus.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<EmploymentStatus>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    employmentStatus_Update(id: number, body: EmploymentStatus | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/EmploymentStatus/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmploymentStatus_Update(_response);
+        });
+    }
+
+    protected processEmploymentStatus_Update(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    employmentStatus_Delete(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/EmploymentStatus/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmploymentStatus_Delete(_response);
+        });
+    }
+
+    protected processEmploymentStatus_Delete(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+}
+
+export class JobCategoryClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    jobCategory_GetAll(): Promise<JobCategory[]> {
+        let url_ = this.baseUrl + "/api/JobCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobCategory_GetAll(_response);
+        });
+    }
+
+    protected processJobCategory_GetAll(response: Response): Promise<JobCategory[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(JobCategory.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<JobCategory[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    jobCategory_Create(body: JobCategory | undefined): Promise<JobCategory> {
+        let url_ = this.baseUrl + "/api/JobCategory";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobCategory_Create(_response);
+        });
+    }
+
+    protected processJobCategory_Create(response: Response): Promise<JobCategory> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = JobCategory.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<JobCategory>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    jobCategory_GetById(id: number): Promise<JobCategory> {
+        let url_ = this.baseUrl + "/api/JobCategory/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobCategory_GetById(_response);
+        });
+    }
+
+    protected processJobCategory_GetById(response: Response): Promise<JobCategory> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = JobCategory.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<JobCategory>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    jobCategory_Update(id: number, body: JobCategory | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/JobCategory/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobCategory_Update(_response);
+        });
+    }
+
+    protected processJobCategory_Update(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    jobCategory_Delete(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/JobCategory/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobCategory_Delete(_response);
+        });
+    }
+
+    protected processJobCategory_Delete(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+}
+
+export class JobTitleClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    jobTitle_GetAll(): Promise<JobTitle[]> {
+        let url_ = this.baseUrl + "/api/JobTitle";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobTitle_GetAll(_response);
+        });
+    }
+
+    protected processJobTitle_GetAll(response: Response): Promise<JobTitle[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(JobTitle.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<JobTitle[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    jobTitle_Create(body: JobTitle | undefined): Promise<JobTitle> {
+        let url_ = this.baseUrl + "/api/JobTitle";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobTitle_Create(_response);
+        });
+    }
+
+    protected processJobTitle_Create(response: Response): Promise<JobTitle> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = JobTitle.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<JobTitle>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    jobTitle_GetById(id: number): Promise<JobTitle> {
+        let url_ = this.baseUrl + "/api/JobTitle/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobTitle_GetById(_response);
+        });
+    }
+
+    protected processJobTitle_GetById(response: Response): Promise<JobTitle> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = JobTitle.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<JobTitle>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    jobTitle_Update(id: number, body: JobTitle | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/JobTitle/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobTitle_Update(_response);
+        });
+    }
+
+    protected processJobTitle_Update(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    jobTitle_Delete(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/JobTitle/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processJobTitle_Delete(_response);
+        });
+    }
+
+    protected processJobTitle_Delete(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+}
+
+export class LeaveTypeClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    leaveType_GetAll(): Promise<LeaveType[]> {
+        let url_ = this.baseUrl + "/api/LeaveType";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLeaveType_GetAll(_response);
+        });
+    }
+
+    protected processLeaveType_GetAll(response: Response): Promise<LeaveType[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LeaveType.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<LeaveType[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    leaveType_Create(body: LeaveType | undefined): Promise<LeaveType> {
+        let url_ = this.baseUrl + "/api/LeaveType";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLeaveType_Create(_response);
+        });
+    }
+
+    protected processLeaveType_Create(response: Response): Promise<LeaveType> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LeaveType.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<LeaveType>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    leaveType_GetById(id: number): Promise<LeaveType> {
+        let url_ = this.baseUrl + "/api/LeaveType/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLeaveType_GetById(_response);
+        });
+    }
+
+    protected processLeaveType_GetById(response: Response): Promise<LeaveType> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = LeaveType.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<LeaveType>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    leaveType_Update(id: number, body: LeaveType | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/LeaveType/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLeaveType_Update(_response);
+        });
+    }
+
+    protected processLeaveType_Update(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    leaveType_Delete(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/LeaveType/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLeaveType_Delete(_response);
+        });
+    }
+
+    protected processLeaveType_Delete(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -295,7 +1364,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
     /**
      * @return Success
      */
-    organizationUnits_GetAll(): Promise<OrganizationUnit[]> {
+    organizationUnits_GetAll(): Promise<OrganizationUnitDTO[]> {
         let url_ = this.baseUrl + "/api/OrganizationUnits";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -313,7 +1382,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
         });
     }
 
-    protected processOrganizationUnits_GetAll(response: Response): Promise<OrganizationUnit[]> {
+    protected processOrganizationUnits_GetAll(response: Response): Promise<OrganizationUnitDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -323,7 +1392,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(OrganizationUnit.fromJS(item));
+                    result200!.push(OrganizationUnitDTO.fromJS(item));
             }
             return result200;
             });
@@ -332,14 +1401,14 @@ export class OrganizationUnitsClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<OrganizationUnit[]>(<any>null);
+        return Promise.resolve<OrganizationUnitDTO[]>(<any>null);
     }
 
     /**
      * @param body (optional) 
      * @return Success
      */
-    organizationUnits_Create(body: OrganizationUnit | undefined): Promise<OrganizationUnit> {
+    organizationUnits_CreateRootUnit(body: OrganizationUnitDTO | undefined): Promise<OrganizationUnitDTO> {
         let url_ = this.baseUrl + "/api/OrganizationUnits";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -357,18 +1426,18 @@ export class OrganizationUnitsClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processOrganizationUnits_Create(_response);
+            return this.processOrganizationUnits_CreateRootUnit(_response);
         });
     }
 
-    protected processOrganizationUnits_Create(response: Response): Promise<OrganizationUnit> {
+    protected processOrganizationUnits_CreateRootUnit(response: Response): Promise<OrganizationUnitDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = OrganizationUnit.fromJS(resultData200);
+            result200 = OrganizationUnitDTO.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -376,13 +1445,13 @@ export class OrganizationUnitsClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<OrganizationUnit>(<any>null);
+        return Promise.resolve<OrganizationUnitDTO>(<any>null);
     }
 
     /**
      * @return Success
      */
-    organizationUnits_GetById(id: number): Promise<OrganizationUnit> {
+    organizationUnits_GetById(id: number): Promise<OrganizationUnitDTO> {
         let url_ = this.baseUrl + "/api/OrganizationUnits/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -403,14 +1472,14 @@ export class OrganizationUnitsClient extends ApiClientBase {
         });
     }
 
-    protected processOrganizationUnits_GetById(response: Response): Promise<OrganizationUnit> {
+    protected processOrganizationUnits_GetById(response: Response): Promise<OrganizationUnitDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = OrganizationUnit.fromJS(resultData200);
+            result200 = OrganizationUnitDTO.fromJS(resultData200);
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -418,14 +1487,14 @@ export class OrganizationUnitsClient extends ApiClientBase {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<OrganizationUnit>(<any>null);
+        return Promise.resolve<OrganizationUnitDTO>(<any>null);
     }
 
     /**
      * @param body (optional) 
      * @return Success
      */
-    organizationUnits_Update(id: number, body: OrganizationUnit | undefined): Promise<void> {
+    organizationUnits_Update(id: number, body: OrganizationUnitDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/OrganizationUnits/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -501,24 +1570,125 @@ export class OrganizationUnitsClient extends ApiClientBase {
         }
         return Promise.resolve<void>(<any>null);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    organizationUnits_CreateUnit(id: number, body: OrganizationUnitDTO | undefined): Promise<OrganizationUnitDTO> {
+        let url_ = this.baseUrl + "/api/OrganizationUnits/{id}/children";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processOrganizationUnits_CreateUnit(_response);
+        });
+    }
+
+    protected processOrganizationUnits_CreateUnit(response: Response): Promise<OrganizationUnitDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = OrganizationUnitDTO.fromJS(resultData201);
+            return result201;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    organizationUnits_ChangeParent(id: number, body: OrganizationUnitDTO | undefined): Promise<OrganizationUnitDTO> {
+        let url_ = this.baseUrl + "/api/OrganizationUnits/{id}/parent";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processOrganizationUnits_ChangeParent(_response);
+        });
+    }
+
+    protected processOrganizationUnits_ChangeParent(response: Response): Promise<OrganizationUnitDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = OrganizationUnitDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<OrganizationUnitDTO>(<any>null);
+    }
 }
 
-export class Employee implements IEmployee {
+export class EmployeeDTO implements IEmployeeDTO {
     id?: number;
     firstName?: string | undefined;
     lastName?: string | undefined;
     personalEmail?: string | undefined;
+    workEmail?: string | undefined;
     phone?: string | undefined;
     dateOfBirth?: Date;
     sex?: string | undefined;
-    idCardNo?: string | undefined;
-    issused?: Date;
-    date?: Date;
-    academicLevel?: string | undefined;
-    university?: string | undefined;
-    major?: string | undefined;
+    address?: string | undefined;
+    currentAddress?: string | undefined;
+    nationalId?: string | undefined;
 
-    constructor(data?: IEmployee) {
+    constructor(data?: IEmployeeDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -533,21 +1703,19 @@ export class Employee implements IEmployee {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.personalEmail = _data["personalEmail"];
+            this.workEmail = _data["workEmail"];
             this.phone = _data["phone"];
             this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
             this.sex = _data["sex"];
-            this.idCardNo = _data["idCardNo"];
-            this.issused = _data["issused"] ? new Date(_data["issused"].toString()) : <any>undefined;
-            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
-            this.academicLevel = _data["academicLevel"];
-            this.university = _data["university"];
-            this.major = _data["major"];
+            this.address = _data["address"];
+            this.currentAddress = _data["currentAddress"];
+            this.nationalId = _data["nationalId"];
         }
     }
 
-    static fromJS(data: any): Employee {
+    static fromJS(data: any): EmployeeDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new Employee();
+        let result = new EmployeeDTO();
         result.init(data);
         return result;
     }
@@ -558,43 +1726,37 @@ export class Employee implements IEmployee {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["personalEmail"] = this.personalEmail;
+        data["workEmail"] = this.workEmail;
         data["phone"] = this.phone;
         data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
         data["sex"] = this.sex;
-        data["idCardNo"] = this.idCardNo;
-        data["issused"] = this.issused ? this.issused.toISOString() : <any>undefined;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["academicLevel"] = this.academicLevel;
-        data["university"] = this.university;
-        data["major"] = this.major;
+        data["address"] = this.address;
+        data["currentAddress"] = this.currentAddress;
+        data["nationalId"] = this.nationalId;
         return data; 
     }
 }
 
-export interface IEmployee {
+export interface IEmployeeDTO {
     id?: number;
     firstName?: string | undefined;
     lastName?: string | undefined;
     personalEmail?: string | undefined;
+    workEmail?: string | undefined;
     phone?: string | undefined;
     dateOfBirth?: Date;
     sex?: string | undefined;
-    idCardNo?: string | undefined;
-    issused?: Date;
-    date?: Date;
-    academicLevel?: string | undefined;
-    university?: string | undefined;
-    major?: string | undefined;
+    address?: string | undefined;
+    currentAddress?: string | undefined;
+    nationalId?: string | undefined;
 }
 
-export class OrganizationUnit implements IOrganizationUnit {
+export class JobTitle implements IJobTitle {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
-    status?: string | undefined;
-    children?: OrganizationUnit[] | undefined;
 
-    constructor(data?: IOrganizationUnit) {
+    constructor(data?: IJobTitle) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -608,18 +1770,12 @@ export class OrganizationUnit implements IOrganizationUnit {
             this.id = _data["id"];
             this.name = _data["name"];
             this.description = _data["description"];
-            this.status = _data["status"];
-            if (Array.isArray(_data["children"])) {
-                this.children = [] as any;
-                for (let item of _data["children"])
-                    this.children!.push(OrganizationUnit.fromJS(item));
-            }
         }
     }
 
-    static fromJS(data: any): OrganizationUnit {
+    static fromJS(data: any): JobTitle {
         data = typeof data === 'object' ? data : {};
-        let result = new OrganizationUnit();
+        let result = new JobTitle();
         result.init(data);
         return result;
     }
@@ -629,22 +1785,354 @@ export class OrganizationUnit implements IOrganizationUnit {
         data["id"] = this.id;
         data["name"] = this.name;
         data["description"] = this.description;
-        data["status"] = this.status;
-        if (Array.isArray(this.children)) {
-            data["children"] = [];
-            for (let item of this.children)
-                data["children"].push(item.toJSON());
-        }
         return data; 
     }
 }
 
-export interface IOrganizationUnit {
+export interface IJobTitle {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
-    status?: string | undefined;
-    children?: OrganizationUnit[] | undefined;
+}
+
+export class EmploymentStatus implements IEmploymentStatus {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+
+    constructor(data?: IEmploymentStatus) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): EmploymentStatus {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmploymentStatus();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        return data; 
+    }
+}
+
+export interface IEmploymentStatus {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+}
+
+export class JobCategory implements IJobCategory {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+
+    constructor(data?: IJobCategory) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): JobCategory {
+        data = typeof data === 'object' ? data : {};
+        let result = new JobCategory();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        return data; 
+    }
+}
+
+export interface IJobCategory {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+}
+
+export class OrganizationUnitDTO implements IOrganizationUnitDTO {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+    employeeNo?: number;
+    parentId?: number | undefined;
+
+    constructor(data?: IOrganizationUnitDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.employeeNo = _data["employeeNo"];
+            this.parentId = _data["parentId"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationUnitDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrganizationUnitDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["employeeNo"] = this.employeeNo;
+        data["parentId"] = this.parentId;
+        return data; 
+    }
+}
+
+export interface IOrganizationUnitDTO {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+    employeeNo?: number;
+    parentId?: number | undefined;
+}
+
+export class PositionDTO implements IPositionDTO {
+    startDate?: Date;
+    endDate?: Date;
+    salery?: number;
+    jobTitle?: JobTitle;
+    employmentStatus?: EmploymentStatus;
+    jobCategory?: JobCategory;
+    unit?: OrganizationUnitDTO;
+
+    constructor(data?: IPositionDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+            this.salery = _data["salery"];
+            this.jobTitle = _data["jobTitle"] ? JobTitle.fromJS(_data["jobTitle"]) : <any>undefined;
+            this.employmentStatus = _data["employmentStatus"] ? EmploymentStatus.fromJS(_data["employmentStatus"]) : <any>undefined;
+            this.jobCategory = _data["jobCategory"] ? JobCategory.fromJS(_data["jobCategory"]) : <any>undefined;
+            this.unit = _data["unit"] ? OrganizationUnitDTO.fromJS(_data["unit"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PositionDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new PositionDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["salery"] = this.salery;
+        data["jobTitle"] = this.jobTitle ? this.jobTitle.toJSON() : <any>undefined;
+        data["employmentStatus"] = this.employmentStatus ? this.employmentStatus.toJSON() : <any>undefined;
+        data["jobCategory"] = this.jobCategory ? this.jobCategory.toJSON() : <any>undefined;
+        data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IPositionDTO {
+    startDate?: Date;
+    endDate?: Date;
+    salery?: number;
+    jobTitle?: JobTitle;
+    employmentStatus?: EmploymentStatus;
+    jobCategory?: JobCategory;
+    unit?: OrganizationUnitDTO;
+}
+
+export class LeaveType implements ILeaveType {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+
+    constructor(data?: ILeaveType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): LeaveType {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeaveType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        return data; 
+    }
+}
+
+export interface ILeaveType {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+}
+
+export class LeaveDetailDTO implements ILeaveDetailDTO {
+    date?: Date;
+    reason?: string | undefined;
+    type?: LeaveType;
+
+    constructor(data?: ILeaveDetailDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
+            this.reason = _data["reason"];
+            this.type = _data["type"] ? LeaveType.fromJS(_data["type"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): LeaveDetailDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeaveDetailDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["reason"] = this.reason;
+        data["type"] = this.type ? this.type.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ILeaveDetailDTO {
+    date?: Date;
+    reason?: string | undefined;
+    type?: LeaveType;
+}
+
+export class ProblemDetails implements IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+
+    constructor(data?: IProblemDetails) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"];
+            this.title = _data["title"];
+            this.status = _data["status"];
+            this.detail = _data["detail"];
+            this.instance = _data["instance"];
+        }
+    }
+
+    static fromJS(data: any): ProblemDetails {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProblemDetails();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["title"] = this.title;
+        data["status"] = this.status;
+        data["detail"] = this.detail;
+        data["instance"] = this.instance;
+        return data; 
+    }
+}
+
+export interface IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
 }
 
 export class ApiException extends Error {
