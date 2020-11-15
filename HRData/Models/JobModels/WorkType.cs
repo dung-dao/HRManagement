@@ -3,7 +3,7 @@
     /// <summary>
     /// Part-time, fulltime, remote...
     /// </summary>
-    public class EmploymentStatus : NamedEntity
+    public class WorkType : NamedEntity
     {
     }
 }

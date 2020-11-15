@@ -63,4 +63,4 @@ export const THEME_COLOR = '#1890ff';
 
 export const URL = 'http://localhost:3002';
 
-export const FOTTER_TEXT = '© 2020 WeWear Inc. All rights reserved';
+export const FOTTER_TEXT = '© 2020 HR Management';

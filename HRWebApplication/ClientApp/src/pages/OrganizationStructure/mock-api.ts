@@ -1,9 +1,18 @@
 // mock api interfaces
-import { KeyOrId, Branch, Employee, OrganizationUnit } from './type';
+import { KeyOrId, Branch, Employee, OrganizationUnit } from './__type';
+import { organizationUnits } from './mock-data';
+
 
 export class Api {
   async waitABit() {
     await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 2000)); // sleep function: https://stackoverflow.com/a/39914235/9787887
+  }
+
+  // api: "/organization-units-preview" to get only barely enought information to draw the tree like table
+  // might be different than "/all-organization-units" which will get all the information 
+  async getOrganizationUnits() {
+    await this.waitABit();
+    return Promise.resolve(organizationUnits);
   }
 
   async getBranchById(id: KeyOrId): Promise<Branch> {

@@ -67,7 +67,7 @@ export interface OrganizationUnit {
   branch?: RefToTable<Branch>;
   children?: RefToTable<OrganizationUnit>[];
   people: RefToTable<Employee>[];
-  readonly numberOfPeople: number; 
+  readonly numberOfPeople: number;
   readonly leaderName: string;
   leader: RefToTable<Employee>;
 }

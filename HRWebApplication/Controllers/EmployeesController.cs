@@ -38,8 +38,8 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<List<EmployeeDTO>>(employees);
         }
 
+        [HttpGet("{id}", Name = "GetEmployeeById")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        [HttpGet("{id}", Name = "[Controller]_GetById")]
         public ActionResult<EmployeeDTO> Get(int id)
         {
             var employee = _employees.Find(id);
@@ -48,8 +48,8 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<EmployeeDTO>(employee);
         }
 
+        [HttpPost(Name = "CreateEmployee")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
-        [HttpPost(Name = "[controller]_Create")]
         public ActionResult<EmployeeDTO> Post([FromBody] EmployeeDTO data)
         {
             var newEmployee = _mapper.Map<Employee>(data);
@@ -59,8 +59,8 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<EmployeeDTO>(newEmployee);
         }
 
+        [HttpPut("{id}", Name = "UpdateEmployeeById")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
-        [HttpPut("{id}", Name = "[controller]_Update")]
         public ActionResult Put(int id, [FromBody] EmployeeDTO value)
         {
             if (value.Id != id)
@@ -80,7 +80,7 @@ namespace HRWebApplication.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}", Name = "[controller]_Delete")]
+        [HttpDelete("{id}", Name = "DeleteEmployeeById")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public ActionResult Delete(int id)
         {

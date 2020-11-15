@@ -8,3 +8,4 @@ namespace HRWebApplication.DTO
         public int? ParentId { get; set; }
     }
 }
+    
