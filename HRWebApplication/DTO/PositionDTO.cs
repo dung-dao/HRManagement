@@ -10,7 +10,7 @@ namespace HRWebApplication.DTO
         public Decimal Salery { get; set; }
 
         public JobTitleDTO JobTitle { get; set; }
-        public EmploymentStatusDTO EmploymentStatus { get; set; }
+        public WorkTypeDTO EmploymentStatus { get; set; }
         public JobCategoryDTO JobCategory { get; set; }
         public OrganizationUnitDTO Unit { get; set; }
     }

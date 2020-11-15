@@ -3,7 +3,7 @@
     /// <summary>
     /// Part-time, fulltime, remote...
     /// </summary>
-    public class EmploymentStatusDTO : NamedDTO
+    public class WorkTypeDTO : NamedDTO
     {
     }
 }

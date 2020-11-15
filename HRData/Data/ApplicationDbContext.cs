@@ -46,7 +46,10 @@ namespace HRData.Data
             RegisterEntity<JobTitle>(builder);
             RegisterEntity<JobCategory>(builder);
             RegisterEntity<OrganizationUnit>(builder);
-            RegisterEntity<EmploymentStatus>(builder);
+
+            RegisterEntity<WorkType>(builder);
+            //builder.Entity<WorkType>().ToTable("WorkType");
+
             RegisterEntity<Employee>(builder);
             RegisterEntity<Position>(builder);
             RegisterEntity<LeaveDetail>(builder);
@@ -79,10 +82,6 @@ namespace HRData.Data
                 po.Property(e => e.Salary).IsRequired();
                 po.Property(e => e.Salary).HasColumnType("decimal(18, 6)");
             });
-            #endregion
-
-            #region Loi
-            builder.Entity<WorkType>().ToTable("WorkType");
             #endregion
         }
 
