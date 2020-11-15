@@ -21,12 +21,14 @@ namespace HRWebApplication.Controllers.Base
         }
 
         [HttpGet(Name = "[controller]_GetAll")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public virtual async Task<ActionResult<IEnumerable<Entity>>> GetAll()
         {
             return await entities.ToListAsync();
         }
 
         [HttpGet("{id}", Name = "[controller]_GetById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public virtual async Task<ActionResult<Entity>> GetById(int id)
         {
             var item = await entities.FindAsync(id);
@@ -40,6 +42,7 @@ namespace HRWebApplication.Controllers.Base
         }
 
         [HttpPut("{id}", Name = "[controller]_Update")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public virtual async Task<IActionResult> Put(int id, Entity entity)
         {
             if (id != entity.Id)
@@ -69,6 +72,7 @@ namespace HRWebApplication.Controllers.Base
         }
 
         [HttpPost(Name = "[controller]_Create")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public virtual async Task<ActionResult<Entity>> Post(Entity entity)
         {
             entities.Add(entity);
@@ -76,8 +80,8 @@ namespace HRWebApplication.Controllers.Base
             return CreatedAtAction("GetById", new { id = entity.Id }, entity);
         }
 
-        // DELETE: api/OrganizationUnits/5
         [HttpDelete("{id}", Name = "[controller]_Delete")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public virtual async Task<IActionResult> Delete(int id)
         {
             var entity = await entities.FindAsync(id);

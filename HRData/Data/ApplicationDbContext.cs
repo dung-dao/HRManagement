@@ -38,13 +38,12 @@ namespace HRData.Data
 
             #region PrimaryKeyReg
             builder.Entity<OrganizationUnit>().HasKey(e => e.Id);
+
             builder.Entity<JobTitle>().HasKey(e => e.Id);
             builder.Entity<JobCategory>().HasKey(e => e.Id);
             builder.Entity<EmploymentStatus>().HasKey(e => e.Id);
-            builder.Entity<OrganizationUnit>().HasKey(e => e.Id);
             builder.Entity<Employee>().HasKey(e => e.Id);
             builder.Entity<Position>().HasKey(e => e.Id);
-            builder.Entity<OrganizationUnit>().HasKey(e => e.Id);
             builder.Entity<LeaveDetail>().HasKey(e => e.Id);
             builder.Entity<LeaveType>().HasKey(e => e.Id);
 

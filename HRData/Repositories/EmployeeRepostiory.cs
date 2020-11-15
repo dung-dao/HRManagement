@@ -20,6 +20,7 @@ namespace HRData.Repositories
 
         #region Position
         List<Position> GetPositions(Employee employee);
+        Position GetPositionById(Employee employee, int positionId);
         Position GetCurentPosition(Employee employee);
         void NewPosition(Employee employee, Position position);
         void EmployeeLeave(Employee employee, LeaveDetail detail);
@@ -75,6 +76,14 @@ namespace HRData.Repositories
         public void DeletePosition(Employee employee, Position position)
         {
             employee.Positions.Remove(position);
+        }
+
+        public Position GetPositionById(Employee employee, int positionId)
+        {
+            return (from p in employee.Positions
+                    where p.Id == positionId
+                    select p
+             ).FirstOrDefault();
         }
     }
 }
