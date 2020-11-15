@@ -122,6 +122,16 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<List<PositionDTO>>(_empRepostiory.GetPositionById(employee, positionId));
         }
 
+        [HttpGet("{id}/positions/current", Name = "[controller]_GetCurrentPosition")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        public ActionResult<PositionDTO> GetCurrentPosition(int id)
+        {
+            var employee = _employees.Find(id);
+            if (employee is null)
+                return NotFound();
+            return _mapper.Map<PositionDTO>(_empRepostiory.GetCurentPosition(employee));
+        }
+
         [HttpPost("{id}/positions", Name = "[controller]_AddToPosition")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult<PositionDTO> AddToPosition(int id, [FromBody] PositionDTO data)
