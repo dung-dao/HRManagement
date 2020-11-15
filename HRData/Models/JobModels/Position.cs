@@ -7,7 +7,7 @@ namespace HRData.Models.JobModels
     {
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public Decimal Salery { get; set; }
+        public Decimal Salary { get; set; }
         public int? LeaveDetailId { get; set; }
 
         #region Navigation
