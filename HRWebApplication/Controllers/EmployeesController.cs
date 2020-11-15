@@ -29,7 +29,7 @@ namespace HRWebApplication.Controllers
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<EmployeeDTO> GetAll()
         {
-            var employees = _empRepostiory.GetActiveEmployee();
+            var employees = _empRepostiory.GetActiveEmployees();
             return ToListEmployeeDTO(employees);
         }
 
@@ -89,7 +89,7 @@ namespace HRWebApplication.Controllers
             var em = _employees.Find(id);
             if (em is null)
                 return NotFound();
-            _employees.Remove(em);
+            _empRepostiory.Delete(em);
             try
             {
                 Commit();
@@ -122,6 +122,16 @@ namespace HRWebApplication.Controllers
             if (employee is null)
                 return NotFound();
             return _mapper.Map<List<PositionDTO>>(_empRepostiory.GetPositionById(employee, positionId));
+        }
+
+        [HttpGet("{id}/positions/current", Name = "[controller]_GetCurrentPosition")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        public ActionResult<PositionDTO> GetCurrentPosition(int id)
+        {
+            var employee = _employees.Find(id);
+            if (employee is null)
+                return NotFound();
+            return _mapper.Map<PositionDTO>(_empRepostiory.GetCurentPosition(employee));
         }
 
         [HttpPost("{id}/positions", Name = "[controller]_AddToPosition")]

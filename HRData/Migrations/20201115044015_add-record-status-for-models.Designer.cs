@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201115044015_add-record-status-for-models")]
+    partial class addrecordstatusformodels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,13 +225,13 @@ namespace HRData.Migrations
                     b.Property<int?>("JobTitleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LeaveDetailId")
+                    b.Property<int>("LeaveDetailId")
                         .HasColumnType("int");
 
                     b.Property<int>("RecordStatus")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Salary")
+                    b.Property<decimal>("Salery")
                         .HasColumnType("decimal(18,6)");
 
                     b.Property<DateTime>("StartDate")
@@ -249,8 +251,7 @@ namespace HRData.Migrations
                     b.HasIndex("JobTitleId");
 
                     b.HasIndex("LeaveDetailId")
-                        .IsUnique()
-                        .HasFilter("[LeaveDetailId] IS NOT NULL");
+                        .IsUnique();
 
                     b.HasIndex("UnitId");
 
@@ -617,7 +618,9 @@ namespace HRData.Migrations
 
                     b.HasOne("HRData.Models.LeaveDetail", "LeaveDetail")
                         .WithOne("Position")
-                        .HasForeignKey("HRData.Models.JobModels.Position", "LeaveDetailId");
+                        .HasForeignKey("HRData.Models.JobModels.Position", "LeaveDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("HRData.Models.Organization.OrganizationUnit", "Unit")
                         .WithMany()

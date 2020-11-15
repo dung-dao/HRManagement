@@ -13,9 +13,11 @@ namespace HRData.Repositories
     public interface IEmployeeRepostiory
     {
         #region Employee
-        List<Employee> GetActiveEmployee();
+        List<Employee> GetActiveEmployees();
+        List<Employee> GetInactiveEmployees();
         void AddEmployee(Employee employee);
         void Update(Employee employee);
+        void Delete(Employee employee);
         #endregion
 
         #region Position
@@ -34,11 +36,12 @@ namespace HRData.Repositories
         }
 
         #region Profile
-        public List<Employee> GetActiveEmployee() => _context.Employees.Where(e => e.Status != EmployeeStatus.Leaved).ToList();
+        public List<Employee> GetActiveEmployees() => _context.Employees.Where(e => e.Status != EmployeeStatus.Leaved && e.RecordStatus == RecordStatus.Active).ToList();
 
         public void AddEmployee(Employee employee)
         {
             employee.Status = EmployeeStatus.Pending;
+            employee.RecordStatus = RecordStatus.Active;
             _context.Employees.Add(employee);
         }
 
@@ -46,6 +49,12 @@ namespace HRData.Repositories
         {
             _context.Entry(employee).State = EntityState.Modified;
             _context.Entry(employee).Property(e => e.Status).IsModified = false;
+            _context.Entry(employee).Property(e => e.RecordStatus).IsModified = false;
+        }
+
+        public void Delete(Employee employee)
+        {
+            employee.RecordStatus = RecordStatus.InActive;
         }
         #endregion
 
@@ -54,20 +63,21 @@ namespace HRData.Repositories
         public void NewPosition(Employee employee, Position position)
         {
             employee.Status = EmployeeStatus.Working;
+            position.RecordStatus = RecordStatus.Active;
             employee.Positions.Add(position);
         }
-        #endregion
         public Position GetCurentPosition(Employee employee)
         {
             return (from p in employee.Positions
-                    orderby p.StartDate
+                    orderby p.StartDate descending
                     select p).FirstOrDefault();
         }
+        #endregion
 
         public void EmployeeLeave(Employee employee, LeaveDetail detail)
         {
             detail.Position = (from p in employee.Positions
-                               orderby p.StartDate
+                               orderby p.StartDate descending
                                select p).FirstOrDefault();
 
             employee.Status = EmployeeStatus.Leaved;
@@ -84,6 +94,11 @@ namespace HRData.Repositories
                     where p.Id == positionId
                     select p
              ).FirstOrDefault();
+        }
+
+        public List<Employee> GetInactiveEmployees()
+        {
+            return _context.Employees.Where(e => e.RecordStatus == RecordStatus.Active).ToList();
         }
     }
 }

@@ -11,6 +11,6 @@ namespace HRWebApplication.DTO
     {
         public DateTime Date { get; set; }
         public string Reason { get; set; }
-        public LeaveType Type { get; set; }
+        public LeaveTypeDTO Type { get; set; }
     }
 }

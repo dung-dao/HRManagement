@@ -9,9 +9,9 @@ namespace HRWebApplication.DTO
         public DateTime EndDate { get; set; }
         public Decimal Salery { get; set; }
 
-        public JobTitle JobTitle { get; set; }
-        public EmploymentStatus EmploymentStatus { get; set; }
-        public JobCategory JobCategory { get; set; }
+        public JobTitleDTO JobTitle { get; set; }
+        public EmploymentStatusDTO EmploymentStatus { get; set; }
+        public JobCategoryDTO JobCategory { get; set; }
         public OrganizationUnitDTO Unit { get; set; }
     }
 }

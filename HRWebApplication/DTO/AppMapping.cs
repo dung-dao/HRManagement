@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HRData.Models;
+using HRData.Models.JobModels;
 using HRData.Models.Organization;
 
 namespace HRWebApplication.DTO
@@ -10,6 +11,12 @@ namespace HRWebApplication.DTO
         {
             CreateMap<OrganizationUnit, OrganizationUnitDTO>().ReverseMap();
             CreateMap<Employee, EmployeeDTO>().ReverseMap();
+            CreateMap<EmploymentStatus, EmploymentStatusDTO>().ReverseMap();
+            CreateMap<JobCategory, JobCategoryDTO>().ReverseMap();
+            CreateMap<JobTitle, JobTitleDTO>().ReverseMap();
+            CreateMap<LeaveDetail, LeaveDetailDTO>().ReverseMap();
+            CreateMap<LeaveType, LeaveTypeDTO>().ReverseMap();
+            CreateMap<Position, PositionDTO>().ReverseMap();
         }
     }
 }
