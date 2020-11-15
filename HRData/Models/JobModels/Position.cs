@@ -8,6 +8,7 @@ namespace HRData.Models.JobModels
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Decimal Salery { get; set; }
+        public int? LeaveDetailId { get; set; }
 
         #region Navigation
         public virtual Employee Employee { get; set; }
@@ -16,7 +17,6 @@ namespace HRData.Models.JobModels
         public virtual JobCategory JobCategory { get; set; }
         public virtual OrganizationUnit Unit { get; set; }
 
-        public int LeaveDetailId { get; set; }
         public virtual LeaveDetail LeaveDetail { get; set; }
         #endregion
     }

@@ -63,12 +63,13 @@ namespace HRData.Repositories
         public void NewPosition(Employee employee, Position position)
         {
             employee.Status = EmployeeStatus.Working;
+            position.RecordStatus = RecordStatus.Active;
             employee.Positions.Add(position);
         }
         public Position GetCurentPosition(Employee employee)
         {
             return (from p in employee.Positions
-                    orderby p.StartDate
+                    orderby p.StartDate descending
                     select p).FirstOrDefault();
         }
         #endregion
@@ -76,7 +77,7 @@ namespace HRData.Repositories
         public void EmployeeLeave(Employee employee, LeaveDetail detail)
         {
             detail.Position = (from p in employee.Positions
-                               orderby p.StartDate
+                               orderby p.StartDate descending
                                select p).FirstOrDefault();
 
             employee.Status = EmployeeStatus.Leaved;
