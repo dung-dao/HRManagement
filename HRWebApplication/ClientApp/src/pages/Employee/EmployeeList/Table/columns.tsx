@@ -5,6 +5,12 @@ import { Button, Dropdown, Space, Tag, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
+const mapSex = {
+  Male: 'Nam',
+  Female: 'Nữ',
+  Other: 'Khác',
+};
+
 export const columns = [
   // { title: 'STT', key: 'index', render: (value, item, index) => index + 1 },
   // { title: 'Mã nhân viên', dataIndex: 'code' },
@@ -19,11 +25,11 @@ export const columns = [
     dataIndex: 'dateOfBirth',
     render: (date) => moment(date).format('DD/MM/YYYY'),
   },
-  { title: 'Giới tính', key: 'sex', dataIndex: 'sex' },
+  { title: 'Giới tính', key: 'sex', dataIndex: 'sex', render: (sex) => mapSex[sex] },
   // { title: 'Bộ phận', dataIndex: 'department' },
   // { title: 'Loại hình nhân sự', dataIndex: 'employeeType' },
   // { title: 'Vị trí', dataIndex: 'jobTitle' },
-  // { title: 'Lương', dataIndex: 'salary' },
+  // { title: 'Lương', dataIndex: 'Salery' },
   // { title: 'Ngày bắt đầu', dataIndex: 'dateStarted' },
   // { title: 'Loại hình làm việc', dataIndex: 'workType' },
   // { title: 'Chi nhánh', dataIndex: 'branch' },

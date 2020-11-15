@@ -54,17 +54,15 @@ class AppSidebar extends Component {
           defaultSelectedKeys={selectedMenu}
           defaultOpenKeys={[openMenu]}
         >
-          <Menu.Item key={Constant.MENU.OVERVIEW_MENU}>
+          <Menu.Item key={'/organization'}>
             <DashboardOutlined />
-            <span>Tổng quan</span>
-            <Link to={Constant.ROUTER_URL.OVERVIEW_PAGE}></Link>
+            <Link to={'/organization'}>Tổ chức</Link>
           </Menu.Item>
-          <Menu.Item key={Constant.MENU.CONFIRM_PRODUCTS_PAGE}>
+          <Menu.Item key={'/employees'}>
             <DashboardOutlined />
-            <span>Duyệt sản phẩm</span>
-            <Link to={Constant.ROUTER_URL.CONFIRM_PRODUCTS_PAGE}></Link>
+            <Link to={'/employees'}>Nhân viên</Link>
           </Menu.Item>
-          <Menu.Item key={Constant.MENU.MERCHANTS_PAGE}>
+          {/* <Menu.Item key={Constant.MENU.MERCHANTS_PAGE}>
             <ShopFilled />
             <span>Đối tác</span>
             <Link to={Constant.ROUTER_URL.MERCHANTS_PAGE}></Link>
@@ -86,7 +84,7 @@ class AppSidebar extends Component {
               <span>Quản lý danh mục</span>
               <Link to={Constant.ROUTER_URL.CATEGORY_PAGE} />
             </Menu.Item>
-          </Menu.SubMenu>
+          </Menu.SubMenu> */}
         </Menu>
       </Sider>
     );

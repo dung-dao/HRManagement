@@ -17,7 +17,16 @@ import AppBody from 'components/Layouts/AppBody';
 import ImgCrop from 'antd-img-crop';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 import './EmployeeDetail.css';
-import { EmployeesClient } from 'services/ApiClient';
+import {
+  EmployeesClient,
+  WorkTypeClient,
+  JobCategoryClient,
+  JobTitleClient,
+  OrganizationUnitsClient,
+  PositionDTO,
+} from 'services/ApiClient';
+// import DatePicker from 'components/DatePicker'
+import moment from 'moment';
 
 export const removeSlug = (url) => {
   return url.substring(0, /:|\/:/.exec(url)?.index);
@@ -26,8 +35,15 @@ export const removeSlug = (url) => {
 };
 
 const formItemLayout = {
-  labelCol: { span: 9 },
-  wrapperCol: { span: 15 },
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+  labelAlign: 'left',
+  validateTrigger: 'onBlur',
+};
+
+const formItemLayoutWide = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 20 },
   labelAlign: 'left',
   validateTrigger: 'onBlur',
 };
@@ -39,9 +55,24 @@ const required = (label) => ({
 
 const phoneRegex = /^(\+84|0|84)\d{9}$/;
 
+type Selection = {
+  id: number;
+  name: string;
+  selected: boolean;
+};
+
 function Index() {
   const [form] = Form.useForm();
-  const api = React.useRef(new EmployeesClient());
+  const apiEmployee = React.useRef(new EmployeesClient());
+  const apiWorkType = React.useRef(new WorkTypeClient());
+  const apiJobCategory = React.useRef(new JobCategoryClient());
+  const apiJobTitle = React.useRef(new JobTitleClient());
+  const apiOrganization = React.useRef(new OrganizationUnitsClient());
+  const [workType, setWorkType] = React.useState<Selection[]>();
+  const [jobCategory, setJobCategory] = React.useState<Selection[]>();
+  const [jobTitle, setJobTitle] = React.useState<Selection[]>();
+  const [organization, setOrganization] = React.useState<Selection[]>();
+  const [positions, setPositions] = React.useState<PositionDTO[]>();
   const history = useHistory();
   // const [merchantData, setMerchantData] = React.useState(apiAllMerchants[0]);
 
@@ -131,17 +162,70 @@ function Index() {
     : 'unknown';
 
   React.useEffect(() => {
-    if (detailPageType === 'detail' || detailPageType === 'edit') {
-      api.current
+    function fetchEmployee() {
+      return apiEmployee.current
         .getEmployeeById(employeeId)
-        .then((data) => form.setFieldsValue(data))
+        .then(
+          (data) => form.setFieldsValue({ ...data, dateOfBirth: moment(data.dateOfBirth) }) && data,
+        )
         .catch();
+    }
+
+    // Detail / Edit nhan vien
+    if (detailPageType === 'detail' || detailPageType === 'edit') {
+      // === Chi tiet nhan vien / Chinh sua nhan vien
+      // -> Fetch nhanVienById
+      // -> Fetch Position of Nhan Vien, -> Update selected of JobTitle, WorkType, JobCategory, OrganizationUnit
+      // -> Fetch danh sach JobTitle
+      // -> Fetch danh sach WorkType
+      // -> Fetch danh sach JobCategory
+      // -> Fetch danh sach OrganizationUnit
+
+      apiEmployee.current
+        .getEmployeeById(employeeId)
+        .then((data) => form.setFieldsValue({ ...data, dateOfBirth: moment(data.dateOfBirth) }))
+        .catch();
+
+      apiEmployee.current
+        .employees_GetPosition(employeeId)
+        .then((data) => console.log('positions', data) || setPositions(data))
+        .catch();
+
+      apiWorkType.current
+        .workType_GetAll()
+        .then((data) => setWorkType(data))
+        .catch((err) => console.log(err));
+      apiJobCategory.current
+        .jobCategory_GetAll()
+        .then((data) => setJobCategory(data))
+        .catch((err) => console.log(err));
+      apiJobTitle.current
+        .jobTitle_GetAll()
+        .then((data) => setJobTitle(data))
+        .catch((err) => console.log(err));
+      apiOrganization.current
+        .organizationUnits_GetAll()
+        .then((data) => setOrganization(data))
+        .catch((err) => console.log(err));
+      console.log(form.getFieldValue('id'), 'idd');
+      // apiEmployee.current.employees_GetPosition(form.getFieldValue('id')).then((data) => {
+      //   console.log(data);
+      // });
+      // apiWorkType.current
+      //   .workType_GetAll()
+      //   .then((data) => {
+      //     setWorkType(data.map(it =>  {
+      //       ...it.
+      //     }))
+      //   });
+      // apiJobCategory.current.
+      // apiJobTitle.current.
     }
   }, [form, detailPageType, employeeId]);
 
   const onFinish = () => {
     if (detailPageType === 'add') {
-      api.current
+      apiEmployee.current
         .createEmployee(form.getFieldsValue())
         .then(() => {
           message.info('Thêm mới nhân viên thành công');
@@ -158,7 +242,11 @@ function Index() {
   };
 
   return (
-    <AppBody title={mapPageTypeToTitle[detailPageType]}>
+    <AppBody
+      title={mapPageTypeToTitle[detailPageType]}
+      selectedMenu="/employees"
+      openMenu="/employees"
+    >
       <Form form={form} onFinish={onFinish}>
         <Row gutter={40}>
           {/* <Col span={8}>
@@ -219,7 +307,7 @@ function Index() {
               >
                 {detailPageType === 'detail' ? (
                   // <Input  readOnly />
-                  <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }}  />
+                  <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} disabled />
                 ) : (
                   <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
                 )}
@@ -409,7 +497,7 @@ function Index() {
               <Form.Item
                 {...formItemLayout}
                 label="Lương"
-                name="salary"
+                name="Salery"
                 rules={[required('Lương')]}
                 readOnly={detailPageType === 'detail'}
               >
@@ -447,6 +535,90 @@ function Index() {
               </Form.Item>
             </fieldset>
           </Col> */}
+          <Col span={24}>
+            <fieldset>
+              <legend>Vị trí công việc</legend>
+              <Form.Item
+                {...formItemLayoutWide}
+                label="Ngày bắt đầu"
+                name="startDate"
+                rules={[required('Ngày bắt đầu')]}
+              >
+                <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
+              </Form.Item>
+              <Form.Item {...formItemLayoutWide} label="Ngày kết thúc" name="endDate">
+                <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayoutWide}
+                label="Lương"
+                name="Salery"
+                rules={[required('Lương')]}
+              >
+                {/* TODO: trailing VNĐ, format xx,xxx,xxx */}
+                <Input placeholder="1,000,000" readOnly={detailPageType === 'detail'} />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayoutWide}
+                label="Vị trí công việc"
+                name="jobTitle"
+                rules={[required('Vị trí công việc')]}
+              >
+                <Select placeholder="Vị trí công việc">
+                  {jobTitle?.map((it) => (
+                    <Select.Option value={it.name} key={it.id}>
+                      {it.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                {...formItemLayoutWide}
+                label="Loại hình làm việc"
+                name="workType"
+                rules={[required('Loại hình làm việc')]}
+                readOnly={detailPageType === 'detail'}
+              >
+                <Select placeholder="Loại hình làm việc">
+                  {workType?.map((it) => (
+                    <Select.Option value={it.name} key={it.id}>
+                      {it.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                {...formItemLayoutWide}
+                label="Loại hình nhân sự"
+                name="jobCategory"
+                rules={[required('Loại hình nhân sự')]}
+                readOnly={detailPageType === 'detail'}
+              >
+                <Select placeholder="Loại hình nhân sự">
+                  {jobCategory?.map((it) => (
+                    <Select.Option value={it.name} key={it.id}>
+                      {it.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                {...formItemLayoutWide}
+                label="Tổ chức"
+                name="unit"
+                rules={[required('Tổ chức')]}
+                readOnly={detailPageType === 'detail'}
+              >
+                <Select placeholder="Tổ chức">
+                  {organization?.map((it) => (
+                    <Select.Option value={it.name} key={it.id}>
+                      {it.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </fieldset>
+          </Col>
           {detailPageType !== 'add' ? (
             <Col span={24}>
               <fieldset>

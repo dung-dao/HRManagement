@@ -66,7 +66,7 @@ namespace HRData.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmploymentStatuses",
+                name: "WorkType",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)

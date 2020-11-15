@@ -48,8 +48,6 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<EmployeeDTO>(employee);
         }
 
-
-
         [HttpPost(Name = "CreateEmployee")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult<EmployeeDTO> Post([FromBody] EmployeeDTO data)

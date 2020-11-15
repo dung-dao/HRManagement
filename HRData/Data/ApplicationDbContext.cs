@@ -21,7 +21,7 @@ namespace HRData.Data
 
         public DbSet<JobTitle> JobTitles { get; set; }
         public DbSet<JobCategory> JobCategories { get; set; }
-        public DbSet<EmploymentStatus> EmploymentStatuses { get; set; }
+        public DbSet<WorkType> WorkType { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<LeaveDetail> LeaveDetails { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; }
@@ -67,7 +67,7 @@ namespace HRData.Data
 
             builder.Entity<Employee>().HasMany(e => e.Positions).WithOne(p => p.Employee).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Position>().HasOne(p => p.JobTitle);
-            builder.Entity<Position>().HasOne(p => p.EmploymentStatus);
+            builder.Entity<Position>().HasOne(p => p.WorkType);
             builder.Entity<Position>().HasOne(p => p.JobCategory);
             builder.Entity<Position>().HasOne(p => p.Unit);
 
@@ -79,6 +79,10 @@ namespace HRData.Data
                 po.Property(e => e.Salary).IsRequired();
                 po.Property(e => e.Salary).HasColumnType("decimal(18, 6)");
             });
+            #endregion
+
+            #region Loi
+            builder.Entity<WorkType>().ToTable("WorkType");
             #endregion
         }
 

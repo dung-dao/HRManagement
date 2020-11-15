@@ -155,7 +155,7 @@ const columns = ({
 //     department: 'BOD',
 //     employeeType: 'BOD',
 //     jobTitle: 'Giám đốc',
-//     salary: '9000000',
+//     Salery: '9000000',
 //     dateStarted: '01/01/2018',
 //     workType: 'Full-Time',
 //     branch: 'Cơ sở Nguyễn Tuân',
@@ -178,7 +178,7 @@ const columns = ({
 //     department: 'Back Office',
 //     employeeType: 'Nhân viên',
 //     jobTitle: 'Thư ký giám đốc',
-//     salary: '9000000',
+//     Salery: '9000000',
 //     dateStarted: '02/01/2018',
 //     workType: 'Full-Time',
 //     branch: 'Cơ sở Nguyễn Tuân',
@@ -201,7 +201,7 @@ const columns = ({
 //     department: 'Back Office',
 //     employeeType: 'Quản lý',
 //     jobTitle: 'Trưởng phòng hành chính - nhân sự',
-//     salary: '9000000',
+//     Salery: '9000000',
 //     dateStarted: '03/01/2018',
 //     workType: 'Full-Time',
 //     branch: 'Cơ sở Nguyễn Tuân',
@@ -224,7 +224,7 @@ const columns = ({
 //     department: 'BOD',
 //     employeeType: 'BOD',
 //     jobTitle: 'Phó giám đốc khối nghiệp vụ',
-//     salary: '9000000',
+//     Salery: '9000000',
 //     dateStarted: '04/01/2018',
 //     workType: 'Full-Time',
 //     branch: 'Cơ sở Nguyễn Tuân',
@@ -247,7 +247,7 @@ const columns = ({
 //     department: 'BOD',
 //     employeeType: 'BOD',
 //     jobTitle: 'Phó giám đốc khối trường học',
-//     salary: '9000000',
+//     Salery: '9000000',
 //     dateStarted: '05/01/2018',
 //     workType: 'Full-Time',
 //     branch: 'Cơ sở Nguyễn Tuân',
@@ -270,7 +270,7 @@ const columns = ({
 //     department: 'Back Office',
 //     employeeType: 'Nhân viên',
 //     jobTitle: 'Chuyên viên tuyển dụng',
-//     salary: '9000000',
+//     Salery: '9000000',
 //     dateStarted: '06/01/2018',
 //     workType: 'Full-Time',
 //     branch: 'Cơ sở Nguyễn Tuân',
@@ -293,7 +293,7 @@ const columns = ({
 //     department: 'Back Office',
 //     employeeType: 'Nhân viên',
 //     jobTitle: 'Chuyên viên C&B',
-//     salary: '9000000',
+//     Salery: '9000000',
 //     dateStarted: '07/01/2018',
 //     workType: 'Full-Time',
 //     branch: 'Cơ sở Nguyễn Tuân',
@@ -316,7 +316,7 @@ const columns = ({
 //     department: 'Back Office',
 //     employeeType: 'Nhân viên',
 //     jobTitle: 'Admin',
-//     salary: '9000000',
+//     Salery: '9000000',
 //     dateStarted: '08/01/2018',
 //     workType: 'Full-Time',
 //     branch: 'Cơ sở Nguyễn Tuân',
@@ -352,7 +352,7 @@ export default function () {
 
   // const [autoCompleteOptions, setAutoCompleteOptions] = React.useState<any>([]); // list of employees to suggest
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<OrganizationUnitDTO>();
 
   // initially get data from backend
   React.useEffect(() => {
@@ -373,7 +373,7 @@ export default function () {
 
   // map modal type to ...
   const mapTypeTo: Record<ModalType, { title: string }> = {
-    add: { title: 'Thêm mới bộ phận con của' + getSelectedRecord()?.name },
+    add: { title: 'Thêm mới bộ phận con của ' + getSelectedRecord()?.name },
     detail: { title: 'Chi tiết bộ phận  ' + getSelectedRecord()?.name },
     edit: { title: 'Chỉnh sửa bộ phận ' + getSelectedRecord()?.name },
   };
@@ -475,31 +475,24 @@ export default function () {
         onOk={() => {
           if (modalType === 'add') {
             const isNameFilled = form.isFieldsValidating(['name']);
-            if (isNameFilled) {
+            if (isNameFilled) { // TODO: WHY 
             } else {
               form
                 .validateFields()
                 .then((validatedData) => {
-                  const newId = maxBy(data, 'id').id + 1;
-                  const newEntity = {
-                    id: newId,
-                    parentId: selectedId,
-                    ...validatedData,
-                  } as OrganizationUnitDTO;
-                  console.log('> : maxBy(data,.id', maxBy(data, 'id').id + 1);
+                  const parentId = Number(selectedId)
                   api.current // TODO: Them chua duoc
-                    .organizationUnits_CreateUnit(newId, newEntity) // newId: 14 (trong khi database max la 13), newEntity la object ok ma
-                    .then(() => {
+                    .organizationUnits_CreateUnit(parentId, validatedData as OrganizationUnitDTO) // newId: 14 (trong khi database max la 13), newEntity la object ok ma
+                    .then((newEntity) => {
                       setData((prev) => (prev ? prev.concat(newEntity) : prev));
                       message.info(`Thêm mới bộ phận ${validatedData.name} thành công`);
                       setIsModalVisible(false);
                     })
-                    .catch();
+                    .catch((err) => console.log(err));
                 })
                 .catch();
             }
-          }
-          if (modalType === 'edit') {
+          } else if (modalType === 'edit') {
             // TODO: CHinh sua: Them PopConfirm: Ban co muon luu lai chinh sua? Co, Khong, Dung lai
             onEditFinish();
           } else {
@@ -550,12 +543,7 @@ export default function () {
                 onClick={() => setModalType('edit')}
               />
             ) : modalType === 'edit' ? (
-              <Button
-                type="primary"
-                htmlType="submit"
-                children={'Xong'}
-                onClick={onEditFinish}
-              />
+              <Button type="primary" htmlType="submit" children={'Xong'} onClick={onEditFinish} />
             ) : null}
           </Form.Item>
         </Form>
