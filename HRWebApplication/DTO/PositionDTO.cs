@@ -1,9 +1,5 @@
 ﻿using HRData.Models.JobModels;
-using HRData.Models.Organization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HRWebApplication.DTO
 {
@@ -16,6 +12,6 @@ namespace HRWebApplication.DTO
         public JobTitle JobTitle { get; set; }
         public EmploymentStatus EmploymentStatus { get; set; }
         public JobCategory JobCategory { get; set; }
-        public OrganizationUnit Unit { get; set; }
+        public OrganizationUnitDTO Unit { get; set; }
     }
 }
