@@ -76,8 +76,8 @@ namespace HRData.Data
             builder.Entity<Position>().Property(e => e.StartDate).IsRequired();
             builder.Entity<Position>(po =>
             {
-                po.Property(e => e.Salery).IsRequired();
-                po.Property(e => e.Salery).HasColumnType("decimal(18, 6)");
+                po.Property(e => e.Salary).IsRequired();
+                po.Property(e => e.Salary).HasColumnType("decimal(18, 6)");
             });
             #endregion
         }
