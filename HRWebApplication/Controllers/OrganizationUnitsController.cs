@@ -6,6 +6,7 @@ using HRWebApplication.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,31 +15,33 @@ namespace HRWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "admin")]
+    //[Authorize(Roles = "admin")]
     public class OrganizationUnitsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IOrganizationRepository _organizationRepository;
 
-        public OrganizationUnitsController(ApplicationDbContext context, IMapper mapper)
+        public OrganizationUnitsController(ApplicationDbContext context, IMapper mapper, IOrganizationRepository organizationRepository)
         {
             _context = context;
             _mapper = mapper;
+            _organizationRepository = organizationRepository;
         }
 
         [HttpGet(Name = "[controller]_GetAll")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<OrganizationUnitDTO> GetDepartments()
         {
-            var data = _context.OrganizationUnits.ToList();
+            var data = _organizationRepository.GetActiveRecords();
             return _mapper.Map<List<OrganizationUnitDTO>>(data);
         }
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         [HttpGet("{id}", Name = "[controller]_GetById")]
-        public async Task<ActionResult<OrganizationUnitDTO>> GetOrganizationUnit(int id)
+        public ActionResult<OrganizationUnitDTO> GetOrganizationUnit(int id)
         {
-            var organizationUnit = await _context.OrganizationUnits.FindAsync(id);
+            var organizationUnit = _organizationRepository.GetById(id);
 
             if (organizationUnit == null)
             {
@@ -52,7 +55,7 @@ namespace HRWebApplication.Controllers
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         [HttpPut("{id}", Name = "[controller]_Update")]
-        public async Task<IActionResult> PutOrganizationUnit(int id, OrganizationUnitDTO data)
+        public IActionResult PutOrganizationUnit(int id, OrganizationUnitDTO data)
         {
             if (id != data.Id)
             {
@@ -61,13 +64,13 @@ namespace HRWebApplication.Controllers
 
             var organizationUnit = _mapper.Map<OrganizationUnit>(data);
 
-            _context.Entry(organizationUnit).State = EntityState.Modified;
+            _organizationRepository.Update(organizationUnit);
 
             try
             {
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
                 if (!OrganizationUnitExists(id))
                 {
@@ -84,11 +87,11 @@ namespace HRWebApplication.Controllers
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         [HttpPost(Name = "[controller]_CreateRootUnit")]
-        public async Task<ActionResult<OrganizationUnitDTO>> PostOrganizationUnit(OrganizationUnitDTO data)
+        public ActionResult<OrganizationUnitDTO> PostOrganizationUnit(OrganizationUnitDTO data)
         {
             var organizationUnit = ToEntity(data);
-            _context.OrganizationUnits.Add(organizationUnit);
-            await _context.SaveChangesAsync();
+            _organizationRepository.Add(organizationUnit);
+            _context.SaveChanges();
             var res = _mapper.Map<OrganizationUnitDTO>(organizationUnit);
 
             return CreatedAtAction("GetOrganizationUnit", new { id = organizationUnit.Id }, res);
@@ -102,11 +105,11 @@ namespace HRWebApplication.Controllers
             if (parent is null)
                 return NotFound("Parent not found");
 
-            var newUnit = _mapper.Map<OrganizationUnit>(unit);
-            parent.Children.Add(newUnit);
+            var subUnit = _mapper.Map<OrganizationUnit>(unit);
+            _organizationRepository.AddSubUnit(parent, subUnit);
             _context.SaveChanges();
-            var res = _mapper.Map<OrganizationUnitDTO>(newUnit);
-            return CreatedAtAction("GetOrganizationUnit", new { id = newUnit.Id }, res);
+            var res = _mapper.Map<OrganizationUnitDTO>(subUnit);
+            return CreatedAtAction("GetOrganizationUnit", new { id = subUnit.Id }, res);
         }
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
@@ -121,7 +124,7 @@ namespace HRWebApplication.Controllers
             if (parent is null)
                 return BadRequest();
 
-            parent.Children.Add(unit);
+            _organizationRepository.ChangeParentUnit(unit, parent);
             try
             {
                 _context.SaveChanges();
@@ -142,18 +145,16 @@ namespace HRWebApplication.Controllers
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         [HttpDelete("{id}", Name = "[controller]_Delete")]
-        public async Task<IActionResult> DeleteOrganizationUnit(int id)
+        public IActionResult DeleteOrganizationUnit(int id)
         {
-            var unit = await _context.OrganizationUnits.FindAsync(id);
+            var unit = _context.OrganizationUnits.Find(id);
             if (unit == null)
             {
                 return NotFound();
             }
 
-            unit.Children.RemoveAll(p => true);
-            _context.OrganizationUnits.Remove(unit);
-
-            await _context.SaveChangesAsync();
+            _organizationRepository.Delete(unit);
+            _context.SaveChanges();
 
             return NoContent();
         }

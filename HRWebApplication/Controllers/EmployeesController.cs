@@ -29,7 +29,7 @@ namespace HRWebApplication.Controllers
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<EmployeeDTO> GetAll()
         {
-            var employees = _empRepostiory.GetActiveEmployee();
+            var employees = _empRepostiory.GetActiveEmployees();
             return ToListEmployeeDTO(employees);
         }
 
@@ -87,7 +87,7 @@ namespace HRWebApplication.Controllers
             var em = _employees.Find(id);
             if (em is null)
                 return NotFound();
-            _employees.Remove(em);
+            _empRepostiory.Delete(em);
             try
             {
                 Commit();

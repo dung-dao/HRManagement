@@ -31,25 +31,31 @@ namespace HRData.Data
 
         public DbSet<TestModel> TestModels { get; set; }
 
+        private void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
+        {
+            builder.Entity<T>().HasKey(e => e.Id);
+            builder.Entity<T>().Property(e => e.RecordStatus).HasConversion<int>();
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             //Use preconfigured api config
             base.OnModelCreating(builder);
 
-            #region PrimaryKeyReg
-            builder.Entity<OrganizationUnit>().HasKey(e => e.Id);
-
-            builder.Entity<JobTitle>().HasKey(e => e.Id);
-            builder.Entity<JobCategory>().HasKey(e => e.Id);
-            builder.Entity<EmploymentStatus>().HasKey(e => e.Id);
-            builder.Entity<Employee>().HasKey(e => e.Id);
-            builder.Entity<Position>().HasKey(e => e.Id);
-            builder.Entity<LeaveDetail>().HasKey(e => e.Id);
-            builder.Entity<LeaveType>().HasKey(e => e.Id);
+            #region KeyAndProperty
+            RegisterEntity<OrganizationUnit>(builder);
+            RegisterEntity<JobTitle>(builder);
+            RegisterEntity<JobCategory>(builder);
+            RegisterEntity<OrganizationUnit>(builder);
+            RegisterEntity<EmploymentStatus>(builder);
+            RegisterEntity<Employee>(builder);
+            RegisterEntity<Position>(builder);
+            RegisterEntity<LeaveDetail>(builder);
+            RegisterEntity<LeaveType>(builder);
 
             #endregion
 
             #region Organization
+
             builder.Entity<OrganizationUnit>()
                 .HasMany(e => e.Children).WithOne(e => e.Parent)
                 .HasForeignKey(e => e.ParentId)

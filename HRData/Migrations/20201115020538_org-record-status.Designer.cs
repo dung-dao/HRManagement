@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201115020538_org-record-status")]
+    partial class orgrecordstatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,9 +120,6 @@ namespace HRData.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RecordStatus")
-                        .HasColumnType("int");
-
                     b.Property<string>("Sex")
                         .HasColumnType("nvarchar(max)");
 
@@ -151,9 +150,6 @@ namespace HRData.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RecordStatus")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("EmploymentStatuses");
@@ -172,9 +168,6 @@ namespace HRData.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RecordStatus")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("JobCategories");
@@ -192,9 +185,6 @@ namespace HRData.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RecordStatus")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -224,9 +214,6 @@ namespace HRData.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("LeaveDetailId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RecordStatus")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Salery")
@@ -269,9 +256,6 @@ namespace HRData.Migrations
                     b.Property<string>("Reason")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RecordStatus")
-                        .HasColumnType("int");
-
                     b.Property<int?>("TypeId")
                         .HasColumnType("int");
 
@@ -294,9 +278,6 @@ namespace HRData.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RecordStatus")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -341,9 +322,6 @@ namespace HRData.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RecordStatus")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -2,5 +2,8 @@
 
 namespace HRWebApplication.DTO
 {
-    public class DTOBase : EntityBase { }
+    public class DTOBase
+    {
+        public int Id { get; set; }
+    }
 }
