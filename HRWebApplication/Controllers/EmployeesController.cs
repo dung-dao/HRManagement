@@ -26,13 +26,20 @@ namespace HRWebApplication.Controllers
 
         #region Profile
         [HttpGet(Name = "[controller]_GetAll")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<EmployeeDTO> GetAll()
         {
             var employees = _empRepostiory.GetActiveEmployee();
             return ToListEmployeeDTO(employees);
         }
 
+        private List<EmployeeDTO> ToListEmployeeDTO(List<Employee> employees)
+        {
+            return _mapper.Map<List<EmployeeDTO>>(employees);
+        }
+
         [HttpGet("{id}", Name = "GetEmployeeById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<EmployeeDTO> Get(int id)
         {
             var employee = _employees.Find(id);
@@ -41,14 +48,10 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<EmployeeDTO>(employee);
         }
 
-        [HttpGet("{id}/positions", Name = "GetPositionsByEmployeeId")]
-        public ActionResult<IEnumerable<PositionDTO>> GetPosition(int id)
-        private List<EmployeeDTO> ToListEmployeeDTO(List<Employee> employees)
-        {
-            return _mapper.Map<List<EmployeeDTO>>(employees);
-        }
+
 
         [HttpPost(Name = "CreateEmployee")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult<EmployeeDTO> Post([FromBody] EmployeeDTO data)
         {
             var newEmployee = _mapper.Map<Employee>(data);
@@ -59,6 +62,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpPut("{id}", Name = "UpdateEmployeeById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public ActionResult Put(int id, [FromBody] EmployeeDTO value)
         {
             if (value.Id != id)
@@ -79,6 +83,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpDelete("{id}", Name = "DeleteEmployeeById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public ActionResult Delete(int id)
         {
             var em = _employees.Find(id);
@@ -100,6 +105,7 @@ namespace HRWebApplication.Controllers
 
         #region Position
         [HttpGet("{id}/positions", Name = "[controller]_GetPosition")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<IEnumerable<PositionDTO>> GetPosition(int id)
         {
             var employee = _employees.Find(id);
@@ -108,7 +114,18 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<List<PositionDTO>>(_empRepostiory.GetPositions(employee));
         }
 
+        [HttpGet("{id}/positions/{positionId}", Name = "[controller]_GetPositionById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        public ActionResult<IEnumerable<PositionDTO>> GetPositionById(int id, int positionId)
+        {
+            var employee = _employees.Find(id);
+            if (employee is null)
+                return NotFound();
+            return _mapper.Map<List<PositionDTO>>(_empRepostiory.GetPositionById(employee, positionId));
+        }
+
         [HttpPost("{id}/positions", Name = "[controller]_AddToPosition")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult<PositionDTO> AddToPosition(int id, [FromBody] PositionDTO data)
         {
             var employee = _employees.Find(id);
@@ -120,10 +137,11 @@ namespace HRWebApplication.Controllers
             _empRepostiory.NewPosition(employee, po);
 
             Commit();
-            return _mapper.Map<PositionDTO>(po);
+            return CreatedAtAction("GetPositionById", new { id = employee.Id, positionId = po.Id }, _mapper.Map<PositionDTO>(po));
         }
-        
+
         [HttpDelete("{id}/positions/{positionId}", Name = "[controller]_DeletePosition")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public ActionResult DeletePosition(int id, int positionId)
         {
             var employee = _employees.Find(id);
