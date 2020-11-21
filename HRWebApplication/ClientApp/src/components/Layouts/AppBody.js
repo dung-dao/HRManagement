@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { Layout, Breadcrumb, Typography } from 'antd';
 import AppSidebar from './AppSideBar';
 import AppHeader from './AppHeader';
-import { Layout, Breadcrumb } from 'antd';
+
+const { Title } = Typography;
 
 const breadCrumbs = {
   admin: 'Trang chủ',
@@ -10,7 +12,18 @@ const breadCrumbs = {
   merchants: 'Quản lý đối tác',
   'merchant-add': 'Thêm mới đối tác',
   'merchant-detail': 'Chi tiết đối tác',
+  'employees': 'Nhân viên',
+  'organization': 'Tổ chức',
+  'job-category': 'Loại hình nhân sự',
+  'job-title': 'Chức vụ công việc',
+  'work-type': 'Loại công việc',
 };
+
+const breadcrumbStyle = {
+  padding: '8px 10px',
+  backgroundColor: 'white',
+  margin: '8px 0',
+}
 
 class AppBody extends Component {
   loadBreadCrumbs = () => {
@@ -29,7 +42,9 @@ class AppBody extends Component {
   render() {
     const { selectedMenu, title, openMenu } = this.props;
     const breadCrumbArr = this.loadBreadCrumbs().map((i) => (
-      <Breadcrumb.Item key={i}>{i}</Breadcrumb.Item>
+      <Breadcrumb.Item key={i}>
+        <Title style={{ margin: 0 }} level={5}>{i}</Title>
+      </Breadcrumb.Item>
     ));
     return (
       <Layout style={{ minHeight: '100vh' }} id="parent-layout">
@@ -37,7 +52,7 @@ class AppBody extends Component {
         <Layout>
           <AppHeader title={title} />
           <Layout.Content style={{ margin: '0 8px', overflow: 'initial' }}>
-            <Breadcrumb style={{ margin: '8px 0' }}>{breadCrumbArr}</Breadcrumb>
+            <Breadcrumb style={breadcrumbStyle}>{breadCrumbArr}</Breadcrumb>
             <div style={{ padding: 16, background: '#fff' }}>{this.props.children}</div>
           </Layout.Content>
           <Layout.Footer style={{ textAlign: 'center' }}>© 2020 HR Management</Layout.Footer>
