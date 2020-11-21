@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HRData.Migrations
 {
-    public partial class CreateOrgModel : Migration
+    public partial class createmodels : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -66,25 +66,12 @@ namespace HRData.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WorkType",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmploymentStatuses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "JobCategories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -99,6 +86,7 @@ namespace HRData.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -108,23 +96,39 @@ namespace HRData.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LeaveTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeaveTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrganizationUnits",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ParentId = table.Column<int>(type: "int", nullable: true),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrganizationUnits", x => x.Id);
-                    //table.ForeignKey(
-                    //    name: "FK_OrganizationUnits_OrganizationUnits_ParentId",
-                    //    column: x => x.ParentId,
-                    //    principalTable: "OrganizationUnits",
-                    //    principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OrganizationUnits_OrganizationUnits_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "OrganizationUnits",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -153,12 +157,28 @@ namespace HRData.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestModels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkType", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -268,6 +288,28 @@ namespace HRData.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LeaveDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TypeId = table.Column<int>(type: "int", nullable: true),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeaveDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LeaveDetails_LeaveTypes_TypeId",
+                        column: x => x.TypeId,
+                        principalTable: "LeaveTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -283,14 +325,16 @@ namespace HRData.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CurrentAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NationalId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UnitId = table.Column<int>(type: "int", nullable: true)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrganizationUnitId = table.Column<int>(type: "int", nullable: true),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Employees_OrganizationUnits_UnitId",
-                        column: x => x.UnitId,
+                        name: "FK_Employees_OrganizationUnits_OrganizationUnitId",
+                        column: x => x.OrganizationUnitId,
                         principalTable: "OrganizationUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -302,14 +346,16 @@ namespace HRData.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    JobTitleId = table.Column<int>(type: "int", nullable: true),
-                    JobCategoryId = table.Column<int>(type: "int", nullable: true),
-                    EmploymentStatusId = table.Column<int>(type: "int", nullable: true),
-                    UnitId = table.Column<int>(type: "int", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Salery = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Salary = table.Column<decimal>(type: "decimal(18,6)", nullable: false),
+                    LeaveDetailId = table.Column<int>(type: "int", nullable: true),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    JobTitleId = table.Column<int>(type: "int", nullable: true),
+                    WorkTypeId = table.Column<int>(type: "int", nullable: true),
+                    JobCategoryId = table.Column<int>(type: "int", nullable: true),
+                    UnitId = table.Column<int>(type: "int", nullable: true),
+                    RecordStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -319,13 +365,7 @@ namespace HRData.Migrations
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Positions_EmploymentStatuses_EmploymentStatusId",
-                        column: x => x.EmploymentStatusId,
-                        principalTable: "EmploymentStatuses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Positions_JobCategories_JobCategoryId",
                         column: x => x.JobCategoryId,
@@ -339,9 +379,21 @@ namespace HRData.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Positions_LeaveDetails_LeaveDetailId",
+                        column: x => x.LeaveDetailId,
+                        principalTable: "LeaveDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Positions_OrganizationUnits_UnitId",
                         column: x => x.UnitId,
                         principalTable: "OrganizationUnits",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Positions_WorkType_WorkTypeId",
+                        column: x => x.WorkTypeId,
+                        principalTable: "WorkType",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -397,9 +449,14 @@ namespace HRData.Migrations
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employees_UnitId",
+                name: "IX_Employees_OrganizationUnitId",
                 table: "Employees",
-                column: "UnitId");
+                column: "OrganizationUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LeaveDetails_TypeId",
+                table: "LeaveDetails",
+                column: "TypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganizationUnits_ParentId",
@@ -427,11 +484,6 @@ namespace HRData.Migrations
                 column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Positions_EmploymentStatusId",
-                table: "Positions",
-                column: "EmploymentStatusId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Positions_JobCategoryId",
                 table: "Positions",
                 column: "JobCategoryId");
@@ -442,9 +494,21 @@ namespace HRData.Migrations
                 column: "JobTitleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Positions_LeaveDetailId",
+                table: "Positions",
+                column: "LeaveDetailId",
+                unique: true,
+                filter: "[LeaveDetailId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Positions_UnitId",
                 table: "Positions",
                 column: "UnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Positions_WorkTypeId",
+                table: "Positions",
+                column: "WorkTypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -486,16 +550,22 @@ namespace HRData.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "EmploymentStatuses");
-
-            migrationBuilder.DropTable(
                 name: "JobCategories");
 
             migrationBuilder.DropTable(
                 name: "JobTitles");
 
             migrationBuilder.DropTable(
+                name: "LeaveDetails");
+
+            migrationBuilder.DropTable(
+                name: "WorkType");
+
+            migrationBuilder.DropTable(
                 name: "OrganizationUnits");
+
+            migrationBuilder.DropTable(
+                name: "LeaveTypes");
         }
     }
 }

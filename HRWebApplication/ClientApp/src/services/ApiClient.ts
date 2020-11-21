@@ -516,6 +516,57 @@ export class EmployeesClient extends ApiClientBase {
     }
 
     /**
+     * @return Success
+     */
+    employees_GetCurrentPosition(id: number): Promise<PositionDTO> {
+        let url_ = this.baseUrl + "/api/Employees/{id}/positions/current";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployees_GetCurrentPosition(_response);
+        });
+    }
+
+    protected processEmployees_GetCurrentPosition(response: Response): Promise<PositionDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PositionDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -577,7 +628,7 @@ export class JobCategoryClient extends ApiClientBase {
     /**
      * @return Success
      */
-    jobCategory_GetAll(): Promise<JobCategory[]> {
+    jobCategory_GetAll(): Promise<JobCategoryDTO[]> {
         let url_ = this.baseUrl + "/api/JobCategory";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -595,7 +646,7 @@ export class JobCategoryClient extends ApiClientBase {
         });
     }
 
-    protected processJobCategory_GetAll(response: Response): Promise<JobCategory[]> {
+    protected processJobCategory_GetAll(response: Response): Promise<JobCategoryDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -612,7 +663,7 @@ export class JobCategoryClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(JobCategory.fromJS(item));
+                    result200!.push(JobCategoryDTO.fromJS(item));
             }
             return result200;
             });
@@ -630,7 +681,7 @@ export class JobCategoryClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    jobCategory_Create(body: JobCategory | undefined): Promise<JobCategory> {
+    jobCategory_Create(body: JobCategoryDTO | undefined): Promise<JobCategoryDTO> {
         let url_ = this.baseUrl + "/api/JobCategory";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -652,7 +703,7 @@ export class JobCategoryClient extends ApiClientBase {
         });
     }
 
-    protected processJobCategory_Create(response: Response): Promise<JobCategory> {
+    protected processJobCategory_Create(response: Response): Promise<JobCategoryDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 400) {
@@ -666,7 +717,7 @@ export class JobCategoryClient extends ApiClientBase {
             return response.text().then((_responseText) => {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result201 = JobCategory.fromJS(resultData201);
+            result201 = JobCategoryDTO.fromJS(resultData201);
             return result201;
             });
         } else {
@@ -682,7 +733,7 @@ export class JobCategoryClient extends ApiClientBase {
     /**
      * @return Success
      */
-    jobCategory_GetById(id: number): Promise<JobCategory> {
+    jobCategory_GetById(id: number): Promise<JobCategoryDTO> {
         let url_ = this.baseUrl + "/api/JobCategory/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -703,7 +754,7 @@ export class JobCategoryClient extends ApiClientBase {
         });
     }
 
-    protected processJobCategory_GetById(response: Response): Promise<JobCategory> {
+    protected processJobCategory_GetById(response: Response): Promise<JobCategoryDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -717,7 +768,7 @@ export class JobCategoryClient extends ApiClientBase {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = JobCategory.fromJS(resultData200);
+            result200 = JobCategoryDTO.fromJS(resultData200);
             return result200;
             });
         } else {
@@ -734,7 +785,7 @@ export class JobCategoryClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    jobCategory_Update(id: number, body: JobCategory | undefined): Promise<void> {
+    jobCategory_Update(id: number, body: JobCategoryDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/JobCategory/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -858,7 +909,7 @@ export class JobTitleClient extends ApiClientBase {
     /**
      * @return Success
      */
-    jobTitle_GetAll(): Promise<JobTitle[]> {
+    jobTitle_GetAll(): Promise<JobTitleDTO[]> {
         let url_ = this.baseUrl + "/api/JobTitle";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -876,7 +927,7 @@ export class JobTitleClient extends ApiClientBase {
         });
     }
 
-    protected processJobTitle_GetAll(response: Response): Promise<JobTitle[]> {
+    protected processJobTitle_GetAll(response: Response): Promise<JobTitleDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -893,7 +944,7 @@ export class JobTitleClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(JobTitle.fromJS(item));
+                    result200!.push(JobTitleDTO.fromJS(item));
             }
             return result200;
             });
@@ -911,7 +962,7 @@ export class JobTitleClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    jobTitle_Create(body: JobTitle | undefined): Promise<JobTitle> {
+    jobTitle_Create(body: JobTitleDTO | undefined): Promise<JobTitleDTO> {
         let url_ = this.baseUrl + "/api/JobTitle";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -933,7 +984,7 @@ export class JobTitleClient extends ApiClientBase {
         });
     }
 
-    protected processJobTitle_Create(response: Response): Promise<JobTitle> {
+    protected processJobTitle_Create(response: Response): Promise<JobTitleDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 400) {
@@ -947,7 +998,7 @@ export class JobTitleClient extends ApiClientBase {
             return response.text().then((_responseText) => {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result201 = JobTitle.fromJS(resultData201);
+            result201 = JobTitleDTO.fromJS(resultData201);
             return result201;
             });
         } else {
@@ -963,7 +1014,7 @@ export class JobTitleClient extends ApiClientBase {
     /**
      * @return Success
      */
-    jobTitle_GetById(id: number): Promise<JobTitle> {
+    jobTitle_GetById(id: number): Promise<JobTitleDTO> {
         let url_ = this.baseUrl + "/api/JobTitle/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -984,7 +1035,7 @@ export class JobTitleClient extends ApiClientBase {
         });
     }
 
-    protected processJobTitle_GetById(response: Response): Promise<JobTitle> {
+    protected processJobTitle_GetById(response: Response): Promise<JobTitleDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -998,7 +1049,7 @@ export class JobTitleClient extends ApiClientBase {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = JobTitle.fromJS(resultData200);
+            result200 = JobTitleDTO.fromJS(resultData200);
             return result200;
             });
         } else {
@@ -1015,7 +1066,7 @@ export class JobTitleClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    jobTitle_Update(id: number, body: JobTitle | undefined): Promise<void> {
+    jobTitle_Update(id: number, body: JobTitleDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/JobTitle/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -1139,7 +1190,7 @@ export class LeaveTypeClient extends ApiClientBase {
     /**
      * @return Success
      */
-    leaveType_GetAll(): Promise<LeaveType[]> {
+    leaveType_GetAll(): Promise<LeaveTypeDTO[]> {
         let url_ = this.baseUrl + "/api/LeaveType";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1157,7 +1208,7 @@ export class LeaveTypeClient extends ApiClientBase {
         });
     }
 
-    protected processLeaveType_GetAll(response: Response): Promise<LeaveType[]> {
+    protected processLeaveType_GetAll(response: Response): Promise<LeaveTypeDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -1174,7 +1225,7 @@ export class LeaveTypeClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(LeaveType.fromJS(item));
+                    result200!.push(LeaveTypeDTO.fromJS(item));
             }
             return result200;
             });
@@ -1192,7 +1243,7 @@ export class LeaveTypeClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    leaveType_Create(body: LeaveType | undefined): Promise<LeaveType> {
+    leaveType_Create(body: LeaveTypeDTO | undefined): Promise<LeaveTypeDTO> {
         let url_ = this.baseUrl + "/api/LeaveType";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1214,7 +1265,7 @@ export class LeaveTypeClient extends ApiClientBase {
         });
     }
 
-    protected processLeaveType_Create(response: Response): Promise<LeaveType> {
+    protected processLeaveType_Create(response: Response): Promise<LeaveTypeDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 400) {
@@ -1228,7 +1279,7 @@ export class LeaveTypeClient extends ApiClientBase {
             return response.text().then((_responseText) => {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result201 = LeaveType.fromJS(resultData201);
+            result201 = LeaveTypeDTO.fromJS(resultData201);
             return result201;
             });
         } else {
@@ -1244,7 +1295,7 @@ export class LeaveTypeClient extends ApiClientBase {
     /**
      * @return Success
      */
-    leaveType_GetById(id: number): Promise<LeaveType> {
+    leaveType_GetById(id: number): Promise<LeaveTypeDTO> {
         let url_ = this.baseUrl + "/api/LeaveType/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -1265,7 +1316,7 @@ export class LeaveTypeClient extends ApiClientBase {
         });
     }
 
-    protected processLeaveType_GetById(response: Response): Promise<LeaveType> {
+    protected processLeaveType_GetById(response: Response): Promise<LeaveTypeDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -1279,7 +1330,7 @@ export class LeaveTypeClient extends ApiClientBase {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = LeaveType.fromJS(resultData200);
+            result200 = LeaveTypeDTO.fromJS(resultData200);
             return result200;
             });
         } else {
@@ -1296,7 +1347,7 @@ export class LeaveTypeClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    leaveType_Update(id: number, body: LeaveType | undefined): Promise<void> {
+    leaveType_Update(id: number, body: LeaveTypeDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/LeaveType/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -1866,7 +1917,7 @@ export class WorkTypeClient extends ApiClientBase {
     /**
      * @return Success
      */
-    workType_GetAll(): Promise<WorkType[]> {
+    workType_GetAll(): Promise<WorkTypeDTO[]> {
         let url_ = this.baseUrl + "/api/WorkType";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1884,7 +1935,7 @@ export class WorkTypeClient extends ApiClientBase {
         });
     }
 
-    protected processWorkType_GetAll(response: Response): Promise<WorkType[]> {
+    protected processWorkType_GetAll(response: Response): Promise<WorkTypeDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -1901,7 +1952,7 @@ export class WorkTypeClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(WorkType.fromJS(item));
+                    result200!.push(WorkTypeDTO.fromJS(item));
             }
             return result200;
             });
@@ -1919,7 +1970,7 @@ export class WorkTypeClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    workType_Create(body: WorkType | undefined): Promise<WorkType> {
+    workType_Create(body: WorkTypeDTO | undefined): Promise<WorkTypeDTO> {
         let url_ = this.baseUrl + "/api/WorkType";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1941,7 +1992,7 @@ export class WorkTypeClient extends ApiClientBase {
         });
     }
 
-    protected processWorkType_Create(response: Response): Promise<WorkType> {
+    protected processWorkType_Create(response: Response): Promise<WorkTypeDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 400) {
@@ -1955,7 +2006,7 @@ export class WorkTypeClient extends ApiClientBase {
             return response.text().then((_responseText) => {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result201 = WorkType.fromJS(resultData201);
+            result201 = WorkTypeDTO.fromJS(resultData201);
             return result201;
             });
         } else {
@@ -1971,7 +2022,7 @@ export class WorkTypeClient extends ApiClientBase {
     /**
      * @return Success
      */
-    workType_GetById(id: number): Promise<WorkType> {
+    workType_GetById(id: number): Promise<WorkTypeDTO> {
         let url_ = this.baseUrl + "/api/WorkType/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -1992,7 +2043,7 @@ export class WorkTypeClient extends ApiClientBase {
         });
     }
 
-    protected processWorkType_GetById(response: Response): Promise<WorkType> {
+    protected processWorkType_GetById(response: Response): Promise<WorkTypeDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -2006,7 +2057,7 @@ export class WorkTypeClient extends ApiClientBase {
             return response.text().then((_responseText) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = WorkType.fromJS(resultData200);
+            result200 = WorkTypeDTO.fromJS(resultData200);
             return result200;
             });
         } else {
@@ -2023,7 +2074,7 @@ export class WorkTypeClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    workType_Update(id: number, body: WorkType | undefined): Promise<void> {
+    workType_Update(id: number, body: WorkTypeDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/WorkType/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -2261,12 +2312,13 @@ export interface IEmployeeDTO {
     nationalId?: string | undefined;
 }
 
-export class JobTitle implements IJobTitle {
+/** Vị trí công việc nhân viên bán hàng, nhân viên thu ngân... */
+export class JobTitleDTO implements IJobTitleDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
 
-    constructor(data?: IJobTitle) {
+    constructor(data?: IJobTitleDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2283,9 +2335,9 @@ export class JobTitle implements IJobTitle {
         }
     }
 
-    static fromJS(data: any): JobTitle {
+    static fromJS(data: any): JobTitleDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new JobTitle();
+        let result = new JobTitleDTO();
         result.init(data);
         return result;
     }
@@ -2299,18 +2351,20 @@ export class JobTitle implements IJobTitle {
     }
 }
 
-export interface IJobTitle {
+/** Vị trí công việc nhân viên bán hàng, nhân viên thu ngân... */
+export interface IJobTitleDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
 }
 
-export class WorkType implements IWorkType {
+/** Part-time, fulltime, remote... */
+export class WorkTypeDTO implements IWorkTypeDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
 
-    constructor(data?: IWorkType) {
+    constructor(data?: IWorkTypeDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2327,9 +2381,9 @@ export class WorkType implements IWorkType {
         }
     }
 
-    static fromJS(data: any): WorkType {
+    static fromJS(data: any): WorkTypeDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new WorkType();
+        let result = new WorkTypeDTO();
         result.init(data);
         return result;
     }
@@ -2343,18 +2397,20 @@ export class WorkType implements IWorkType {
     }
 }
 
-export interface IWorkType {
+/** Part-time, fulltime, remote... */
+export interface IWorkTypeDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
 }
 
-export class JobCategory implements IJobCategory {
+/** Professionals, Technicians, Officials and Managers */
+export class JobCategoryDTO implements IJobCategoryDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
 
-    constructor(data?: IJobCategory) {
+    constructor(data?: IJobCategoryDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2371,9 +2427,9 @@ export class JobCategory implements IJobCategory {
         }
     }
 
-    static fromJS(data: any): JobCategory {
+    static fromJS(data: any): JobCategoryDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new JobCategory();
+        let result = new JobCategoryDTO();
         result.init(data);
         return result;
     }
@@ -2387,7 +2443,8 @@ export class JobCategory implements IJobCategory {
     }
 }
 
-export interface IJobCategory {
+/** Professionals, Technicians, Officials and Managers */
+export interface IJobCategoryDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
@@ -2449,9 +2506,9 @@ export class PositionDTO implements IPositionDTO {
     startDate?: Date;
     endDate?: Date;
     salery?: number;
-    jobTitle?: JobTitle;
-    employmentStatus?: WorkType;
-    jobCategory?: JobCategory;
+    jobTitle?: JobTitleDTO;
+    employmentStatus?: WorkTypeDTO;
+    jobCategory?: JobCategoryDTO;
     unit?: OrganizationUnitDTO;
 
     constructor(data?: IPositionDTO) {
@@ -2468,9 +2525,9 @@ export class PositionDTO implements IPositionDTO {
             this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
             this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
             this.salery = _data["salery"];
-            this.jobTitle = _data["jobTitle"] ? JobTitle.fromJS(_data["jobTitle"]) : <any>undefined;
-            this.employmentStatus = _data["employmentStatus"] ? WorkType.fromJS(_data["employmentStatus"]) : <any>undefined;
-            this.jobCategory = _data["jobCategory"] ? JobCategory.fromJS(_data["jobCategory"]) : <any>undefined;
+            this.jobTitle = _data["jobTitle"] ? JobTitleDTO.fromJS(_data["jobTitle"]) : <any>undefined;
+            this.employmentStatus = _data["employmentStatus"] ? WorkTypeDTO.fromJS(_data["employmentStatus"]) : <any>undefined;
+            this.jobCategory = _data["jobCategory"] ? JobCategoryDTO.fromJS(_data["jobCategory"]) : <any>undefined;
             this.unit = _data["unit"] ? OrganizationUnitDTO.fromJS(_data["unit"]) : <any>undefined;
         }
     }
@@ -2499,18 +2556,18 @@ export interface IPositionDTO {
     startDate?: Date;
     endDate?: Date;
     salery?: number;
-    jobTitle?: JobTitle;
-    employmentStatus?: WorkType;
-    jobCategory?: JobCategory;
+    jobTitle?: JobTitleDTO;
+    employmentStatus?: WorkTypeDTO;
+    jobCategory?: JobCategoryDTO;
     unit?: OrganizationUnitDTO;
 }
 
-export class LeaveType implements ILeaveType {
+export class LeaveTypeDTO implements ILeaveTypeDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
 
-    constructor(data?: ILeaveType) {
+    constructor(data?: ILeaveTypeDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2527,9 +2584,9 @@ export class LeaveType implements ILeaveType {
         }
     }
 
-    static fromJS(data: any): LeaveType {
+    static fromJS(data: any): LeaveTypeDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new LeaveType();
+        let result = new LeaveTypeDTO();
         result.init(data);
         return result;
     }
@@ -2543,7 +2600,7 @@ export class LeaveType implements ILeaveType {
     }
 }
 
-export interface ILeaveType {
+export interface ILeaveTypeDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
@@ -2552,7 +2609,7 @@ export interface ILeaveType {
 export class LeaveDetailDTO implements ILeaveDetailDTO {
     date?: Date;
     reason?: string | undefined;
-    type?: LeaveType;
+    type?: LeaveTypeDTO;
 
     constructor(data?: ILeaveDetailDTO) {
         if (data) {
@@ -2567,7 +2624,7 @@ export class LeaveDetailDTO implements ILeaveDetailDTO {
         if (_data) {
             this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
             this.reason = _data["reason"];
-            this.type = _data["type"] ? LeaveType.fromJS(_data["type"]) : <any>undefined;
+            this.type = _data["type"] ? LeaveTypeDTO.fromJS(_data["type"]) : <any>undefined;
         }
     }
 
@@ -2590,7 +2647,7 @@ export class LeaveDetailDTO implements ILeaveDetailDTO {
 export interface ILeaveDetailDTO {
     date?: Date;
     reason?: string | undefined;
-    type?: LeaveType;
+    type?: LeaveTypeDTO;
 }
 
 export class ApiException extends Error {
