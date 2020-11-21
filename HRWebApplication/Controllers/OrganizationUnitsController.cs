@@ -156,7 +156,7 @@ namespace HRWebApplication.Controllers
             _organizationRepository.Delete(unit);
             _context.SaveChanges();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool OrganizationUnitExists(int id)
