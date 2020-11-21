@@ -97,7 +97,7 @@ namespace HRWebApplication.Controllers
                 return Forbid();
                 throw;
             }
-            return NoContent();
+            return Ok();
         }
         #endregion
 
@@ -160,7 +160,7 @@ namespace HRWebApplication.Controllers
                 return NotFound();
             _empRepostiory.DeletePosition(employee, position);
             Commit();
-            return NoContent();
+            return Ok();
         }
 
         [HttpPost("{id}/positions/leave", Name = "[controller]_Leave")]

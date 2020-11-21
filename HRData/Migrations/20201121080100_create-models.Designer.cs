@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201110080624_add-employee-model")]
-    partial class addemployeemodel
+    [Migration("20201121080100_create-models")]
+    partial class createmodels
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,7 @@ namespace HRData.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0-rc.2.20475.6");
+                .HasAnnotation("ProductVersion", "5.0.0");
 
             modelBuilder.Entity("HRData.Models.ApplicationUser", b =>
                 {
@@ -120,7 +120,14 @@ namespace HRData.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
                     b.Property<string>("Sex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkEmail")
@@ -131,24 +138,6 @@ namespace HRData.Migrations
                     b.HasIndex("OrganizationUnitId");
 
                     b.ToTable("Employees");
-                });
-
-            modelBuilder.Entity("HRData.Models.JobModels.EmploymentStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EmploymentStatuses");
                 });
 
             modelBuilder.Entity("HRData.Models.JobModels.JobCategory", b =>
@@ -163,6 +152,9 @@ namespace HRData.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -182,6 +174,9 @@ namespace HRData.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("JobTitles");
@@ -194,14 +189,11 @@ namespace HRData.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("time");
-
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EmploymentStatusId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("JobCategoryId")
                         .HasColumnType("int");
@@ -209,8 +201,14 @@ namespace HRData.Migrations
                     b.Property<int?>("JobTitleId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Salery")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int?>("LeaveDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -218,19 +216,94 @@ namespace HRData.Migrations
                     b.Property<int?>("UnitId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("WorkTypeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("EmploymentStatusId");
 
                     b.HasIndex("JobCategoryId");
 
                     b.HasIndex("JobTitleId");
 
+                    b.HasIndex("LeaveDetailId")
+                        .IsUnique()
+                        .HasFilter("[LeaveDetailId] IS NOT NULL");
+
                     b.HasIndex("UnitId");
 
+                    b.HasIndex("WorkTypeId");
+
                     b.ToTable("Positions");
+                });
+
+            modelBuilder.Entity("HRData.Models.JobModels.WorkType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkType");
+                });
+
+            modelBuilder.Entity("HRData.Models.LeaveDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TypeId");
+
+                    b.ToTable("LeaveDetails");
+                });
+
+            modelBuilder.Entity("HRData.Models.LeaveType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LeaveTypes");
                 });
 
             modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
@@ -247,6 +320,9 @@ namespace HRData.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecordStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -268,6 +344,9 @@ namespace HRData.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RecordStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -522,14 +601,9 @@ namespace HRData.Migrations
             modelBuilder.Entity("HRData.Models.JobModels.Position", b =>
                 {
                     b.HasOne("HRData.Models.Employee", "Employee")
-                        .WithMany()
+                        .WithMany("Positions")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HRData.Models.JobModels.EmploymentStatus", "EmploymentStatus")
-                        .WithMany()
-                        .HasForeignKey("EmploymentStatusId");
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("HRData.Models.JobModels.JobCategory", "JobCategory")
                         .WithMany()
@@ -539,19 +613,38 @@ namespace HRData.Migrations
                         .WithMany()
                         .HasForeignKey("JobTitleId");
 
+                    b.HasOne("HRData.Models.LeaveDetail", "LeaveDetail")
+                        .WithOne("Position")
+                        .HasForeignKey("HRData.Models.JobModels.Position", "LeaveDetailId");
+
                     b.HasOne("HRData.Models.Organization.OrganizationUnit", "Unit")
                         .WithMany()
                         .HasForeignKey("UnitId");
 
-                    b.Navigation("Employee");
+                    b.HasOne("HRData.Models.JobModels.WorkType", "WorkType")
+                        .WithMany()
+                        .HasForeignKey("WorkTypeId");
 
-                    b.Navigation("EmploymentStatus");
+                    b.Navigation("Employee");
 
                     b.Navigation("JobCategory");
 
                     b.Navigation("JobTitle");
 
+                    b.Navigation("LeaveDetail");
+
                     b.Navigation("Unit");
+
+                    b.Navigation("WorkType");
+                });
+
+            modelBuilder.Entity("HRData.Models.LeaveDetail", b =>
+                {
+                    b.HasOne("HRData.Models.LeaveType", "Type")
+                        .WithMany()
+                        .HasForeignKey("TypeId");
+
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>
@@ -613,6 +706,16 @@ namespace HRData.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("HRData.Models.Employee", b =>
+                {
+                    b.Navigation("Positions");
+                });
+
+            modelBuilder.Entity("HRData.Models.LeaveDetail", b =>
+                {
+                    b.Navigation("Position");
                 });
 
             modelBuilder.Entity("HRData.Models.Organization.OrganizationUnit", b =>

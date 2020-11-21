@@ -103,7 +103,7 @@ namespace HRWebApplication.Controllers.Base
             entity.RecordStatus = RecordStatus.InActive;
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool Exists(int id)
