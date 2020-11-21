@@ -1,6 +1,6 @@
 import React from 'react';
 import {Form, Input, message, Modal} from "antd";
-import {WorkType} from "services/ApiClient";
+import {WorkTypeDTO} from "services/ApiClient";
 import {usePage} from "./PageProvider";
 
 const formLayout = {
@@ -14,12 +14,12 @@ const title = {
 }
 
 export function WorkTypeModal() {
-  const [form] = Form.useForm<WorkType>();
+  const [form] = Form.useForm<WorkTypeDTO>();
   const { modalVisible, setModalVisible, modalType, record, api, data, setData } = usePage()
   const initialValues = modalType === 'edit' ? record : undefined
   const onSubmit = async () => {
     try {
-      const values = await form.validateFields() as WorkType
+      const values = await form.validateFields() as WorkTypeDTO
 
       if (modalType === 'add') {
         const result = await api.workType_Create(values)

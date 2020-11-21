@@ -5,7 +5,6 @@ import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
 
 export function ActionRenderer(text, record) {
   const {setModalVisible,setModalType, setRecord, api, data, setData} = usePage()
-  console.log({record})
   const onDelete = async () => {
     try {
       await api.workType_Delete(record.id)

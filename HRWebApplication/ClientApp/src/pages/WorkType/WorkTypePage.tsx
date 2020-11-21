@@ -1,7 +1,7 @@
 import React from 'react';
 import AppBody from "../../components/Layouts/AppBody";
 import {Table} from "antd";
-import {WorkType, WorkTypeClient} from "../../services/ApiClient";
+import {WorkTypeDTO, WorkTypeClient} from "../../services/ApiClient";
 import {useTry} from "../../hooks";
 import {WorkTypeModal} from "./WorkTypeModal";
 import {ModalType, PageProvider} from "./PageProvider";
@@ -38,7 +38,7 @@ export function WorkTypePage(props) {
   const { isPending, $try: tryGetAll, data, setData } = useTry(() => api.current.workType_GetAll())
   const [modalVisible, setModalVisible] = React.useState(false)
   const [modalType, setModalType] = React.useState<ModalType>('add')
-  const [record, setRecord] = React.useState<WorkType>()
+  const [record, setRecord] = React.useState<WorkTypeDTO>()
   const pageContext = {
     modalVisible,
     setModalVisible,

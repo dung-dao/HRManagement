@@ -1,4 +1,4 @@
-import {WorkType} from "services/ApiClient";
+import {WorkTypeDTO} from "services/ApiClient";
 
 export const workTypes = [
   {
@@ -16,4 +16,4 @@ export const workTypes = [
     name: 'Remote',
     description: 'K lên văn phòng',
   },
-] as WorkType[]
+] as WorkTypeDTO[]

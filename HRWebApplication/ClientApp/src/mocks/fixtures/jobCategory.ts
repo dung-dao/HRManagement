@@ -1,4 +1,4 @@
-import {JobCategory} from "services/ApiClient";
+import {JobCategoryDTO} from "services/ApiClient";
 
 export const jobCategories = [
   {
@@ -16,4 +16,4 @@ export const jobCategories = [
     name: 'Quản lý',
     description: 'Quản lý Cu bưik',
   },
-] as JobCategory[]
+] as JobCategoryDTO[]

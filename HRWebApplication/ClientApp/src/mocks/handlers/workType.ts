@@ -1,7 +1,7 @@
 import { rest } from "msw"
 import { baseUrl, delay } from "../common"
 import {workTypes} from "mocks/fixtures/workType";
-import {WorkType} from "../../services/ApiClient";
+import {WorkTypeDTO} from "../../services/ApiClient";
 
 const handlers = [
   rest.get(baseUrl + "/api/WorkType", (req, res, ctx) => {
@@ -11,7 +11,7 @@ const handlers = [
     )
   }),
   rest.post(baseUrl + "/api/WorkType", (req, res, ctx) => {
-    const newWorkType = req.body as WorkType
+    const newWorkType = req.body as WorkTypeDTO
     workTypes.push(newWorkType)
     return res(
       ctx.delay(delay),
@@ -21,7 +21,7 @@ const handlers = [
   }),
   rest.put(baseUrl + "/api/WorkType/:id", (req, res, ctx) => {
     const id = Number(req.params.id)
-    const workType = req.body as WorkType
+    const workType = req.body as WorkTypeDTO
     const index = workTypes.findIndex(w => w.id === id)
 
     workTypes[index] = workType

@@ -1,5 +1,5 @@
 import React, {PropsWithChildren} from "react"
-import {WorkType, WorkTypeClient} from "../../services/ApiClient";
+import {WorkTypeDTO, WorkTypeClient} from "../../services/ApiClient";
 
 export type ModalType = 'add' | 'edit'
 type PageContextData = {
@@ -7,10 +7,10 @@ type PageContextData = {
   modalVisible: boolean;
   setModalType: (visible: ModalType) => void;
   modalType: ModalType;
-  setRecord: (visible: WorkType) => void;
-  record?: WorkType;
-  data: WorkType[];
-  setData: (data: WorkType[]) => void;
+  setRecord: (visible: WorkTypeDTO) => void;
+  record?: WorkTypeDTO;
+  data: WorkTypeDTO[];
+  setData: (data: WorkTypeDTO[]) => void;
   api: WorkTypeClient;
 }
 

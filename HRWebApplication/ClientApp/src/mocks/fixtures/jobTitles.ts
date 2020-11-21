@@ -1,4 +1,4 @@
-import {JobTitle} from "services/ApiClient";
+import {JobTitleDTO} from "services/ApiClient";
 
 export const jobTitles = [
   { id: 1, name: 'Giám đốc', description: null, },
@@ -35,4 +35,4 @@ export const jobTitles = [
   { id: 34,name: 'Giáo viên', description: 'Giáo viên' },
   { id: 35,name: 'Admin lớp học', description: 'Admin lớp học' },
   { id: 36,name: 'Trợ giảng', description: 'Trợ giảng' },
-] as JobTitle[]
+] as JobTitleDTO[]
