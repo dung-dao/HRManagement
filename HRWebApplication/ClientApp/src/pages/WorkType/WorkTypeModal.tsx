@@ -17,24 +17,26 @@ export function WorkTypeModal() {
   const [form] = Form.useForm<WorkTypeDTO>();
   const { modalVisible, setModalVisible, modalType, record, api, data, setData } = usePage()
   const initialValues = modalType === 'edit' ? record : undefined
+  const [loading, setLoading] = React.useState(false)
   const onSubmit = async () => {
     try {
       const values = await form.validateFields() as WorkTypeDTO
+      setLoading(true)
 
       if (modalType === 'add') {
         const result = await api.workType_Create(values)
         message.info(`Thêm mới loại công việc ${values.name} thành công`);
         setData([...data, result])
-        setModalVisible(false)
       }
       if (modalType === 'edit') {
         await api.workType_Update(values.id!, values)
         const newData = await api.workType_GetAll()
         message.info(`Chỉnh sửa loại công việc ${values?.name} thành công`)
         setData(newData)
-        setModalVisible(false)
       }
 
+      setModalVisible(false)
+      setLoading(false)
       form.resetFields()
     } catch (e) {
       console.error(e)
@@ -58,6 +60,7 @@ export function WorkTypeModal() {
       }}
       onOk={onSubmit}
       onCancel={() => setModalVisible(false)}
+      confirmLoading={loading}
       destroyOnClose
     >
       <Form
