@@ -6,6 +6,12 @@ import App from './App';
 
 // styles
 import 'antd/dist/antd.css';
+import {isNearHuscarl} from "./constants";
+
+if (isNearHuscarl) {
+  const { browser } = require('./mocks/browser')
+  browser.start()
+}
 
 ReactDOM.render(
   <BrowserRouter basename={process.env.PUBLIC_URL}>

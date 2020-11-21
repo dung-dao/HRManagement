@@ -73,7 +73,7 @@ export class EmployeesClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     createEmployee(body: EmployeeDTO | undefined): Promise<EmployeeDTO> {
@@ -177,7 +177,7 @@ export class EmployeesClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     updateEmployeeById(id: number, body: EmployeeDTO | undefined): Promise<void> {
@@ -345,7 +345,7 @@ export class EmployeesClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     employees_AddToPosition(id: number, body: PositionDTO | undefined): Promise<PositionDTO> {
@@ -516,7 +516,7 @@ export class EmployeesClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     employees_Leave(id: number, body: LeaveDetailDTO | undefined): Promise<PositionDTO> {
@@ -627,7 +627,7 @@ export class JobCategoryClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     jobCategory_Create(body: JobCategory | undefined): Promise<JobCategory> {
@@ -731,7 +731,7 @@ export class JobCategoryClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     jobCategory_Update(id: number, body: JobCategory | undefined): Promise<void> {
@@ -908,7 +908,7 @@ export class JobTitleClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     jobTitle_Create(body: JobTitle | undefined): Promise<JobTitle> {
@@ -1012,7 +1012,7 @@ export class JobTitleClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     jobTitle_Update(id: number, body: JobTitle | undefined): Promise<void> {
@@ -1189,7 +1189,7 @@ export class LeaveTypeClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     leaveType_Create(body: LeaveType | undefined): Promise<LeaveType> {
@@ -1293,7 +1293,7 @@ export class LeaveTypeClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     leaveType_Update(id: number, body: LeaveType | undefined): Promise<void> {
@@ -1520,7 +1520,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     organizationUnits_CreateRootUnit(body: OrganizationUnitDTO | undefined): Promise<OrganizationUnitDTO> {
@@ -1624,7 +1624,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     organizationUnits_Update(id: number, body: OrganizationUnitDTO | undefined): Promise<void> {
@@ -1737,7 +1737,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     organizationUnits_CreateUnit(id: number, body: OrganizationUnitDTO | undefined): Promise<OrganizationUnitDTO> {
@@ -1793,7 +1793,7 @@ export class OrganizationUnitsClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     organizationUnits_ChangeParent(id: number, body: OrganizationUnitDTO | undefined): Promise<void> {
@@ -1916,7 +1916,7 @@ export class WorkTypeClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     workType_Create(body: WorkType | undefined): Promise<WorkType> {
@@ -2020,7 +2020,7 @@ export class WorkTypeClient extends ApiClientBase {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     workType_Update(id: number, body: WorkType | undefined): Promise<void> {
@@ -2173,7 +2173,7 @@ export class ProblemDetails implements IProblemDetails {
         data["status"] = this.status;
         data["detail"] = this.detail;
         data["instance"] = this.instance;
-        return data; 
+        return data;
     }
 }
 
@@ -2243,7 +2243,7 @@ export class EmployeeDTO implements IEmployeeDTO {
         data["address"] = this.address;
         data["currentAddress"] = this.currentAddress;
         data["nationalId"] = this.nationalId;
-        return data; 
+        return data;
     }
 }
 
@@ -2295,7 +2295,7 @@ export class JobTitle implements IJobTitle {
         data["id"] = this.id;
         data["name"] = this.name;
         data["description"] = this.description;
-        return data; 
+        return data;
     }
 }
 
@@ -2339,7 +2339,7 @@ export class WorkType implements IWorkType {
         data["id"] = this.id;
         data["name"] = this.name;
         data["description"] = this.description;
-        return data; 
+        return data;
     }
 }
 
@@ -2383,7 +2383,7 @@ export class JobCategory implements IJobCategory {
         data["id"] = this.id;
         data["name"] = this.name;
         data["description"] = this.description;
-        return data; 
+        return data;
     }
 }
 
@@ -2433,7 +2433,7 @@ export class OrganizationUnitDTO implements IOrganizationUnitDTO {
         data["description"] = this.description;
         data["employeeNo"] = this.employeeNo;
         data["parentId"] = this.parentId;
-        return data; 
+        return data;
     }
 }
 
@@ -2491,7 +2491,7 @@ export class PositionDTO implements IPositionDTO {
         data["employmentStatus"] = this.employmentStatus ? this.employmentStatus.toJSON() : <any>undefined;
         data["jobCategory"] = this.jobCategory ? this.jobCategory.toJSON() : <any>undefined;
         data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -2539,7 +2539,7 @@ export class LeaveType implements ILeaveType {
         data["id"] = this.id;
         data["name"] = this.name;
         data["description"] = this.description;
-        return data; 
+        return data;
     }
 }
 
@@ -2583,7 +2583,7 @@ export class LeaveDetailDTO implements ILeaveDetailDTO {
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["reason"] = this.reason;
         data["type"] = this.type ? this.type.toJSON() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
