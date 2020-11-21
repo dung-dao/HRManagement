@@ -62,6 +62,10 @@ class AppSidebar extends Component {
             <DashboardOutlined />
             <Link to={'/employees'}>Nhân viên</Link>
           </Menu.Item>
+          <Menu.Item key={'/work-type'}>
+            <DashboardOutlined />
+            <Link to={'/work-type'}>Loại công việc</Link>
+          </Menu.Item>
           {/* <Menu.Item key={Constant.MENU.MERCHANTS_PAGE}>
             <ShopFilled />
             <span>Đối tác</span>

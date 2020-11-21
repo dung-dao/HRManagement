@@ -14,6 +14,7 @@ import OrganizationStructure from './pages/OrganizationStructure/OrganizationStr
 import EmployeeList from './pages/Employee/EmployeeList';
 import EmployeeDetail from './pages/Employee/EmployeeDetail/EmployeeDetail';
 import ErrorBoundary from './components/ErrorBoundary';
+import {WorkTypePage} from "./pages/WorkType";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Switch>
           <Route exact path={['/', '/login']} component={LoginPage} />
           <Route exact path={'/organization'} component={OrganizationStructure} />
+          <Route exact path={'/work-type'} component={WorkTypePage} />
           <Route exact path={'/employees'} component={EmployeeList} />
           <Route exact path={'/employee-add'} component={EmployeeDetail} />
           <Route exact path={'/employee-edit/:employeeId'} component={EmployeeDetail} />
