@@ -1,5 +1,6 @@
 import {JobCategoryDTO} from "services/ApiClient";
 
+// loaị hình nhân sự
 export const jobCategories = [
   {
     id: 1,

@@ -1,14 +1,14 @@
 import React from 'react';
-import {usePage} from "pages/WorkType/PageProvider";
 import {Button, message, Popconfirm, Space} from "antd";
 import {DeleteOutlined, EditOutlined, PlusOutlined} from "@ant-design/icons";
+import {usePage} from "./PageProvider";
 
 export function ActionRenderer(text, record) {
   const {setModalVisible,setModalType, setRecord, api, data, setData} = usePage()
   const onDelete = async () => {
     try {
-      await api.workType_Delete(record.id)
-      message.info(`Xoá loại công việc ${record.name} thành công`);
+      await api.jobCategory_Delete(record.id)
+      message.info(`Xoá loại hình nhân sự ${record.name} thành công`);
       setData(data.filter(d => d.id !== record.id))
     } catch (e) {
       console.error(e)
@@ -31,7 +31,7 @@ export function ActionRenderer(text, record) {
       </Button>
       <Popconfirm
         placement="right"
-        title={'Bạn có chắc muốn xoá loại công việc này?'}
+        title={'Bạn có chắc muốn xoá loại hình nhân sự này?'}
         onConfirm={onDelete}
         okText="Đồng ý"
         cancelText="Không"
@@ -41,7 +41,7 @@ export function ActionRenderer(text, record) {
         </Button>
       </Popconfirm>
       <Button
-        title="Thêm mới loại công việc"
+        title="Thêm mới loại hình nhân sự"
         size="small"
         type="primary"
         onClick={() => {

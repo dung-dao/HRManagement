@@ -1,6 +1,6 @@
 import React from 'react';
 import {Form, Input, message, Modal} from "antd";
-import {WorkTypeDTO} from "services/ApiClient";
+import {JobCategoryDTO} from "services/ApiClient";
 import {usePage} from "./PageProvider";
 
 const formLayout = {
@@ -9,29 +9,29 @@ const formLayout = {
 }
 
 const title = {
-  edit: 'Chỉnh sửa loại công việc',
-  add: 'Thêm mới loại công việc'
+  edit: 'Chỉnh sửa loại hình nhân sự',
+  add: 'Thêm mới loại hình nhân sự'
 }
 
-export function WorkTypeModal() {
-  const [form] = Form.useForm<WorkTypeDTO>();
+export function JobCategoryModal() {
+  const [form] = Form.useForm<JobCategoryDTO>();
   const { modalVisible, setModalVisible, modalType, record, api, data, setData } = usePage()
   const initialValues = modalType === 'edit' ? record : undefined
   const [loading, setLoading] = React.useState(false)
   const onSubmit = async () => {
     try {
-      const values = await form.validateFields() as WorkTypeDTO
+      const values = await form.validateFields() as JobCategoryDTO
       setLoading(true)
 
       if (modalType === 'add') {
-        const result = await api.workType_Create(values)
-        message.info(`Thêm mới loại công việc ${values.name} thành công`);
+        const result = await api.jobCategory_Create(values)
+        message.info(`Thêm mới loại hình nhân sự ${values.name} thành công`);
         setData([...data, result])
       }
       if (modalType === 'edit') {
-        await api.workType_Update(values.id!, values)
-        const newData = await api.workType_GetAll()
-        message.info(`Chỉnh sửa loại công việc ${values?.name} thành công`)
+        await api.jobCategory_Update(values.id!, values)
+        const newData = await api.jobCategory_GetAll()
+        message.info(`Chỉnh sửa loại hình nhân sự ${values?.name} thành công`)
         setData(newData)
       }
 
@@ -60,6 +60,7 @@ export function WorkTypeModal() {
       }}
       onOk={onSubmit}
       onCancel={() => setModalVisible(false)}
+      width={600}
       confirmLoading={loading}
       destroyOnClose
     >
@@ -72,22 +73,22 @@ export function WorkTypeModal() {
         <Form.Item
           hidden
           name="id"
-          label="ID loại công việc"
-          rules={[{ required: true, message: 'ID loại công việc không được bỏ trống' }]}
+          label="ID loại hình nhân sự"
+          rules={[{ required: true, message: 'ID loại hình nhân sự không được bỏ trống' }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="name"
-          label="Tên loại công việc"
-          rules={[{ required: true, message: 'Tên loại công việc không được bỏ trống' }]}
+          label="Tên loại hình nhân sự"
+          rules={[{ required: true, message: 'Tên loại hình nhân sự không được bỏ trống' }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="description"
-          label="Mô tả loại công việc"
-          rules={[{ required: true, message: 'Mô tả loại công việc không được bỏ trống' }]}
+          label="Mô tả loại hình nhân sự"
+          rules={[{ required: true, message: 'Mô tả loại hình nhân sự không được bỏ trống' }]}
         >
           <Input.TextArea />
         </Form.Item>
