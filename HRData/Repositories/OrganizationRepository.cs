@@ -10,6 +10,7 @@ namespace HRData.Repositories
 {
     public interface IOrganizationRepository : IRepository<OrganizationUnit>
     {
+        int CountEmployee(OrganizationUnit unit);
         void AddSubUnit(OrganizationUnit parent, OrganizationUnit child);
         bool ChangeParentUnit(OrganizationUnit unit, OrganizationUnit parent);
     }
@@ -58,6 +59,13 @@ namespace HRData.Repositories
             }
 
             unit.RecordStatus = Models.RecordStatus.InActive;
+        }
+
+        public int CountEmployee(OrganizationUnit unit)
+        {
+            return (from p in unit.Positions
+                    where p.StartDate < DateTime.Now && p.LeaveDetail is null
+                    select p).Count();
         }
     }
 }

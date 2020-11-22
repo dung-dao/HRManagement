@@ -71,7 +71,7 @@ namespace HRData.Data
             builder.Entity<Employee>().HasMany(e => e.Positions).WithOne(p => p.Employee).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Position>().HasOne(p => p.JobTitle);
             builder.Entity<Position>().HasOne(p => p.WorkType);
-            builder.Entity<Position>().HasOne(p => p.JobCategory);
+            //builder.Entity<Position>().HasOne(p => p.JobCategory);
             builder.Entity<Position>().HasOne(p => p.Unit);
 
             PositionEntity(builder).HasOne(p => p.LeaveDetail).WithOne(ld => ld.Position).HasForeignKey<Position>(p => p.LeaveDetailId);
@@ -82,6 +82,10 @@ namespace HRData.Data
                 po.Property(e => e.Salary).IsRequired();
                 po.Property(e => e.Salary).HasColumnType("decimal(18, 6)");
             });
+            #endregion
+
+            #region Jobs
+            builder.Entity<JobTitle>().HasOne(e => e.JobCategory).WithMany(e => e.JobTitles);
             #endregion
         }
 

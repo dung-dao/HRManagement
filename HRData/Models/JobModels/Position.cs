@@ -14,7 +14,7 @@ namespace HRData.Models.JobModels
         public virtual Employee Employee { get; set; }
         public virtual JobTitle JobTitle { get; set; }
         public virtual WorkType WorkType { get; set; }
-        public virtual JobCategory JobCategory { get; set; }
+        //public virtual JobCategory JobCategory { get; set; }
         public virtual OrganizationUnit Unit { get; set; }
 
         public virtual LeaveDetail LeaveDetail { get; set; }
