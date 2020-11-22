@@ -2,6 +2,7 @@ import React, {PropsWithChildren} from "react"
 import {EmployeeDTO, EmployeesClient } from "../../services/ApiClient";
 
 type PageContextData = {
+  id: number
   setEmployee: (value: EmployeeDTO) => void;
   employee?: EmployeeDTO;
   api: EmployeesClient;

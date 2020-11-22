@@ -32,23 +32,45 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
   const apiJobCategory = React.useRef(new JobCategoryClient());
   const apiJobTitle = React.useRef(new JobTitleClient());
   const apiOrganization = React.useRef(new OrganizationUnitsClient());
-  const [workTypes, setWorkTypes] = React.useState<WorkTypeDTO[]>([]);
-  const [jobCategories, setJobCategories] = React.useState<JobCategoryDTO[]>([]);
-  const [jobTitles, setJobTitles] = React.useState<JobTitleDTO[]>([]);
-  const [organizations, setOrganizations] = React.useState<OrganizationUnitDTO[]>([]);
-  const [positions, setPositions] = React.useState<PositionDTO[]>([]);
-  const [selectedWorkType, setSelectedWorkType] = React.useState<WorkTypeDTO>();
-  const [selectedJobCategory, setSelectedJobCategory] = React.useState<JobCategoryDTO>();
-  const [selectedJobTitle, setSelectedJobTitle] = React.useState<JobTitleDTO>();
-  const [selectedOrganization, setSelectedOrganization] = React.useState<OrganizationUnitDTO>();
+  const workTypesRef = React.useRef<WorkTypeDTO[]>([]);
+  const jobCategoriesRef = React.useRef<JobCategoryDTO[]>([]);
+  const jobTitlesRef = React.useRef<JobTitleDTO[]>([]);
+  const organizationsRef = React.useRef<OrganizationUnitDTO[]>([]);
+  const [,forceRender] = React.useReducer((x) => ++x, 0)
+
+  React.useEffect(() => {
+    (async () => {
+      const one = apiWorkType.current
+        .workType_GetAll()
+        .then((data) => workTypesRef.current = data)
+        .catch((err) => console.error(err));
+      const two = apiJobCategory.current
+        .jobCategory_GetAll()
+        .then((data) => jobCategoriesRef.current = data)
+        .catch((err) => console.error(err));
+      const three = apiJobTitle.current
+        .jobTitle_GetAll()
+        .then((data) => jobTitlesRef.current = data)
+        .catch((err) => console.error(err));
+      const four = apiOrganization.current
+        .organizationUnits_GetAll()
+        .then((data) => organizationsRef.current = data)
+        .catch((err) => console.error(err));
+      await Promise.all([one,two,three,four])
+      forceRender()
+    })()
+  }, [form, employeeId]);
 
   const onFormSubmit = async (data) => {
     const submitData = {
       ...data,
+      workType: workTypesRef.current.find(i => i.id === Number(data.workType)),
+      jobTitle: jobTitlesRef.current.find(i => i.id === Number(data.jobTitle)),
+      unit: organizationsRef.current.find(i => i.id === Number(data.unit)),
       startDate: data.startDate.toDate(),
       endDate: data.endDate.toDate(),
       salary: toNumber(data.salary),
-    }
+    } as PositionDTO
     await onSubmit(submitData)
   };
   const { $try: trySubmitting, isPending } = useTry(onFormSubmit)
@@ -56,26 +78,6 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
   React.useEffect(() => {
     form.setFieldsValue(initialValues)
   }, [form, initialValues])
-
-  React.useEffect(() => {
-    // Fetch collections for Select.Option s
-    apiWorkType.current
-      .workType_GetAll()
-      .then((data) => setWorkTypes(data))
-      .catch((err) => console.error(err));
-    apiJobCategory.current
-      .jobCategory_GetAll()
-      .then((data) => setJobCategories(data))
-      .catch((err) => console.error(err));
-    apiJobTitle.current
-      .jobTitle_GetAll()
-      .then((data) => setJobTitles(data))
-      .catch((err) => console.error(err));
-    apiOrganization.current
-      .organizationUnits_GetAll()
-      .then((data) => setOrganizations(data))
-      .catch((err) => console.error(err));
-  }, [form, employeeId]);
 
   return (
     <Form name='work' form={form} onFinish={trySubmitting} style={style} initialValues={initialValues}>
@@ -118,10 +120,8 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
             <Select
               placeholder="Vị trí công việc"
               style={{ marginRight: '10px' }}
-              value={selectedJobTitle?.id}
-              onChange={(data) => setSelectedJobTitle(jobTitles?.find((it) => it.id === data))}
             >
-              {jobTitles?.map((it) => (
+              {jobTitlesRef.current.map((it) => (
                 <Select.Option value={it.id!.toString()} key={it.id}>
                   {it.name}
                 </Select.Option>
@@ -137,31 +137,8 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
             <Select
               placeholder="Loại hình làm việc"
               style={{ marginRight: '10px' }}
-              value={selectedWorkType?.id}
-              onChange={(data) => setSelectedWorkType(workTypes?.find((it) => it.id === data))}
             >
-              {workTypes?.map((it) => (
-                <Select.Option value={it.id!.toString()} key={it.id}>
-                  {it.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            {...formItemLayoutWide}
-            label="Loại hình nhân sự"
-            name="jobCategory"
-            rules={[required('Loại hình nhân sự')]}
-          >
-            <Select
-              placeholder="Loại hình nhân sự"
-              style={{ marginRight: '10px' }}
-              value={selectedJobCategory?.id}
-              onChange={(data) =>
-                setSelectedJobCategory(jobCategories?.find((it) => it.id === data))
-              }
-            >
-              {jobCategories?.map((it) => (
+              {workTypesRef.current.map((it) => (
                 <Select.Option value={it.id!.toString()} key={it.id}>
                   {it.name}
                 </Select.Option>
@@ -177,12 +154,8 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
             <Select
               placeholder="Tổ chức"
               style={{ marginRight: '10px' }}
-              value={selectedOrganization?.id}
-              onChange={(data) =>
-                setSelectedOrganization(organizations?.find((it) => it.id === data))
-              }
             >
-              {organizations?.map((it) => (
+              {organizationsRef.current.map((it) => (
                 <Select.Option value={it.id!.toString()} key={it.id}>
                   {it.name}
                 </Select.Option>
@@ -191,27 +164,6 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
           </Form.Item>
         </fieldset>
       </Col>
-      {/*{type !== 'add' ? (*/}
-      {/*  <Col span={24}>*/}
-      {/*    <fieldset>*/}
-      {/*      <legend>Lịch sử công tác:</legend>*/}
-      {/*      <Collapse style={{ marginBottom: 20 }}>*/}
-      {/*        <Collapse.Panel header="Lịch sử">*/}
-      {/*          <Timeline mode="left" className="EmployeeDetail-history-section">*/}
-      {/*            /!* {[...merchantData.history].reverse().map((each, index) => (*/}
-      {/*                    <Timeline.Item*/}
-      {/*                      color={index ? 'gray' : undefined}*/}
-      {/*                      label={format(new Date(each.time), 'dd-MM-yyyy HH:mm:SS')}*/}
-      {/*                    >*/}
-      {/*                      {each.type}*/}
-      {/*                    </Timeline.Item>*/}
-      {/*                  ))} *!/*/}
-      {/*          </Timeline>*/}
-      {/*        </Collapse.Panel>*/}
-      {/*      </Collapse>*/}
-      {/*    </fieldset>*/}
-      {/*  </Col>*/}
-      {/*) : null}*/}
       <FormAction form={form} loading={isPending} />
     </Form>
   );

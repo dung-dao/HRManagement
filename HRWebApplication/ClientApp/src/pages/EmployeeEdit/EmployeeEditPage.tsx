@@ -1,12 +1,12 @@
 import React from 'react';
 import {message, Tabs} from "antd";
-import {useHistory} from "react-router-dom";
 import AppBody from "../../components/Layouts/AppBody";
 import {EmployeeDTO, EmployeesClient, PositionDTO} from "services/ApiClient";
 import {PageProvider, usePage} from "./PageProvider";
 import {EmployeeInfoForm} from "../Employee/EmployeeInfoForm";
 import {EmployeeWorkForm} from "../Employee/EmployeeWorkForm";
 import {EmployeeFormAction} from "./EmployeeFormAction";
+import {PositionHistory} from "./PositionHistory";
 
 function Form1() {
   const {api, setEmployee, employee} = usePage()
@@ -37,10 +37,10 @@ function Form1() {
   )
 }
 function Form2() {
-  const {api, employee} = usePage()
+  const {api, employee, id} = usePage()
   const onSubmit = async (data: PositionDTO) => {
     try {
-      await api.employees_AddToPosition(employee?.id!, data)
+      await api.employees_AddToPosition(id, data)
       message.info(`Thêm vị trí nhân viên ${employee?.firstName} thành công`)
     } catch (e) {
       console.error(e)
@@ -60,11 +60,18 @@ function Form2() {
 export function EmployeeEditPage(props) {
   const api = React.useRef(new EmployeesClient());
   const [employee, setEmployee] = React.useState<EmployeeDTO>()
+  const [positions, setPositions] = React.useState<PositionDTO[]>([])
+  const id = Number(window.location.pathname.split('/')[2])
   const contextValue = {
     api: api.current,
+    id,
     employee,
     setEmployee,
   }
+
+  React.useEffect(() => {
+    api.current.employees_GetPosition(id).then(setPositions)
+  }, [])
 
   return (
     <AppBody title='Chỉnh sửa nhân viên'>
@@ -75,6 +82,7 @@ export function EmployeeEditPage(props) {
           </Tabs.TabPane>
           <Tabs.TabPane tab="Công việc" key="2">
             <Form2 />
+            <PositionHistory values={positions}/>
           </Tabs.TabPane>
         </Tabs>
       </PageProvider>
