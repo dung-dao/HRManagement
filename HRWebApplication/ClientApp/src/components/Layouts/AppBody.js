@@ -19,13 +19,14 @@ const breadCrumbs = {
   'job-title': 'Chức vụ công việc',
   'work-type': 'Loại công việc',
   'add': 'Thêm',
+  'leave-type': 'Loại nghỉ việc',
 };
 
 const breadcrumbStyle = {
   padding: '8px 10px',
   backgroundColor: 'white',
   margin: '8px 0',
-}
+};
 
 class AppBody extends Component {
   loadBreadCrumbs = () => {
@@ -42,15 +43,17 @@ class AppBody extends Component {
   };
 
   render() {
-    const { selectedMenu, title, openMenu } = this.props;
+    const { title } = this.props;
     const breadCrumbArr = this.loadBreadCrumbs().map((i) => (
       <Breadcrumb.Item key={i}>
-        <Title style={{ margin: 0, display: 'contents' }} level={5}>{i}</Title>
+        <Title style={{ margin: 0, display: 'contents' }} level={5}>
+          {i}
+        </Title>
       </Breadcrumb.Item>
     ));
     return (
       <Layout style={{ minHeight: '100vh' }} id="parent-layout">
-        <AppSidebar selectedMenu={selectedMenu} openMenu={openMenu} />
+        <AppSidebar />
         <Layout>
           <AppHeader title={title} />
           <Layout.Content style={{ margin: '0 8px', overflow: 'initial' }}>

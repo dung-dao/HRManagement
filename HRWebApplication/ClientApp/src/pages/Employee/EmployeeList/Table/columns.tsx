@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Space, Tag, Tooltip } from 'antd';
+import { Button, Dropdown, Space, Tag, Tooltip, Popconfirm } from 'antd';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
@@ -11,7 +11,7 @@ const mapSex = {
   Other: 'Khác',
 };
 
-export const columns = [
+export const columns = ({ onDeleteEmployee }) => ([
   // { title: 'STT', key: 'index', render: (value, item, index) => index + 1 },
   // { title: 'Mã nhân viên', dataIndex: 'code' },
   { title: 'Họ', key: 'firstName', dataIndex: 'firstName' },
@@ -49,11 +49,17 @@ export const columns = [
             <EditOutlined />
           </Button>
         </Link>
-        <Link title="Xoá">
+        <Popconfirm
+          placement="right"
+          title={'Bạn có chắc muốn xoá nhân viên này?'}
+          onConfirm={() => onDeleteEmployee(record?.id)}
+          okText="Đồng ý"
+          cancelText="Không"
+        >
           <Button size="small" danger>
             <DeleteOutlined />
           </Button>
-        </Link>
+        </Popconfirm>
       </Space>
     ),
   },
@@ -164,4 +170,4 @@ export const columns = [
   //   dataIndex: 'acceptStatus',
   //   render: (acceptStatus) => <Tag {...acceptStatusToTagProps(acceptStatus)} key={acceptStatus} />,
   // },
-];
+]);

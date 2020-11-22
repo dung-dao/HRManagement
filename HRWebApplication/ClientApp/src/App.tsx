@@ -18,6 +18,7 @@ import {WorkTypePage} from "./pages/WorkType";
 import {JobCategoryPage} from "./pages/JobCategory";
 import {JobTitlePage} from "./pages/JobTitle";
 import {EmployeeAddPage} from "./pages/EmployeeAdd";
+import { LeaveTypePage } from './pages/LeaveType';
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route exact path={['/', '/login']} component={LoginPage} />
           <Route exact path={'/organization'} component={OrganizationStructure} />
           <Route exact path={'/work-type'} component={WorkTypePage} />
+          <Route exact path={'/leave-type'} component={LeaveTypePage} />
           <Route exact path={'/job-category'} component={JobCategoryPage} />
           <Route exact path={'/job-title'} component={JobTitlePage} />
           <Route exact path={'/employees'} component={EmployeeList} />

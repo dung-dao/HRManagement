@@ -1,18 +1,14 @@
 import React from 'react';
-import AppBody from "../../components/Layouts/AppBody";
-import {Table} from "antd";
-import {WorkTypeDTO, WorkTypeClient} from "../../services/ApiClient";
-import {useTry} from "../../hooks";
-import {WorkTypeModal} from "./WorkTypeModal";
-import {ModalType, PageProvider} from "./PageProvider";
-import {ActionRenderer} from "./ActionRenderer";
+import AppBody from '../../components/Layouts/AppBody';
+import { WorkTypeDTO, WorkTypeClient } from '../../services/ApiClient';
+import { useTry } from '../../hooks';
+import { WorkTypeModal } from './WorkTypeModal';
+import { ModalType, PageProvider } from './PageProvider';
+import { ActionRenderer } from './ActionRenderer';
+import { Table, Button, Col, Row, Input } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 const columns = [
-  {
-    key: 'id',
-    title: 'ID',
-    dataIndex: 'id',
-  },
   {
     key: 'name',
     title: 'Tên',
@@ -35,10 +31,10 @@ const columns = [
 
 export function WorkTypePage(props) {
   const api = React.useRef(new WorkTypeClient());
-  const { isPending, $try: tryGetAll, data, setData } = useTry(() => api.current.workType_GetAll())
-  const [modalVisible, setModalVisible] = React.useState(false)
-  const [modalType, setModalType] = React.useState<ModalType>('add')
-  const [record, setRecord] = React.useState<WorkTypeDTO>()
+  const { isPending, $try: tryGetAll, data, setData } = useTry(() => api.current.workType_GetAll());
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalType, setModalType] = React.useState<ModalType>('add');
+  const [record, setRecord] = React.useState<WorkTypeDTO>();
   const pageContext = {
     modalVisible,
     setModalVisible,
@@ -49,14 +45,37 @@ export function WorkTypePage(props) {
     data: data ?? [],
     setData,
     api: api.current, // won't change
-  }
+  };
 
   React.useEffect(() => {
-    tryGetAll()
-  }, [])
+    tryGetAll();
+  }, []);
 
   return (
-    <AppBody>
+    <AppBody title="Loại công việc">
+      <Row gutter={[16, 16]}>
+        <Col span={6}>
+          <Input.Search
+            size="middle"
+            placeholder="Tìm kiếm loại công việc"
+            enterButton
+            allowClear
+          />
+        </Col>
+        <Col style={{ marginLeft: 'auto' }}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            size="middle"
+            onClick={() => {
+              setModalVisible(true);
+              setModalType('add');
+            }}
+          >
+            Thêm mới
+          </Button>
+        </Col>
+      </Row>
       <PageProvider value={pageContext}>
         <Table
           dataSource={data}
@@ -65,9 +84,11 @@ export function WorkTypePage(props) {
           columns={columns}
           loading={isPending}
           pagination={false}
+          rowKey={(record) => String(record.id)}
+          locale={{ emptyText: 'Không tìm thấy loại công việc nào' }}
         />
         <WorkTypeModal />
       </PageProvider>
     </AppBody>
-  )
+  );
 }

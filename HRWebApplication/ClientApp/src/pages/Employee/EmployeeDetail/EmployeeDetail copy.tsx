@@ -205,11 +205,7 @@ function Index() {
   };
 
   return (
-    <AppBody
-      title={mapPageTypeToTitle[detailPageType]}
-      selectedMenu="/employees"
-      openMenu="/employees"
-    >
+    <AppBody title={mapPageTypeToTitle[detailPageType]}>
       <Tabs>
         <Tabs.TabPane tab="Thông tin" key={1}>
           <InfoTab />

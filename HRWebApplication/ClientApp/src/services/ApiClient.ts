@@ -2601,7 +2601,6 @@ export class PositionDTO implements IPositionDTO {
     employee?: EmployeeDTO;
     jobTitle?: JobTitleDTO;
     workType?: WorkTypeDTO;
-    jobCategory?: JobCategoryDTO;
     unit?: OrganizationUnitDTO;
     leaveDetail?: LeaveDetailDTO;
 
@@ -2622,7 +2621,6 @@ export class PositionDTO implements IPositionDTO {
             this.employee = _data["employee"] ? EmployeeDTO.fromJS(_data["employee"]) : <any>undefined;
             this.jobTitle = _data["jobTitle"] ? JobTitleDTO.fromJS(_data["jobTitle"]) : <any>undefined;
             this.workType = _data["workType"] ? WorkTypeDTO.fromJS(_data["workType"]) : <any>undefined;
-            this.jobCategory = _data["jobCategory"] ? JobCategoryDTO.fromJS(_data["jobCategory"]) : <any>undefined;
             this.unit = _data["unit"] ? OrganizationUnitDTO.fromJS(_data["unit"]) : <any>undefined;
             this.leaveDetail = _data["leaveDetail"] ? LeaveDetailDTO.fromJS(_data["leaveDetail"]) : <any>undefined;
         }
@@ -2643,7 +2641,6 @@ export class PositionDTO implements IPositionDTO {
         data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
         data["jobTitle"] = this.jobTitle ? this.jobTitle.toJSON() : <any>undefined;
         data["workType"] = this.workType ? this.workType.toJSON() : <any>undefined;
-        data["jobCategory"] = this.jobCategory ? this.jobCategory.toJSON() : <any>undefined;
         data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
         data["leaveDetail"] = this.leaveDetail ? this.leaveDetail.toJSON() : <any>undefined;
         return data; 
@@ -2657,7 +2654,6 @@ export interface IPositionDTO {
     employee?: EmployeeDTO;
     jobTitle?: JobTitleDTO;
     workType?: WorkTypeDTO;
-    jobCategory?: JobCategoryDTO;
     unit?: OrganizationUnitDTO;
     leaveDetail?: LeaveDetailDTO;
 }

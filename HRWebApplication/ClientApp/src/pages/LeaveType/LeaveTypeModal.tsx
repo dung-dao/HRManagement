@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, message, Modal } from 'antd';
-import { JobCategoryDTO } from 'services/ApiClient';
+import { LeaveTypeDTO } from 'services/ApiClient';
 import { usePage } from './PageProvider';
 
 const formLayout = {
@@ -9,30 +9,30 @@ const formLayout = {
 };
 
 const title = {
-  edit: 'Chỉnh sửa loại hình nhân sự',
-  add: 'Thêm mới loại hình nhân sự',
+  edit: 'Chỉnh sửa loại nghỉ việc',
+  add: 'Thêm mới loại nghỉ việc',
 };
 
-export function JobCategoryModal() {
-  const [form] = Form.useForm<JobCategoryDTO>();
+export function LeaveTypeModal() {
+  const [form] = Form.useForm<LeaveTypeDTO>();
   const { modalVisible, setModalVisible, modalType, record, api, data, setData } = usePage();
   const initialValues = modalType === 'edit' ? record : undefined;
   const [loading, setLoading] = React.useState(false);
   const onSubmit = async () => {
     try {
-      const values = (await form.validateFields()) as JobCategoryDTO;
+      const values = (await form.validateFields()) as LeaveTypeDTO;
       setLoading(true);
 
       if (modalType === 'add') {
-        const result = await api.jobCategory_Create(values);
-        message.info(`Thêm mới loại hình nhân sự ${values.name} thành công`);
+        const result = await api.leaveType_Create(values);
+        message.info(`Thêm mới loại nghỉ việc ${values.name} thành công`);
         setData([...data, result]);
       }
       if (modalType === 'edit') {
         values.id = record?.id!;
-        await api.jobCategory_Update(values.id, values);
-        const newData = await api.jobCategory_GetAll();
-        message.info(`Chỉnh sửa loại hình nhân sự ${values?.name} thành công`);
+        await api.leaveType_Update(values.id, values);
+        const newData = await api.leaveType_GetAll();
+        message.info(`Chỉnh sửa loại nghỉ việc ${values?.name} thành công`);
         setData(newData);
       }
 
@@ -61,22 +61,21 @@ export function JobCategoryModal() {
       }}
       onOk={onSubmit}
       onCancel={() => setModalVisible(false)}
-      width={600}
       confirmLoading={loading}
       destroyOnClose
     >
       <Form {...formLayout} form={form} preserve={false} onFinish={(values) => console.log(values)}>
         <Form.Item
           name="name"
-          label="Tên loại hình nhân sự"
-          rules={[{ required: true, message: 'Tên loại hình nhân sự không được bỏ trống' }]}
+          label="Tên loại nghỉ việc"
+          rules={[{ required: true, message: 'Tên loại nghỉ việc không được bỏ trống' }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="description"
-          label="Mô tả loại hình nhân sự"
-          rules={[{ required: true, message: 'Mô tả loại hình nhân sự không được bỏ trống' }]}
+          label="Mô tả"
+          rules={[{ required: true, message: 'Mô tả loại nghỉ việc không được bỏ trống' }]}
         >
           <Input.TextArea />
         </Form.Item>

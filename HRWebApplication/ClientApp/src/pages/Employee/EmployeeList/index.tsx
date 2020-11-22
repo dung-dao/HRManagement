@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 function Index() {
   return (
-    <AppBody>
+    <AppBody title="Nhân viên">
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Input.Search size="middle" placeholder="Tìm kiếm nhân viên" enterButton allowClear />

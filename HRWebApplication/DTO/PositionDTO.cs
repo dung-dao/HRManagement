@@ -4,7 +4,7 @@ using System;
 
 namespace HRWebApplication.DTO
 {
-    public class PositionDTO
+    public class PositionDTO : DTOBase
     {
         //public DateTime StartDate { get; set; }
         //public DateTime? EndDate { get; set; }
