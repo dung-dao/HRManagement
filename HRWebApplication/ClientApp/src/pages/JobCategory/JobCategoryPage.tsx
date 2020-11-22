@@ -54,7 +54,7 @@ export function JobCategoryPage(props) {
   }, []);
 
   return (
-    <AppBody>
+    <AppBody title="Loại hình nhân sự">
       <PageProvider value={pageContext}>
         <Row gutter={[16, 16]}>
           <Col span={6}>

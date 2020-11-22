@@ -52,7 +52,7 @@ export function WorkTypePage(props) {
   }, []);
 
   return (
-    <AppBody>
+    <AppBody title="Loại công việc">
       <PageProvider value={pageContext}>
         <Row gutter={[16, 16]}>
           <Col span={6}>

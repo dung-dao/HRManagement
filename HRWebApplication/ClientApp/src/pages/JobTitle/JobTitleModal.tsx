@@ -1,10 +1,7 @@
+import { Form, Input, message, Modal, Select } from 'antd';
 import React from 'react';
-import { Button, Form, Input, message, Modal, Select, Tooltip } from 'antd';
 import { JobCategoryClient, JobCategoryDTO, JobTitleDTO } from 'services/ApiClient';
 import { usePage } from './PageProvider';
-import { useTry } from 'hooks';
-import { DoubleRightOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
 
 const formLayout = {
   labelCol: { span: 8 },
@@ -52,7 +49,6 @@ export function JobTitleModal() {
       if (modalType === 'edit') {
         values.id = record?.id!;
         await api.jobTitle_Update(values.id, values);
-        console.log('> : values', values)
         const newData = await api.jobTitle_GetAll();
         message.info(`Chỉnh sửa chức vụ công việc ${values?.name} thành công`);
         setData(newData);
@@ -102,7 +98,6 @@ export function JobTitleModal() {
         >
           <Select
             placeholder="Loại hình nhân sự"
-            style={{ width: 'calc(100% -  45px)', marginRight: '10px' }}
             value={selectedCategory?.id}
             onChange={(data) => setSelectedCategory(categories?.find((it) => it.id == data))}
           >
@@ -113,11 +108,6 @@ export function JobTitleModal() {
               </Select.Option>
             ))}
           </Select>
-          <Tooltip title="Xem toàn loại hình nhân sự">
-            <Link to="/job-category">
-              <Button icon={<DoubleRightOutlined />} />
-            </Link>
-          </Tooltip>
         </Form.Item>
         <Form.Item
           name="description"

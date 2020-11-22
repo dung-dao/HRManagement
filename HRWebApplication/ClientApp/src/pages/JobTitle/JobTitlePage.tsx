@@ -58,7 +58,7 @@ export function JobTitlePage(props) {
   }, []);
 
   return (
-    <AppBody>
+    <AppBody title="Chức vụ công việc">
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Input.Search

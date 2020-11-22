@@ -236,7 +236,11 @@ export default function () {
       } as OrganizationUnitDTO)
       .then(() => {
         setData((prev) =>
-          prev?.map((it) => (it.id === selectedId ? { ...it, ...form.getFieldsValue() } as OrganizationUnitDTO : it)),
+          prev?.map((it) =>
+            it.id === selectedId
+              ? ({ ...it, ...form.getFieldsValue() } as OrganizationUnitDTO)
+              : it,
+          ),
         );
         message.info(`Chỉnh sửa bộ phận ${getSelectedRecord()?.name} thành công`);
       })
@@ -246,7 +250,7 @@ export default function () {
   };
 
   return (
-    <AppBody>
+    <AppBody title="Tổ chức">
       <Table
         // @ts-ignore
         columns={columns({
@@ -272,7 +276,8 @@ export default function () {
         onOk={() => {
           if (modalType === 'add') {
             const isNameFilled = form.isFieldsValidating(['name']);
-            if (isNameFilled) { // TODO: WHY
+            if (isNameFilled) {
+              // TODO: WHY
             } else {
               form
                 .validateFields()

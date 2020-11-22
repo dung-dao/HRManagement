@@ -14,13 +14,6 @@ function Index() {
   const { employeeId } = useParams<{ employeeId: string }>();
   const history = useHistory();
 
-  const mapPageTypeToTitle: Record<DetailPageType, string> = {
-    add: 'Thêm mới nhân viên',
-    edit: 'Chỉnh sửa nhân viên',
-  };
-
-  console.log('pathname', pathname);
-
   const detailPageType: DetailPageType = pathname.includes('add')
     ? 'add'
     : pathname.includes('edit')
@@ -34,11 +27,7 @@ function Index() {
   }, [pathname]);
 
   return (
-    <AppBody
-      title={mapPageTypeToTitle[detailPageType]}
-      selectedMenu="/employees"
-      openMenu="/employees"
-    >
+    <AppBody title="Nhân viên">
       <Tabs
         activeKey={getPageType === 'edit-info' || getPageType === 'add' ? '1' : '2'}
         onChange={(newActiveKey) => {
