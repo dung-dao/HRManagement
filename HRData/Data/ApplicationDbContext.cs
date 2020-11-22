@@ -85,7 +85,7 @@ namespace HRData.Data
             #endregion
 
             #region Jobs
-            builder.Entity<JobTitle>().HasOne(e => e.JobCategory).WithMany(e => e.JobTitles);
+            builder.Entity<JobTitle>().HasOne(e => e.JobCategory).WithMany(e => e.JobTitles).HasForeignKey(e => e.JobCategoryId);
             #endregion
         }
 

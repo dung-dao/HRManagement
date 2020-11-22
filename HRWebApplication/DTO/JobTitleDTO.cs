@@ -5,6 +5,6 @@
     /// </summary>
     public class JobTitleDTO : NamedDTO
     {
-        public JobCategoryDTO JobCategory { get; set; }
+        public int JobCategoryId { get; set; }
     }
 }

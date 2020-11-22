@@ -26,9 +26,9 @@ namespace HRWebApplication.Controllers.Base
 
         [HttpGet(Name = "[controller]_GetAll")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public virtual async Task<ActionResult<IEnumerable<DTO>>> GetAll()
+        public virtual ActionResult<IEnumerable<DTO>> GetAll()
         {
-            var data = await entities.Where(e => e.RecordStatus == RecordStatus.Active).ToListAsync();
+            var data = entities.Where(e => e.RecordStatus == RecordStatus.Active).ToList();
             return _mapper.Map<List<DTO>>(data);
         }
 

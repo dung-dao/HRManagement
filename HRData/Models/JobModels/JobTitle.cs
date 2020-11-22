@@ -5,6 +5,7 @@
     /// </summary>
     public class JobTitle : NamedEntity
     {
+        public int JobCategoryId { get; set; }
         public virtual JobCategory JobCategory { get; set; }
     }
 }
