@@ -1,18 +1,15 @@
 import React from 'react';
-import AppBody from "../../components/Layouts/AppBody";
-import {Table} from "antd";
-import {JobTitleDTO, JobTitleClient} from "../../services/ApiClient";
-import {useTry} from "../../hooks";
-import {JobTitleModal} from "./JobTitleModal";
-import {ModalType, PageProvider} from "./PageProvider";
-import {ActionRenderer} from "./ActionRenderer";
+import AppBody from '../../components/Layouts/AppBody';
+import { Table } from 'antd';
+import { JobTitleDTO, JobTitleClient } from '../../services/ApiClient';
+import { useTry } from '../../hooks';
+import { JobTitleModal } from './JobTitleModal';
+import { ModalType, PageProvider } from './PageProvider';
+import { ActionRenderer } from './ActionRenderer';
+import { Button, Col, Row, Input } from 'antd';
+import { PlusOutlined, SyncOutlined, UserAddOutlined } from '@ant-design/icons';
 
 const columns = [
-  {
-    key: 'id',
-    title: 'ID',
-    dataIndex: 'id',
-  },
   {
     key: 'name',
     title: 'Tên',
@@ -22,6 +19,11 @@ const columns = [
     key: 'description',
     title: 'Mô tả',
     dataIndex: 'description',
+  },
+  {
+    key: 'description',
+    title: 'Loại hình nhân sự',
+    dataIndex: ['jobCategory', 'name'],
   },
   {
     title: 'Thao tác',
@@ -35,10 +37,10 @@ const columns = [
 
 export function JobTitlePage(props) {
   const api = React.useRef(new JobTitleClient());
-  const { isPending, $try: tryGetAll, data, setData } = useTry(() => api.current.jobTitle_GetAll())
-  const [modalVisible, setModalVisible] = React.useState(false)
-  const [modalType, setModalType] = React.useState<ModalType>('add')
-  const [record, setRecord] = React.useState<JobTitleDTO>()
+  const { isPending, $try: tryGetAll, data, setData } = useTry(() => api.current.jobTitle_GetAll());
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalType, setModalType] = React.useState<ModalType>('add');
+  const [record, setRecord] = React.useState<JobTitleDTO>();
   const pageContext = {
     modalVisible,
     setModalVisible,
@@ -49,14 +51,37 @@ export function JobTitlePage(props) {
     data: data ?? [],
     setData,
     api: api.current, // won't change
-  }
+  };
 
   React.useEffect(() => {
-    tryGetAll()
-  }, [])
+    tryGetAll().then((x) => console.log(x));
+  }, []);
 
   return (
     <AppBody>
+      <Row gutter={[16, 16]}>
+        <Col span={6}>
+          <Input.Search
+            size="middle"
+            placeholder="Tìm kiếm chức vụ công việc"
+            enterButton
+            allowClear
+          />
+        </Col>
+        <Col style={{ marginLeft: 'auto' }}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            size="middle"
+            onClick={() => {
+              setModalVisible(true);
+              setModalType('add');
+            }}
+          >
+            Thêm mới
+          </Button>
+        </Col>
+      </Row>
       <PageProvider value={pageContext}>
         <Table
           dataSource={data}
@@ -69,5 +94,5 @@ export function JobTitlePage(props) {
         <JobTitleModal />
       </PageProvider>
     </AppBody>
-  )
+  );
 }
