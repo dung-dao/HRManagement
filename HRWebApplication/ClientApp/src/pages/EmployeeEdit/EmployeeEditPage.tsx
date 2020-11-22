@@ -37,10 +37,11 @@ function Form1() {
   )
 }
 function Form2() {
-  const {api, employee, id} = usePage()
+  const {api, employee, id, positions, setPositions} = usePage()
   const onSubmit = async (data: PositionDTO) => {
     try {
-      await api.employees_AddToPosition(id, data)
+      const position = await api.employees_AddToPosition(id, data)
+      setPositions([...positions, position])
       message.info(`Thêm vị trí nhân viên ${employee?.firstName} thành công`)
     } catch (e) {
       console.error(e)
@@ -67,6 +68,8 @@ export function EmployeeEditPage(props) {
     id,
     employee,
     setEmployee,
+    positions,
+    setPositions,
   }
 
   React.useEffect(() => {

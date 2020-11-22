@@ -1,10 +1,12 @@
 import React, {PropsWithChildren} from "react"
-import {EmployeeDTO, EmployeesClient } from "../../services/ApiClient";
+import {EmployeeDTO, EmployeesClient, PositionDTO} from "../../services/ApiClient";
 
 type PageContextData = {
   id: number
   setEmployee: (value: EmployeeDTO) => void;
   employee?: EmployeeDTO;
+  setPositions: (value: PositionDTO[]) => void;
+  positions: PositionDTO[];
   api: EmployeesClient;
 }
 
