@@ -35,6 +35,7 @@ export default function AppSidebar() {
     if (pathname.includes('job-title')) return 'job-title';
     if (pathname.includes('job-category')) return 'job-category';
     if (pathname.includes('work-type')) return 'work-type';
+    if (pathname.includes('leave-type')) return 'leave-type';
   };
 
   return (
