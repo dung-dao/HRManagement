@@ -5,6 +5,9 @@ import { jobTitles } from "mocks/fixtures/jobTitles";
 import {workTypes} from "mocks/fixtures/workType";
 import {jobCategories} from "mocks/fixtures/jobCategory";
 import { organizationUnits } from "mocks/fixtures/organizationUnit";
+import { positions } from "mocks/fixtures/positions";
+import {EmployeeDTO, PositionDTO} from "../../services/ApiClient";
+import {randomBetween} from "../../common";
 
 const handlers = [
   rest.get(baseUrl + "/api/Employees", (req, res, ctx) => {
@@ -31,6 +34,38 @@ const handlers = [
         jobCategory: jobCategories[0],
         unit: organizationUnits[0],
       })
+    )
+  }),
+  rest.post(baseUrl + "/api/Employees", (req, res, ctx) => {
+    const newEmployee = req.body as EmployeeDTO
+    newEmployee.id = randomBetween(0, 9999999999)
+    employees.push(newEmployee)
+
+    return res(
+      ctx.delay(delay),
+      ctx.status(201),
+      ctx.json(newEmployee)
+    )
+  }),
+  rest.put(baseUrl + "/api/Employees/:id", (req, res, ctx) => {
+    const id = Number(req.params.id)
+    const employee = req.body as EmployeeDTO
+    const index = employees.findIndex(w => w.id === id)
+
+    employees[index] = employee
+    return res(
+      ctx.delay(delay),
+      ctx.status(204),
+    )
+  }),
+  rest.post(baseUrl + "/api/Employees/:id/positions", (req, res, ctx) => {
+    const newPosition = req.body as PositionDTO
+    positions.push(newPosition)
+
+    return res(
+      ctx.delay(delay),
+      ctx.status(201),
+      ctx.json(newPosition)
     )
   }),
 ]

@@ -1,3 +1,5 @@
+import {FormLabelAlign} from "antd/es/form/interface";
+
 export const removeSlug = (url) => {
   return url.substring(0, /:|\/:/.exec(url)?.index);
   // The regex "/:|\/:/" means ": or /:"
@@ -13,7 +15,7 @@ export const formItemLayout = {
 export const formItemLayoutWide = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
-  labelAlign: 'left',
+  labelAlign: 'left' as FormLabelAlign,
   validateTrigger: 'onBlur',
 };
 
@@ -24,10 +26,11 @@ export const required = (label) => ({
 
 export const phoneRegex = /^(\+84|0|84)\d{9}$/;
 
-export const formatCurrency = (input: number): string => {
+export const formatCurrency = (input?: string): string => {
   // format currency using regex: https://coderwall.com/p/uccfpq/formatting-currency-via-regular-expression
-  return String(input).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+  return String(input || '0').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 };
+// should be called parseNumber()
 export const toNumber = (input: string): number => {
   // Remove all NonNumber characters
   return +input.replace(/\D+/g, '');

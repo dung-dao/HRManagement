@@ -17,6 +17,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import {WorkTypePage} from "./pages/WorkType";
 import {JobCategoryPage} from "./pages/JobCategory";
 import {JobTitlePage} from "./pages/JobTitle";
+import {EmployeeAddPage} from "./pages/EmployeeAdd";
 
 export default function App() {
   return (
@@ -29,7 +30,8 @@ export default function App() {
           <Route exact path={'/job-category'} component={JobCategoryPage} />
           <Route exact path={'/job-title'} component={JobTitlePage} />
           <Route exact path={'/employees'} component={EmployeeList} />
-          <Route exact path={'/employee-add'} component={EmployeeDetail} />
+          <Route exact path={'/employee/new'} component={EmployeeAddPage} />
+          <Route exact path={'/employee/add-old'} component={EmployeeDetail} />
           <Route exact path={'/employee-edit/:employeeId/info'} component={EmployeeDetail} />
           <Route exact path={'/employee-edit/:employeeId/work'} component={EmployeeDetail} />
           <Route exact path={'/admin'} component={OverviewPage} />

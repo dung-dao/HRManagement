@@ -12,11 +12,13 @@ const breadCrumbs = {
   merchants: 'Quản lý đối tác',
   'merchant-add': 'Thêm mới đối tác',
   'merchant-detail': 'Chi tiết đối tác',
+  'employee': 'Nhân viên',
   'employees': 'Nhân viên',
   'organization': 'Tổ chức',
   'job-category': 'Loại hình nhân sự',
   'job-title': 'Chức vụ công việc',
   'work-type': 'Loại công việc',
+  'add': 'Thêm',
 };
 
 const breadcrumbStyle = {
