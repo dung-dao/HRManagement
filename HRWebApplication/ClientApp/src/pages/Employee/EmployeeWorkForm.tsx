@@ -17,16 +17,14 @@ import moment from "moment";
 import {useTry} from "hooks";
 
 type EmployeeFormProps = {
-  action: any;
+  action?: any;
   style?: object;
-  employeeId: number
-  onSubmit: (value: EmployeeDTO) => Promise<any>
+  onSubmit?: (value: EmployeeDTO) => Promise<any>
   value?: PositionDTO
 }
 
 export function EmployeeWorkForm(props: EmployeeFormProps) {
-  const { action: FormAction, style = {}, onSubmit, value, employeeId } = props
-  const initialValues = { ...value, startDate: moment(value?.startDate), endDate: moment(value?.endDate) }
+  const { action: FormAction, style = {}, onSubmit, value } = props
   const [form] = Form.useForm();
   const apiWorkType = React.useRef(new WorkTypeClient());
   const apiJobCategory = React.useRef(new JobCategoryClient());
@@ -37,6 +35,28 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
   const jobTitlesRef = React.useRef<JobTitleDTO[]>([]);
   const organizationsRef = React.useRef<OrganizationUnitDTO[]>([]);
   const [,forceRender] = React.useReducer((x) => ++x, 0)
+  const initialValues = {
+    ...value,
+    startDate: moment(value?.startDate),
+    endDate: moment(value?.endDate),
+    workType: value?.workType?.id?.toString(),
+    jobTitle: value?.jobTitle?.id?.toString(),
+    unit: value?.unit?.id?.toString(),
+  }
+
+  const onFormSubmit = async (data) => {
+    const submitData = {
+      ...data,
+      workType: workTypesRef.current.find(i => i.id === Number(data.workType)),
+      jobTitle: jobTitlesRef.current.find(i => i.id === Number(data.jobTitle)),
+      unit: organizationsRef.current.find(i => i.id === Number(data.unit)),
+      startDate: data.startDate.toDate(),
+      endDate: data.endDate.toDate(),
+      salary: toNumber(data.salary),
+    } as PositionDTO
+    await onSubmit?.(submitData)
+  };
+  const { $try: trySubmitting, isPending } = useTry(onFormSubmit)
 
   React.useEffect(() => {
     (async () => {
@@ -59,21 +79,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
       await Promise.all([one,two,three,four])
       forceRender()
     })()
-  }, [form, employeeId]);
-
-  const onFormSubmit = async (data) => {
-    const submitData = {
-      ...data,
-      workType: workTypesRef.current.find(i => i.id === Number(data.workType)),
-      jobTitle: jobTitlesRef.current.find(i => i.id === Number(data.jobTitle)),
-      unit: organizationsRef.current.find(i => i.id === Number(data.unit)),
-      startDate: data.startDate.toDate(),
-      endDate: data.endDate.toDate(),
-      salary: toNumber(data.salary),
-    } as PositionDTO
-    await onSubmit(submitData)
-  };
-  const { $try: trySubmitting, isPending } = useTry(onFormSubmit)
+  }, [form]);
 
   React.useEffect(() => {
     form.setFieldsValue(initialValues)
@@ -164,7 +170,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
           </Form.Item>
         </fieldset>
       </Col>
-      <FormAction form={form} loading={isPending} />
+      {FormAction && <FormAction form={form} loading={isPending}/>}
     </Form>
   );
 }

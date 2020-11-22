@@ -53,8 +53,7 @@ function Form2() {
     <EmployeeWorkForm
       style={{ marginTop: 25 }}
       action={EmployeeFormAction}
-      onSubmit={onSubmit}
-      employeeId={employee?.id!} />
+      onSubmit={onSubmit} />
   )
 }
 
