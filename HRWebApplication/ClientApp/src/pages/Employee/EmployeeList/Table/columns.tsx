@@ -44,7 +44,7 @@ export const columns = [
     fixed: 'right',
     render: (_, record) => (
       <Space size="small">
-        <Link to={'employee-edit-info/' + record?.id} title="Chỉnh sửa">
+        <Link to={'employee-edit/' + record?.id + '/info'} title="Chỉnh sửa">
           <Button size="small" type="primary">
             <EditOutlined />
           </Button>

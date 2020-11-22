@@ -29,8 +29,8 @@ function Index() {
 
   const getPageType = React.useMemo(() => {
     if (pathname.includes('add')) return 'add';
-    if (pathname.includes('edit-info')) return 'edit-info';
-    if (pathname.includes('edit-work')) return 'edit-work';
+    if (pathname.includes('info')) return 'edit-info';
+    if (pathname.includes('work')) return 'edit-work';
   }, [pathname]);
 
   return (
@@ -44,9 +44,9 @@ function Index() {
         onChange={(newActiveKey) => {
           if (getPageType === 'add') return;
           if (getPageType === 'edit-info' && newActiveKey === '2') {
-            history.push('employee-edit-work/' +  employeeId);
+            history.push('work');
           } else if (getPageType === 'edit-work' && newActiveKey === '1') {
-            history.push('employee-edit-info/' + employeeId);
+            history.push('info');
           }
         }}
       >
