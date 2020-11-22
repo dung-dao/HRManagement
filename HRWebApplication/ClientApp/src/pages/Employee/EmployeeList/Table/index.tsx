@@ -15,11 +15,21 @@ export default function (props) {
       .catch((err: Error) => message.error(err.message));
   }, []);
 
+  const onDeleteEmployee = React.useCallback((employeeId) => {
+    api.current
+      .deleteEmployeeById(employeeId)
+      .then(() => {
+        setEmployees((employees) => employees?.filter((it) => it.id != employeeId));
+        message.info('Xoá nhân viên thành công');
+      })
+      .catch((err) => message.error('Xoá nhân viên không thành công'));
+  }, []);
+
   return (
     <>
       <Table
         // @ts-ignore
-        columns={columns}
+        columns={columns({ onDeleteEmployee })}
         dataSource={employees}
         loading={!employees}
         // pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: [5, 10, 20] }}

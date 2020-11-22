@@ -53,30 +53,30 @@ export function WorkTypePage(props) {
 
   return (
     <AppBody title="Loại công việc">
+      <Row gutter={[16, 16]}>
+        <Col span={6}>
+          <Input.Search
+            size="middle"
+            placeholder="Tìm kiếm loại công việc"
+            enterButton
+            allowClear
+          />
+        </Col>
+        <Col style={{ marginLeft: 'auto' }}>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            size="middle"
+            onClick={() => {
+              setModalVisible(true);
+              setModalType('add');
+            }}
+          >
+            Thêm mới
+          </Button>
+        </Col>
+      </Row>
       <PageProvider value={pageContext}>
-        <Row gutter={[16, 16]}>
-          <Col span={6}>
-            <Input.Search
-              size="middle"
-              placeholder="Tìm kiếm loại công việc"
-              enterButton
-              allowClear
-            />
-          </Col>
-          <Col style={{ marginLeft: 'auto' }}>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              size="middle"
-              onClick={() => {
-                setModalVisible(true);
-                setModalType('add');
-              }}
-            >
-              Thêm mới
-            </Button>
-          </Col>
-        </Row>
         <Table
           dataSource={data}
           // model doesn't have action field
@@ -85,6 +85,7 @@ export function WorkTypePage(props) {
           loading={isPending}
           pagination={false}
           rowKey={(record) => String(record.id)}
+          locale={{ emptyText: 'Không tìm thấy loại công việc nào' }}
         />
         <WorkTypeModal />
       </PageProvider>

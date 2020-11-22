@@ -14,7 +14,7 @@ export default function () {
   const history = useHistory();
 
   const login = () => {
-    history.push('/admin');
+    history.push('/employees');
   };
 
   return (

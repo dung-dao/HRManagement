@@ -5,6 +5,7 @@ import {
   IdcardOutlined,
   GoldOutlined,
   ReconciliationOutlined,
+  ExceptionOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu } from 'antd';
 import React from 'react';
@@ -65,6 +66,9 @@ export default function AppSidebar() {
         </Menu.Item>
         <Menu.Item key={'work-type'}>
           <ReconciliationOutlined /> <Link to={'/work-type'}>Loại công việc</Link>
+        </Menu.Item>
+        <Menu.Item key={'leave-type'}>
+          <ExceptionOutlined /> <Link to={'/leave-type'}>Loại nghỉ việc</Link>
         </Menu.Item>
         {/* <Menu.Item key={Constant.MENU.MERCHANTS_PAGE}>
             <ShopFilled />

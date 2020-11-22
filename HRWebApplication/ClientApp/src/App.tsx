@@ -14,9 +14,10 @@ import OrganizationStructure from './pages/OrganizationStructure/OrganizationStr
 import EmployeeList from './pages/Employee/EmployeeList';
 import EmployeeDetail from './pages/Employee/EmployeeDetail/EmployeeDetail';
 import ErrorBoundary from './components/ErrorBoundary';
-import {WorkTypePage} from "./pages/WorkType";
-import {JobCategoryPage} from "./pages/JobCategory";
-import {JobTitlePage} from "./pages/JobTitle";
+import { WorkTypePage } from './pages/WorkType';
+import { JobCategoryPage } from './pages/JobCategory';
+import { JobTitlePage } from './pages/JobTitle';
+import { LeaveTypePage } from './pages/LeaveType';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route exact path={['/', '/login']} component={LoginPage} />
           <Route exact path={'/organization'} component={OrganizationStructure} />
           <Route exact path={'/work-type'} component={WorkTypePage} />
+          <Route exact path={'/leave-type'} component={LeaveTypePage} />
           <Route exact path={'/job-category'} component={JobCategoryPage} />
           <Route exact path={'/job-title'} component={JobTitlePage} />
           <Route exact path={'/employees'} component={EmployeeList} />

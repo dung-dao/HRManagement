@@ -1,8 +1,8 @@
 import React from 'react';
 import AppBody from '../../components/Layouts/AppBody';
-import { JobCategoryDTO, JobCategoryClient } from '../../services/ApiClient';
+import { LeaveTypeClient, LeaveTypeDTO } from '../../services/ApiClient';
 import { useTry } from '../../hooks';
-import { JobCategoryModal } from 'pages/JobCategory/JobCategoryModal';
+import { LeaveTypeModal } from './LeaveTypeModal';
 import { ModalType, PageProvider } from './PageProvider';
 import { ActionRenderer } from './ActionRenderer';
 import { Table, Button, Col, Row, Input } from 'antd';
@@ -29,14 +29,14 @@ const columns = [
   },
 ];
 
-export function JobCategoryPage(props) {
-  const api = React.useRef(new JobCategoryClient());
+export function LeaveTypePage(props) {
+  const api = React.useRef(new LeaveTypeClient());
   const { isPending, $try: tryGetAll, data, setData } = useTry(() =>
-    api.current.jobCategory_GetAll(),
+    api.current.leaveType_GetAll(),
   );
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalType, setModalType] = React.useState<ModalType>('add');
-  const [record, setRecord] = React.useState<JobCategoryDTO>();
+  const [record, setRecord] = React.useState<LeaveTypeDTO>();
   const pageContext = {
     modalVisible,
     setModalVisible,
@@ -54,13 +54,13 @@ export function JobCategoryPage(props) {
   }, []);
 
   return (
-    <AppBody title="Loại hình nhân sự">
+    <AppBody title="Loại nghỉ việc">
       <PageProvider value={pageContext}>
         <Row gutter={[16, 16]}>
           <Col span={6}>
             <Input.Search
               size="middle"
-              placeholder="Tìm kiếm loại hình nhân sự"
+              placeholder="Tìm kiếm loại nghỉ việc"
               enterButton
               allowClear
             />
@@ -87,9 +87,9 @@ export function JobCategoryPage(props) {
           loading={isPending}
           pagination={false}
           rowKey={(record) => String(record.id)}
-          locale={{ emptyText: 'Không tìm thấy loại hình nhân sự nào' }}
+          locale={{ emptyText: 'Không tìm thấy loại nghỉ việc nào' }}
         />
-        <JobCategoryModal />
+        <LeaveTypeModal />
       </PageProvider>
     </AppBody>
   );

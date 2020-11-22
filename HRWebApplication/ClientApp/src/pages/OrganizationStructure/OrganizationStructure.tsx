@@ -266,6 +266,7 @@ export default function () {
         rowKey={(record) => String(record.id)}
         expandedRowKeys={expandedRowKeys}
         pagination={false}
+        locale={{ emptyText: 'Không tìm thấy bộ phận nào' }}
         // defaultExpandAllRows={true} // doesn't work for async data
       />
 

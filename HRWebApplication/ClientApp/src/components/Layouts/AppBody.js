@@ -19,6 +19,7 @@ const breadCrumbs = {
   'job-category': 'Loại hình nhân sự',
   'job-title': 'Chức vụ công việc',
   'work-type': 'Loại công việc',
+  'leave-type': 'Loại nghỉ việc',
 };
 
 const breadcrumbStyle = {

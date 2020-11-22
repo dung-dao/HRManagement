@@ -91,6 +91,7 @@ export function JobTitlePage(props) {
           loading={isPending}
           pagination={false}
           rowKey={(record) => String(record.id)}
+          locale={{ emptyText: 'Không tìm thấy chức vụ công việc nào' }}
         />
         <JobTitleModal />
       </PageProvider>
