@@ -168,7 +168,7 @@ export const WorkTab: React.FC<{
           >
             <Select
               placeholder="Vị trí công việc"
-              style={{ width: 'calc(100% -  50px)', marginRight: '10px' }}
+              style={{ width: 'calc(100% -  45px)', marginRight: '10px' }}
               value={selectedJobTitle?.id}
               onChange={(data) => setSelectedJobTitle(jobTitles?.find((it) => it.id === data))}
             >
@@ -190,7 +190,7 @@ export const WorkTab: React.FC<{
           >
             <Select
               placeholder="Loại hình làm việc"
-              style={{ width: 'calc(100% -  50px)', marginRight: '10px' }}
+              style={{ width: 'calc(100% -  45px)', marginRight: '10px' }}
               value={selectedWorkType?.id}
               onChange={(data) => setSelectedWorkType(workTypes?.find((it) => it.id === data))}
             >
@@ -212,7 +212,7 @@ export const WorkTab: React.FC<{
           >
             <Select
               placeholder="Loại hình nhân sự"
-              style={{ width: 'calc(100% -  50px)', marginRight: '10px' }}
+              style={{ width: 'calc(100% -  45px)', marginRight: '10px' }}
               value={selectedJobCategory?.id}
               onChange={(data) =>
                 setSelectedJobCategory(jobCategories?.find((it) => it.id === data))
@@ -236,7 +236,7 @@ export const WorkTab: React.FC<{
           >
             <Select
               placeholder="Tổ chức"
-              style={{ width: 'calc(100% -  50px)', marginRight: '10px' }}
+              style={{ width: 'calc(100% -  45px)', marginRight: '10px' }}
               value={selectedOrganization?.id}
               onChange={(data) =>
                 setSelectedOrganization(organizations?.find((it) => it.id === data))

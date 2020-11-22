@@ -54,7 +54,7 @@ export function JobTitlePage(props) {
   };
 
   React.useEffect(() => {
-    tryGetAll().then((x) => console.log(x));
+    tryGetAll();
   }, []);
 
   return (
@@ -90,6 +90,7 @@ export function JobTitlePage(props) {
           columns={columns}
           loading={isPending}
           pagination={false}
+          rowKey={(record) => String(record.id)}
         />
         <JobTitleModal />
       </PageProvider>

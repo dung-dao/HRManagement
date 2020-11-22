@@ -86,6 +86,7 @@ export function JobCategoryPage(props) {
           columns={columns}
           loading={isPending}
           pagination={false}
+          rowKey={(record) => String(record.id)}
         />
         <JobCategoryModal />
       </PageProvider>

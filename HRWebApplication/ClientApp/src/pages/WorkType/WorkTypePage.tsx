@@ -84,6 +84,7 @@ export function WorkTypePage(props) {
           columns={columns}
           loading={isPending}
           pagination={false}
+          rowKey={(record) => String(record.id)}
         />
         <WorkTypeModal />
       </PageProvider>
