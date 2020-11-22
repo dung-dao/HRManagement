@@ -72,31 +72,6 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
       .organizationUnits_GetAll()
       .then((data) => setOrganizations(data))
       .catch((err) => console.error(err));
-
-    // if (type === 'edit') {
-      // TODO: populate when editing
-      // apiEmployee.current
-      //   .employees_GetPosition(employeeId)
-      //   .then((data) => console.log('positions', data) || setPositions(data))
-      //   .catch((err) => console.log(err));
-      //
-      // apiEmployee.current
-      //   .employees_GetCurrentPosition(employeeId)
-      //   .then((data) => {
-      //     console.log('current position', data);
-      //     form.setFieldsValue({
-      //       ...form.getFieldsValue(),
-      //       startDate: moment(data.startDate),
-      //       endDate: moment(data.endDate),
-      //     });
-      //     setSalary(data.salery);
-      //     setSelectedJobCategory(data.jobCategory);
-      //     setSelectedJobTitle(data.jobTitle);
-      //     setSelectedWorkType(data.workType);
-      //     setSelectedOrganization(data.unit);
-      //   })
-      //   .catch((err) => console.log(err));
-    // }
   }, [form, employeeId]);
 
   return (
