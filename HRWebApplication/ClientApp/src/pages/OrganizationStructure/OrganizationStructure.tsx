@@ -439,7 +439,7 @@ export default function () {
       .organizationUnits_Update(Number(selectedId), form.getFieldsValue() as OrganizationUnitDTO)
       .then(() => {
         setData((prev) =>
-          prev?.map((it) => (it.id === selectedId ? { ...it, ...form.getFieldsValue() } : it)),
+          prev?.map((it) => (it.id === selectedId ? { ...it, ...form.getFieldsValue() } as OrganizationUnitDTO : it)),
         );
         // setModalType('detail');
         message.info(`Chỉnh sửa bộ phận ${getSelectedRecord()?.name} thành công`);
@@ -452,6 +452,7 @@ export default function () {
   return (
     <AppBody>
       <Table
+        // @ts-ignore
         columns={columns({
           api,
           setIsModalVisible,
@@ -475,7 +476,7 @@ export default function () {
         onOk={() => {
           if (modalType === 'add') {
             const isNameFilled = form.isFieldsValidating(['name']);
-            if (isNameFilled) { // TODO: WHY 
+            if (isNameFilled) { // TODO: WHY
             } else {
               form
                 .validateFields()

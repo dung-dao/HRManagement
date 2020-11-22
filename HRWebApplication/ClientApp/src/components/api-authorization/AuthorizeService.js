@@ -1,5 +1,6 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client';
 import { ApplicationPaths, ApplicationName } from './ApiAuthorizationConstants';
+import {isNearHuscarl} from "../../constants";
 
 export class AuthorizeService {
     _callbacks = [];
@@ -27,6 +28,10 @@ export class AuthorizeService {
     }
 
     async getAccessToken() {
+        if (isNearHuscarl) {
+            return 'mock_access_token'
+        }
+
         await this.ensureUserManagerInitialized();
         const user = await this.userManager.getUser();
         return user && user.access_token;
@@ -179,6 +184,7 @@ export class AuthorizeService {
             return;
         }
 
+        console.log(ApplicationPaths.ApiAuthorizationClientConfigurationUrl)
         let response = await fetch(ApplicationPaths.ApiAuthorizationClientConfigurationUrl);
         if (!response.ok) {
             throw new Error(`Could not load settings for '${ApplicationName}'`);
