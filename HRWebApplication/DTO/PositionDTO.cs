@@ -22,7 +22,7 @@ namespace HRWebApplication.DTO
         public EmployeeDTO Employee { get; set; }
         public JobTitleDTO JobTitle { get; set; }
         public WorkTypeDTO WorkType { get; set; }
-        public JobCategoryDTO JobCategory { get; set; }
+        //public JobCategoryDTO JobCategory { get; set; }
         public OrganizationUnitDTO Unit { get; set; }
 
         public LeaveDetailDTO LeaveDetail { get; set; }

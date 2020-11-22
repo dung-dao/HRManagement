@@ -34,7 +34,12 @@ namespace HRWebApplication.Controllers
         public IEnumerable<OrganizationUnitDTO> GetDepartments()
         {
             var data = _organizationRepository.GetActiveRecords();
-            return _mapper.Map<List<OrganizationUnitDTO>>(data);
+            foreach (var unit in data)
+            {
+                var dtoObj = _mapper.Map<OrganizationUnitDTO>(unit);
+                dtoObj.EmployeeNo = _organizationRepository.CountEmployee(unit);
+                yield return dtoObj;
+            }
         }
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
@@ -49,7 +54,7 @@ namespace HRWebApplication.Controllers
             }
 
             var unitDTO = _mapper.Map<OrganizationUnitDTO>(organizationUnit);
-            unitDTO.EmployeeNo = organizationUnit.Employees.Count;
+            unitDTO.EmployeeNo = _organizationRepository.CountEmployee(organizationUnit);
             return unitDTO;
         }
 
