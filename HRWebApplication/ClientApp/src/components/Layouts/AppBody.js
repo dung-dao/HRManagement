@@ -43,7 +43,7 @@ class AppBody extends Component {
     const { selectedMenu, title, openMenu } = this.props;
     const breadCrumbArr = this.loadBreadCrumbs().map((i) => (
       <Breadcrumb.Item key={i}>
-        <Title style={{ margin: 0 }} level={5}>{i}</Title>
+        <Title style={{ margin: 0, display: 'contents' }} level={5}>{i}</Title>
       </Breadcrumb.Item>
     ));
     return (
