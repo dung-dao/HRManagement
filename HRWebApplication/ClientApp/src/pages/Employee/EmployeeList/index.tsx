@@ -13,9 +13,6 @@ function Index() {
           <Input.Search size="middle" placeholder="Tìm kiếm nhân viên" enterButton allowClear />
         </Col>
         <Col style={{ marginLeft: 'auto' }}>
-          <Button type="primary" icon={<SyncOutlined />} size="middle">
-            Làm mới
-          </Button>
           <Link to="employee-add" style={{ marginLeft: 10 }}>
             <Button type="primary" icon={<UserAddOutlined />} size="middle">
               Thêm mới nhân viên

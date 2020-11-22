@@ -1,9 +1,4 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  PlusOutlined
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Modal, Popconfirm, Space, Table } from 'antd';
 import AppBody from 'components/Layouts/AppBody';
 import React from 'react';
@@ -85,18 +80,6 @@ const columns = ({
           <PlusOutlined />
         </Button>
         <Button
-          title="Xem chi tiết"
-          size="small"
-          type="dashed"
-          onClick={() => {
-            setIsModalVisible(true);
-            setSelectedId(record.id);
-            setModalType('detail');
-          }}
-        >
-          <EyeOutlined />
-        </Button>
-        <Button
           title="Chỉnh sửa trực tiếp"
           size="small"
           type="primary"
@@ -122,7 +105,7 @@ const columns = ({
                   setData((prev) => prev.filter((it) => it.id !== record.id));
                 })
                 .catch((err) => {
-                  console.log(err, 'errrrr delete')
+                  console.log(err, 'errrrr delete');
                   message.error(JSON.stringify(err));
                 });
             }
@@ -158,8 +141,8 @@ export default function () {
   const [expandedRowKeys, setExpandedRowKeys] = React.useState<string[]>([]);
 
   const [isModalVisible, setIsModalVisible] = React.useState<boolean>(false);
-  type ModalType = 'detail' | 'add' | 'edit';
-  const [modalType, setModalType] = React.useState<ModalType>('detail');
+  type ModalType = 'add' | 'edit';
+  const [modalType, setModalType] = React.useState<ModalType>('edit');
 
   // const [autoCompleteOptions, setAutoCompleteOptions] = React.useState<any>([]); // list of employees to suggest
 
@@ -185,7 +168,6 @@ export default function () {
   // map modal type to ...
   const mapTypeTo: Record<ModalType, { title: string }> = {
     add: { title: 'Thêm mới bộ phận con của ' + getSelectedRecord()?.name },
-    detail: { title: 'Chi tiết bộ phận  ' + getSelectedRecord()?.name },
     edit: { title: 'Chỉnh sửa bộ phận ' + getSelectedRecord()?.name },
   };
 
@@ -234,7 +216,7 @@ export default function () {
       });
     }
 
-    if (modalType === 'edit' || modalType === 'detail') {
+    if (modalType === 'edit') {
       if (!data) return;
 
       form.setFieldsValue({
@@ -256,7 +238,6 @@ export default function () {
         setData((prev) =>
           prev?.map((it) => (it.id === selectedId ? { ...it, ...form.getFieldsValue() } as OrganizationUnitDTO : it)),
         );
-        setModalType('detail');
         message.info(`Chỉnh sửa bộ phận ${getSelectedRecord()?.name} thành công`);
       })
       .catch((err) => {
@@ -330,7 +311,7 @@ export default function () {
             label="Tên bộ phận"
             rules={[{ required: true, message: 'Tên bộ phận không được bỏ trống' }]}
           >
-            <Input readOnly={modalType === 'detail'} autoFocus />
+            <Input />
           </Form.Item>
           {/* <Form.Item name="manager" label="Người đứng đầu" rules={[{ required: true }]}>
             {modalType === 'detail' ? (
@@ -348,19 +329,7 @@ export default function () {
             )}
           </Form.Item> */}
           <Form.Item name="description" label="Mô tả">
-            <Input.TextArea readOnly={modalType === 'detail'} />
-          </Form.Item>
-          <Form.Item {...{ wrapperCol: { offset: 8, span: 16 } }}>
-            {modalType === 'detail' ? (
-              <Button
-                type="primary"
-                htmlType="submit"
-                children={'Chỉnh sửa'}
-                onClick={() => setModalType('edit')}
-              />
-            ) : modalType === 'edit' ? (
-              <Button type="primary" htmlType="submit" children={'Xong'} onClick={onEditFinish} />
-            ) : null}
+            <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>

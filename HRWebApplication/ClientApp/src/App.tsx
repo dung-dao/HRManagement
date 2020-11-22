@@ -30,8 +30,8 @@ export default function App() {
           <Route exact path={'/job-title'} component={JobTitlePage} />
           <Route exact path={'/employees'} component={EmployeeList} />
           <Route exact path={'/employee-add'} component={EmployeeDetail} />
-          <Route exact path={'/employee-edit/:employeeId'} component={EmployeeDetail} />
-          <Route exact path={'/employee-detail/:employeeId'} component={EmployeeDetail} />
+          <Route exact path={'/employee-edit-info/:employeeId'} component={EmployeeDetail} />
+          <Route exact path={'/employee-edit-work/:employeeId'} component={EmployeeDetail} />
           <Route exact path={'/admin'} component={OverviewPage} />
           <Route exact path={'/admin/category'} component={CategoryPage} />
           <Route exact path={'/admin/attributes'} component={AttributePage} />
