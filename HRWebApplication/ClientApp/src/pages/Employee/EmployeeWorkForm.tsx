@@ -28,7 +28,6 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
   const { action: FormAction, style = {}, onSubmit, value, employeeId } = props
   const initialValues = { ...value, startDate: moment(value?.startDate), endDate: moment(value?.endDate) }
   const [form] = Form.useForm();
-  console.log({initialValues})
   const apiWorkType = React.useRef(new WorkTypeClient());
   const apiJobCategory = React.useRef(new JobCategoryClient());
   const apiJobTitle = React.useRef(new JobTitleClient());
@@ -53,6 +52,10 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
     await onSubmit(submitData)
   };
   const { $try: trySubmitting, isPending } = useTry(onFormSubmit)
+
+  React.useEffect(() => {
+    form.setFieldsValue(initialValues)
+  }, [form, initialValues])
 
   React.useEffect(() => {
     // Fetch collections for Select.Option s

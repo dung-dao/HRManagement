@@ -19,6 +19,7 @@ import {JobCategoryPage} from "./pages/JobCategory";
 import {JobTitlePage} from "./pages/JobTitle";
 import {EmployeeAddPage} from "./pages/EmployeeAdd";
 import { LeaveTypePage } from './pages/LeaveType';
+import {EmployeeEditPage} from "./pages/EmployeeEdit";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
           <Route exact path={'/job-title'} component={JobTitlePage} />
           <Route exact path={'/employees'} component={EmployeeList} />
           <Route exact path={'/employee/new'} component={EmployeeAddPage} />
+          <Route exact path={'/employee/:id'} component={EmployeeEditPage} />
           <Route exact path={'/employee/add-old'} component={EmployeeDetail} />
           <Route exact path={'/employee-edit/:employeeId/info'} component={EmployeeDetail} />
           <Route exact path={'/employee-edit/:employeeId/work'} component={EmployeeDetail} />

@@ -23,6 +23,10 @@ export function EmployeeInfoForm(props: EmployeeFormProps) {
   }
   const { $try: trySubmitting, isPending } = useTry(onFormSubmit)
 
+  React.useEffect(() => {
+    form.setFieldsValue(initialValues)
+  }, [form, initialValues])
+
   return (
     <Form name='info' form={form} style={style} onFinish={trySubmitting} labelAlign="left" initialValues={initialValues}>
       <Row gutter={40}>

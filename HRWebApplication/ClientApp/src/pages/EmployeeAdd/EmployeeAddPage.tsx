@@ -5,7 +5,6 @@ import {PageProvider, usePage} from "./PageProvider";
 import {EmployeeDTO, EmployeesClient, PositionDTO} from "services/ApiClient";
 import {EmployeeInfoForm} from "../Employee/EmployeeInfoForm";
 import {EmployeeWorkForm} from "../Employee/EmployeeWorkForm";
-import {EmployeeAddResult} from "./EmployeeAddResult";
 import {EmployeeFormAction} from "./EmployeeFormAction";
 import {useHistory} from "react-router-dom";
 
@@ -54,7 +53,6 @@ function Form2() {
   const history = useHistory();
   const onSubmit = async (data: PositionDTO) => {
     try {
-      console.log(data)
       await api.employees_AddToPosition(employee?.id!, data)
       message.info(`${verb} nhân viên ${employee?.firstName} thành công`)
       nextPage()

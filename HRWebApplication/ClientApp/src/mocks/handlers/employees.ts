@@ -17,9 +17,12 @@ const handlers = [
     )
   }),
   rest.get(baseUrl + "/api/Employees/:id", (req, res, ctx) => {
+    const id = Number(req.params.id)
+    const employee = employees.find(e => e.id === id)
+
     return res(
       ctx.delay(delay),
-      ctx.json(employees[0])
+      ctx.json(employee)
     )
   }),
   rest.get(baseUrl + "/api/Employees/:id/positions", (req, res, ctx) => {
