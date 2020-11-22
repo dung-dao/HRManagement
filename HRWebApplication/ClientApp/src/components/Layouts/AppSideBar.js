@@ -1,9 +1,15 @@
-import React, { Component } from 'react';
-import { Layout, Menu, Button } from 'antd';
-import { HomeOutlined, DashboardOutlined, ShopOutlined, ShopFilled } from '@ant-design/icons';
-import * as Constant from '../../common/Constant';
+import {
+  SolutionOutlined,
+  ApartmentOutlined,
+  TeamOutlined,
+  IdcardOutlined,
+  GoldOutlined,
+  ReconciliationOutlined,
+} from '@ant-design/icons';
+import { Button, Layout, Menu } from 'antd';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 const Logo = styled.div`
   height: 64px;
@@ -20,61 +26,47 @@ const LogoHead = styled.h1`
 `;
 const { Sider } = Layout;
 
-class AppSidebar extends Component {
-  state = {
-    collapsed: false,
+export default function AppSidebar() {
+  const { pathname } = useLocation();
+  const getSelectedKey = () => {
+    if (pathname.includes('organization')) return 'organization';
+    if (pathname.includes('employee')) return 'employee';
+    if (pathname.includes('job-title')) return 'job-title';
+    if (pathname.includes('job-category')) return 'job-category';
+    if (pathname.includes('work-type')) return 'work-type';
   };
 
-  onCollapse = (collapsed) => {
-    this.setState({ collapsed });
-  };
-
-  render() {
-    const { collapsed } = this.state;
-    const { selectedMenu, openMenu } = this.props;
-    return (
-      <Sider
-        collapsible
-        onCollapse={this.onCollapse}
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'sticky',
-          top: 0,
-          left: 0,
-        }}
-      >
-        <Logo>
-          <Button type="primary" icon={<ShopOutlined style={{ fontSize: 28 }} />} size="large" />
-          {!collapsed && <LogoHead>ADMIN CENTER</LogoHead>}
-        </Logo>
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={selectedMenu}
-          defaultOpenKeys={[openMenu]}
-        >
-          <Menu.Item key={'/organization'}>
-            <DashboardOutlined />
-            <Link to={'/organization'}>Tổ chức</Link>
-          </Menu.Item>
-          <Menu.Item key={'/employees'}>
-            <DashboardOutlined />
-            <Link to={'/employees'}>Nhân viên</Link>
-          </Menu.Item>
-          <Menu.Item key={'/work-type'}>
-            <DashboardOutlined />
-            <Link to={'/work-type'}>Loại công việc</Link>
-          </Menu.Item>
-          <Menu.Item key={'/job-category'}>
-            <DashboardOutlined />
-            <Link to={'/job-category'}>Loại hình nhân sự</Link>
-          </Menu.Item>
-          <Menu.Item key={'/job-title'}>
-            <DashboardOutlined />
-            <Link to={'/job-title'}>Chức vụ công việc</Link>
-          </Menu.Item>
-          {/* <Menu.Item key={Constant.MENU.MERCHANTS_PAGE}>
+  return (
+    <Layout.Sider
+      style={{
+        overflow: 'auto',
+        height: '100vh',
+        position: 'sticky',
+        top: 0,
+        left: 0,
+      }}
+    >
+      <Logo>
+        <Button type="primary" icon={<SolutionOutlined style={{ fontSize: 24 }} />} size="large" />
+        <LogoHead>HR Management</LogoHead>
+      </Logo>
+      <Menu theme="dark" mode="inline" selectedKeys={[getSelectedKey()]} style={{ marginTop: 20 }}>
+        <Menu.Item key={'organization'} active>
+          <ApartmentOutlined /> <Link to={'/organization'}>Tổ chức</Link>
+        </Menu.Item>
+        <Menu.Item key={'employee'}>
+          <TeamOutlined /> <Link to={'/employees'}>Nhân viên</Link>
+        </Menu.Item>
+        <Menu.Item key={'job-title'}>
+          <IdcardOutlined /> <Link to={'/job-title'}>Chức vụ công việc</Link>
+        </Menu.Item>
+        <Menu.Item key={'job-category'}>
+          <GoldOutlined /> <Link to={'/job-category'}>Loại hình nhân sự</Link>
+        </Menu.Item>
+        <Menu.Item key={'work-type'}>
+          <ReconciliationOutlined /> <Link to={'/work-type'}>Loại công việc</Link>
+        </Menu.Item>
+        {/* <Menu.Item key={Constant.MENU.MERCHANTS_PAGE}>
             <ShopFilled />
             <span>Đối tác</span>
             <Link to={Constant.ROUTER_URL.MERCHANTS_PAGE}></Link>
@@ -97,10 +89,7 @@ class AppSidebar extends Component {
               <Link to={Constant.ROUTER_URL.CATEGORY_PAGE} />
             </Menu.Item>
           </Menu.SubMenu> */}
-        </Menu>
-      </Sider>
-    );
-  }
+      </Menu>
+    </Layout.Sider>
+  );
 }
-
-export default AppSidebar;

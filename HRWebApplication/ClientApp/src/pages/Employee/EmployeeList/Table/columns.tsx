@@ -44,12 +44,7 @@ export const columns = [
     fixed: 'right',
     render: (_, record) => (
       <Space size="small">
-        <Link to={'employee-detail/' + record?.id} title="Xem chi tiết">
-          <Button size="small" type="dashed">
-            <EyeOutlined />
-          </Button>
-        </Link>
-        <Link to={'employee-edit/' + record?.id} title="Chỉnh sửa">
+        <Link to={'employee-edit/' + record?.id + '/info'} title="Chỉnh sửa">
           <Button size="small" type="primary">
             <EditOutlined />
           </Button>

@@ -2312,13 +2312,13 @@ export interface IEmployeeDTO {
     nationalId?: string | undefined;
 }
 
-/** Vị trí công việc nhân viên bán hàng, nhân viên thu ngân... */
-export class JobTitleDTO implements IJobTitleDTO {
+/** Professionals, Technicians, Officials and Managers */
+export class JobCategoryDTO implements IJobCategoryDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
 
-    constructor(data?: IJobTitleDTO) {
+    constructor(data?: IJobCategoryDTO) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2335,9 +2335,9 @@ export class JobTitleDTO implements IJobTitleDTO {
         }
     }
 
-    static fromJS(data: any): JobTitleDTO {
+    static fromJS(data: any): JobCategoryDTO {
         data = typeof data === 'object' ? data : {};
-        let result = new JobTitleDTO();
+        let result = new JobCategoryDTO();
         result.init(data);
         return result;
     }
@@ -2351,11 +2351,61 @@ export class JobTitleDTO implements IJobTitleDTO {
     }
 }
 
+/** Professionals, Technicians, Officials and Managers */
+export interface IJobCategoryDTO {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+}
+
+/** Vị trí công việc nhân viên bán hàng, nhân viên thu ngân... */
+export class JobTitleDTO implements IJobTitleDTO {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+    jobCategory?: JobCategoryDTO;
+
+    constructor(data?: IJobTitleDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.jobCategory = _data["jobCategory"] ? JobCategoryDTO.fromJS(_data["jobCategory"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): JobTitleDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new JobTitleDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["jobCategory"] = this.jobCategory ? this.jobCategory.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
 /** Vị trí công việc nhân viên bán hàng, nhân viên thu ngân... */
 export interface IJobTitleDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
+    jobCategory?: JobCategoryDTO;
 }
 
 /** Part-time, fulltime, remote... */
@@ -2399,52 +2449,6 @@ export class WorkTypeDTO implements IWorkTypeDTO {
 
 /** Part-time, fulltime, remote... */
 export interface IWorkTypeDTO {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
-}
-
-/** Professionals, Technicians, Officials and Managers */
-export class JobCategoryDTO implements IJobCategoryDTO {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
-
-    constructor(data?: IJobCategoryDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-        }
-    }
-
-    static fromJS(data: any): JobCategoryDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new JobCategoryDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        return data; 
-    }
-}
-
-/** Professionals, Technicians, Officials and Managers */
-export interface IJobCategoryDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
@@ -2500,66 +2504,6 @@ export interface IOrganizationUnitDTO {
     description?: string | undefined;
     employeeNo?: number;
     parentId?: number | undefined;
-}
-
-export class PositionDTO implements IPositionDTO {
-    startDate?: Date;
-    endDate?: Date;
-    salery?: number;
-    jobTitle?: JobTitleDTO;
-    employmentStatus?: WorkTypeDTO;
-    jobCategory?: JobCategoryDTO;
-    unit?: OrganizationUnitDTO;
-
-    constructor(data?: IPositionDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
-            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
-            this.salery = _data["salery"];
-            this.jobTitle = _data["jobTitle"] ? JobTitleDTO.fromJS(_data["jobTitle"]) : <any>undefined;
-            this.employmentStatus = _data["employmentStatus"] ? WorkTypeDTO.fromJS(_data["employmentStatus"]) : <any>undefined;
-            this.jobCategory = _data["jobCategory"] ? JobCategoryDTO.fromJS(_data["jobCategory"]) : <any>undefined;
-            this.unit = _data["unit"] ? OrganizationUnitDTO.fromJS(_data["unit"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): PositionDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new PositionDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["salery"] = this.salery;
-        data["jobTitle"] = this.jobTitle ? this.jobTitle.toJSON() : <any>undefined;
-        data["employmentStatus"] = this.employmentStatus ? this.employmentStatus.toJSON() : <any>undefined;
-        data["jobCategory"] = this.jobCategory ? this.jobCategory.toJSON() : <any>undefined;
-        data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IPositionDTO {
-    startDate?: Date;
-    endDate?: Date;
-    salery?: number;
-    jobTitle?: JobTitleDTO;
-    employmentStatus?: WorkTypeDTO;
-    jobCategory?: JobCategoryDTO;
-    unit?: OrganizationUnitDTO;
 }
 
 export class LeaveTypeDTO implements ILeaveTypeDTO {
@@ -2648,6 +2592,70 @@ export interface ILeaveDetailDTO {
     date?: Date;
     reason?: string | undefined;
     type?: LeaveTypeDTO;
+}
+
+export class PositionDTO implements IPositionDTO {
+    startDate?: Date;
+    endDate?: Date | undefined;
+    salary?: number;
+    employee?: EmployeeDTO;
+    jobTitle?: JobTitleDTO;
+    workType?: WorkTypeDTO;
+    unit?: OrganizationUnitDTO;
+    leaveDetail?: LeaveDetailDTO;
+
+    constructor(data?: IPositionDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+            this.salary = _data["salary"];
+            this.employee = _data["employee"] ? EmployeeDTO.fromJS(_data["employee"]) : <any>undefined;
+            this.jobTitle = _data["jobTitle"] ? JobTitleDTO.fromJS(_data["jobTitle"]) : <any>undefined;
+            this.workType = _data["workType"] ? WorkTypeDTO.fromJS(_data["workType"]) : <any>undefined;
+            this.unit = _data["unit"] ? OrganizationUnitDTO.fromJS(_data["unit"]) : <any>undefined;
+            this.leaveDetail = _data["leaveDetail"] ? LeaveDetailDTO.fromJS(_data["leaveDetail"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PositionDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new PositionDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["salary"] = this.salary;
+        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
+        data["jobTitle"] = this.jobTitle ? this.jobTitle.toJSON() : <any>undefined;
+        data["workType"] = this.workType ? this.workType.toJSON() : <any>undefined;
+        data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
+        data["leaveDetail"] = this.leaveDetail ? this.leaveDetail.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IPositionDTO {
+    startDate?: Date;
+    endDate?: Date | undefined;
+    salary?: number;
+    employee?: EmployeeDTO;
+    jobTitle?: JobTitleDTO;
+    workType?: WorkTypeDTO;
+    unit?: OrganizationUnitDTO;
+    leaveDetail?: LeaveDetailDTO;
 }
 
 export class ApiException extends Error {
