@@ -138,12 +138,22 @@ namespace HRWebApplication.Controllers
             if (employee is null)
                 return NotFound();
 
-            var po = _mapper.Map<Position>(data);
+            //Manual mapping Position to avoid record status bug
+            var position = new Position()
+            {
+                Employee = employee,
+                StartDate = data.StartDate,
+                EndDate = data.EndDate,
+                Salary = data.Salary,
+                JobTitle = _context.JobTitles.Find(data.JobTitle.Id),
+                WorkType = _context.WorkType.Find(data.WorkType.Id),
+                Unit = _context.OrganizationUnits.Find(data.Unit.Id)
+            };
 
-            _employeeRepo.NewPosition(employee, po);
+            _employeeRepo.NewPosition(employee, position);
 
             Commit();
-            return CreatedAtAction("GetPositionById", new { id = employee.Id, positionId = po.Id }, _mapper.Map<PositionDTO>(po));
+            return CreatedAtAction("GetPositionById", new { id = employee.Id, positionId = position.Id }, _mapper.Map<PositionDTO>(position));
         }
 
         [HttpDelete("{id}/positions/{positionId}", Name = "[controller]_DeletePosition")]
