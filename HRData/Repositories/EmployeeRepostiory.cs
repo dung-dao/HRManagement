@@ -62,6 +62,9 @@ namespace HRData.Repositories
         public List<Position> GetPositions(Employee employee) => employee.Positions.OrderBy(po => po.StartDate).ToList();
         public void NewPosition(Employee employee, Position position)
         {
+            var currentPos = GetCurentPosition(employee);
+            currentPos.EndDate = DateTime.Now;
+
             employee.Status = EmployeeStatus.Working;
             position.RecordStatus = RecordStatus.Active;
             employee.Positions.Add(position);
@@ -72,14 +75,15 @@ namespace HRData.Repositories
                     orderby p.StartDate descending
                     select p).FirstOrDefault();
         }
-        #endregion
 
         public void EmployeeLeave(Employee employee, LeaveDetail detail)
         {
-            detail.Position = (from p in employee.Positions
-                               orderby p.StartDate descending
-                               select p).FirstOrDefault();
+            var pos = (from p in employee.Positions
+                       orderby p.StartDate descending
+                       select p).FirstOrDefault();
+            pos.EndDate = DateTime.Now;
 
+            detail.Position = pos;
             employee.Status = EmployeeStatus.Leaved;
         }
 
@@ -95,6 +99,7 @@ namespace HRData.Repositories
                     select p
              ).FirstOrDefault();
         }
+        #endregion
 
         public List<Employee> GetInactiveEmployees()
         {

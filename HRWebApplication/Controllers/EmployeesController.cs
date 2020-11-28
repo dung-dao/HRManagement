@@ -17,24 +17,21 @@ namespace HRWebApplication.Controllers
     public class EmployeesController : APIController
     {
         private readonly DbSet<Employee> _employees;
-        private readonly IEmployeeRepostiory _empRepostiory;
+        private readonly IEmployeeRepostiory _employeeRepo;
+        #region Constructor
         public EmployeesController(ApplicationDbContext context, IMapper mapper, IEmployeeRepostiory employeeRepostiory) : base(context, mapper)
         {
-            this._empRepostiory = employeeRepostiory;
+            this._employeeRepo = employeeRepostiory;
             this._employees = _context.Set<Employee>();
         }
+        #endregion
 
         #region Profile
         [HttpGet(Name = "[controller]_GetAll")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<EmployeeDTO> GetAll()
         {
-            var employees = _empRepostiory.GetActiveEmployees();
-            return ToListEmployeeDTO(employees);
-        }
-
-        private List<EmployeeDTO> ToListEmployeeDTO(List<Employee> employees)
-        {
+            var employees = _employeeRepo.GetActiveEmployees();
             return _mapper.Map<List<EmployeeDTO>>(employees);
         }
 
@@ -54,9 +51,10 @@ namespace HRWebApplication.Controllers
         {
             var newEmployee = _mapper.Map<Employee>(data);
 
-            _empRepostiory.AddEmployee(newEmployee);
+            _employeeRepo.AddEmployee(newEmployee);
             Commit();
-            return _mapper.Map<EmployeeDTO>(newEmployee);
+            var res = _mapper.Map<EmployeeDTO>(newEmployee);
+            return CreatedAtAction("Get", new { id = newEmployee.Id }, res);
         }
 
         [HttpPut("{id}", Name = "UpdateEmployeeById")]
@@ -66,7 +64,7 @@ namespace HRWebApplication.Controllers
             if (value.Id != id)
                 return BadRequest();
             var em = _mapper.Map<Employee>(value);
-            _empRepostiory.Update(em);
+            _employeeRepo.Update(em);
             try
             {
                 Commit();
@@ -87,7 +85,7 @@ namespace HRWebApplication.Controllers
             var em = _employees.Find(id);
             if (em is null)
                 return NotFound();
-            _empRepostiory.Delete(em);
+            _employeeRepo.Delete(em);
             try
             {
                 Commit();
@@ -109,7 +107,7 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return _mapper.Map<List<PositionDTO>>(_empRepostiory.GetPositions(employee));
+            return _mapper.Map<List<PositionDTO>>(_employeeRepo.GetPositions(employee));
         }
 
         [HttpGet("{id}/positions/{positionId}", Name = "[controller]_GetPositionById")]
@@ -119,7 +117,7 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return _mapper.Map<List<PositionDTO>>(_empRepostiory.GetPositionById(employee, positionId));
+            return _mapper.Map<List<PositionDTO>>(_employeeRepo.GetPositionById(employee, positionId));
         }
 
         [HttpGet("{id}/positions/current", Name = "[controller]_GetCurrentPosition")]
@@ -129,7 +127,7 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return _mapper.Map<PositionDTO>(_empRepostiory.GetCurentPosition(employee));
+            return _mapper.Map<PositionDTO>(_employeeRepo.GetCurentPosition(employee));
         }
 
         [HttpPost("{id}/positions", Name = "[controller]_AddToPosition")]
@@ -142,7 +140,7 @@ namespace HRWebApplication.Controllers
 
             var po = _mapper.Map<Position>(data);
 
-            _empRepostiory.NewPosition(employee, po);
+            _employeeRepo.NewPosition(employee, po);
 
             Commit();
             return CreatedAtAction("GetPositionById", new { id = employee.Id, positionId = po.Id }, _mapper.Map<PositionDTO>(po));
@@ -158,7 +156,7 @@ namespace HRWebApplication.Controllers
             var position = employee.Positions.FirstOrDefault(po => po.Id == positionId);
             if (position is null)
                 return NotFound();
-            _empRepostiory.DeletePosition(employee, position);
+            _employeeRepo.DeletePosition(employee, position);
             Commit();
             return Ok();
         }
@@ -171,7 +169,7 @@ namespace HRWebApplication.Controllers
                 return NotFound();
 
             var detail = _mapper.Map<LeaveDetail>(leaveDetail);
-            _empRepostiory.EmployeeLeave(employee, detail);
+            _employeeRepo.EmployeeLeave(employee, detail);
             Commit();
             return NoContent();
         }

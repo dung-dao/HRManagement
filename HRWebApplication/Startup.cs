@@ -61,8 +61,8 @@ namespace HRWebApplication
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ToDo API",
-                    Description = "A simple example ASP.NET Core Web API",
+                    Title = "HRM API",
+                    Description = "An ASP.NET Core Web API",
                 });
 
                 // Set the comments path for the Swagger JSON and UI.
