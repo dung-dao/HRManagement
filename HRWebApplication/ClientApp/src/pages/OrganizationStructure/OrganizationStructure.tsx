@@ -155,7 +155,6 @@ export default function () {
 
   // recalculate expandedRowKeys
   const onTableTreeExpand = React.useCallback((expanded: boolean, record: OrganizationUnitDTO) => {
-    console.log('> : record', record);
     if (expanded) {
       setExpandedRowKeys((old) => old.concat(String(record.id)));
     } else {

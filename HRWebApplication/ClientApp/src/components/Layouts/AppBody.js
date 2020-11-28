@@ -19,6 +19,8 @@ const breadCrumbs = {
   'job-title': 'Chức vụ công việc',
   'work-type': 'Loại công việc',
   'add': 'Thêm',
+  'new': 'Thêm mới',
+  'edit': 'Chỉnh sửa',
   'leave-type': 'Loại nghỉ việc',
 };
 

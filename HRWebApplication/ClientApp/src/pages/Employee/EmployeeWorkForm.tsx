@@ -1,30 +1,30 @@
+import { Col, DatePicker, Form, Input, Select } from 'antd';
+import { useTry } from 'hooks';
+import moment from 'moment';
 import React from 'react';
-import {Button, Col, Collapse, DatePicker, Form, Input, message, Row, Select, Timeline, Tooltip} from "antd";
-import {
-  formatCurrency,
-  formItemLayoutWide,
-  required,
-  toNumber
-} from "./EmployeeDetail/utils";
 import {
   EmployeeDTO,
-  JobCategoryClient, JobCategoryDTO,
-  JobTitleClient, JobTitleDTO, OrganizationUnitDTO,
-  OrganizationUnitsClient, PositionDTO,
-  WorkTypeClient, WorkTypeDTO
-} from "services/ApiClient";
-import moment from "moment";
-import {useTry} from "hooks";
+  JobCategoryClient,
+  JobCategoryDTO,
+  JobTitleClient,
+  JobTitleDTO,
+  OrganizationUnitDTO,
+  OrganizationUnitsClient,
+  PositionDTO,
+  WorkTypeClient,
+  WorkTypeDTO,
+} from 'services/ApiClient';
+import { formatCurrency, formItemLayoutWide, required, toNumber } from './EmployeeDetail/utils';
 
 type EmployeeFormProps = {
   action?: any;
   style?: object;
-  onSubmit?: (value: EmployeeDTO) => Promise<any>
-  value?: PositionDTO
-}
+  onSubmit?: (value: EmployeeDTO) => Promise<any>;
+  value?: PositionDTO;
+};
 
 export function EmployeeWorkForm(props: EmployeeFormProps) {
-  const { action: FormAction, style = {}, onSubmit, value } = props
+  const { action: FormAction, style = {}, onSubmit, value } = props;
   const [form] = Form.useForm();
   const apiWorkType = React.useRef(new WorkTypeClient());
   const apiJobCategory = React.useRef(new JobCategoryClient());
@@ -34,59 +34,92 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
   const jobCategoriesRef = React.useRef<JobCategoryDTO[]>([]);
   const jobTitlesRef = React.useRef<JobTitleDTO[]>([]);
   const organizationsRef = React.useRef<OrganizationUnitDTO[]>([]);
-  const [,forceRender] = React.useReducer((x) => ++x, 0)
-  const initialValues = {
-    ...value,
-    startDate: moment(value?.startDate),
-    endDate: moment(value?.endDate),
-    workType: value?.workType?.id?.toString(),
-    jobTitle: value?.jobTitle?.id?.toString(),
-    unit: value?.unit?.id?.toString(),
-  }
+  const [, forceRender] = React.useReducer((x) => ++x, 0);
+  const initialValues = React.useMemo(
+    () => ({
+      ...value,
+      startDate: moment(value?.startDate),
+      endDate: moment(value?.endDate),
+      workType: value?.workType?.id?.toString(),
+      jobTitle: value?.jobTitle?.id?.toString(),
+      unit: value?.unit?.id?.toString(),
+    }),
+    [],
+  );
 
   const onFormSubmit = async (data) => {
+    const allRefTableLoaded =
+      workTypesRef.current &&
+      jobCategoriesRef.current &&
+      jobTitlesRef.current &&
+      organizationsRef.current;
+    if (!allRefTableLoaded) {
+      console.error('Not all ref table loaded');
+      return;
+    }
+
     const submitData = {
       ...data,
-      workType: workTypesRef.current.find(i => i.id === Number(data.workType)),
-      jobTitle: jobTitlesRef.current.find(i => i.id === Number(data.jobTitle)),
-      unit: organizationsRef.current.find(i => i.id === Number(data.unit)),
+      workType: workTypesRef.current.find((i) => i.id === Number(data.workType)),
+      jobTitle: jobTitlesRef.current.find((i) => i.id === Number(data.jobTitle)),
+      unit: organizationsRef.current.find((i) => i.id === Number(data.unit)),
       startDate: data.startDate.toDate(),
       endDate: data.endDate.toDate(),
-      salary: toNumber(data.salary),
-    } as PositionDTO
-    await onSubmit?.(submitData)
+      salary: toNumber(String(data.salary)),
+    } as PositionDTO;
+    // LOG: console.log('> : submitData', form.getFieldsValue(), submitData, workTypesRef.current);
+    await onSubmit?.(submitData);
   };
-  const { $try: trySubmitting, isPending } = useTry(onFormSubmit)
+  const { $try: trySubmitting, isPending } = useTry(onFormSubmit);
 
   React.useEffect(() => {
+    // LOG: console.log('affect get ref tables');
     (async () => {
       const one = apiWorkType.current
         .workType_GetAll()
-        .then((data) => workTypesRef.current = data)
+        .then((data) => (workTypesRef.current = data))
         .catch((err) => console.error(err));
       const two = apiJobCategory.current
         .jobCategory_GetAll()
-        .then((data) => jobCategoriesRef.current = data)
+        .then((data) => (jobCategoriesRef.current = data))
         .catch((err) => console.error(err));
       const three = apiJobTitle.current
         .jobTitle_GetAll()
-        .then((data) => jobTitlesRef.current = data)
+        .then((data) => (jobTitlesRef.current = data))
         .catch((err) => console.error(err));
       const four = apiOrganization.current
         .organizationUnits_GetAll()
-        .then((data) => organizationsRef.current = data)
+        .then((data) => (organizationsRef.current = data))
         .catch((err) => console.error(err));
-      await Promise.all([one,two,three,four])
-      forceRender()
-    })()
+      await Promise.all([one, two, three, four]);
+      //  LOG:
+      // console.log(
+      //   'all ref table loaded',
+      //   workTypesRef,
+      //   jobCategoriesRef,
+      //   jobTitlesRef,
+      //   organizationsRef,
+      // );
+      forceRender();
+    })();
   }, [form]);
 
+  console.log('render');
+
   React.useEffect(() => {
-    form.setFieldsValue(initialValues)
-  }, [form, initialValues])
+    form.setFieldsValue(initialValues);
+  }, [form, initialValues]);
+
+  // LOG: console.log(form.getFieldsValue(), 'form', form.getFieldValue('jobTitle'));
 
   return (
-    <Form name='work' form={form} onFinish={trySubmitting} style={style} initialValues={initialValues}>
+    <Form
+      name="work"
+      form={form}
+      onFinish={trySubmitting}
+      style={style}
+      initialValues={initialValues}
+    >
       <Col span={24}>
         <fieldset>
           <legend>Vị trí công việc</legend>
@@ -112,8 +145,8 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
               suffix="VNĐ"
               onChange={(e) => {
                 form.setFieldsValue({
-                  salary: formatCurrency(toNumber(e.target.value).toString())
-                })
+                  salary: formatCurrency(toNumber(e.target.value).toString()),
+                });
               }}
             />
           </Form.Item>
@@ -123,10 +156,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
             name="jobTitle"
             rules={[required('Vị trí công việc')]}
           >
-            <Select
-              placeholder="Vị trí công việc"
-              style={{ marginRight: '10px' }}
-            >
+            <Select placeholder="Vị trí công việc" style={{ marginRight: '10px' }}>
               {jobTitlesRef.current.map((it) => (
                 <Select.Option value={it.id!.toString()} key={it.id}>
                   {it.name}
@@ -140,10 +170,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
             name="workType"
             rules={[required('Loại hình làm việc')]}
           >
-            <Select
-              placeholder="Loại hình làm việc"
-              style={{ marginRight: '10px' }}
-            >
+            <Select placeholder="Loại hình làm việc" style={{ marginRight: '10px' }}>
               {workTypesRef.current.map((it) => (
                 <Select.Option value={it.id!.toString()} key={it.id}>
                   {it.name}
@@ -157,10 +184,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
             name="unit"
             rules={[required('Tổ chức')]}
           >
-            <Select
-              placeholder="Tổ chức"
-              style={{ marginRight: '10px' }}
-            >
+            <Select placeholder="Tổ chức" style={{ marginRight: '10px' }}>
               {organizationsRef.current.map((it) => (
                 <Select.Option value={it.id!.toString()} key={it.id}>
                   {it.name}
@@ -170,7 +194,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
           </Form.Item>
         </fieldset>
       </Col>
-      {FormAction && <FormAction form={form} loading={isPending}/>}
+      {FormAction && <FormAction form={form} loading={isPending} />}
     </Form>
   );
 }

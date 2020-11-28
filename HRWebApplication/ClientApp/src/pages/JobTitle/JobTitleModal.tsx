@@ -69,7 +69,6 @@ export function JobTitleModal() {
     }
   }, [data.length, form, initialValues, modalVisible]);
 
-  console.log('> : selectedCategory', selectedCategory);
   return (
     <Modal
       title={title[modalType]}
@@ -112,7 +111,7 @@ export function JobTitleModal() {
         <Form.Item
           name="description"
           label="Mô tả "
-          rules={[{ required: true, message: 'Mô tả chức vụ công việc không được bỏ trống' }]}
+          // rules={[{ required: true, message: 'Mô tả chức vụ công việc không được bỏ trống' }]}
         >
           <Input.TextArea />
         </Form.Item>

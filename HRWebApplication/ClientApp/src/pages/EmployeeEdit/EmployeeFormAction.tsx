@@ -22,7 +22,7 @@ export function EmployeeFormAction(props: FormActionProps) {
       </Button>
       <Button type="primary" htmlType='submit' loading={loading}>
         {
-          name === 'info' ? 'Lưu thay đổi' : 'Thêm vị trí'
+          name === 'info' ? 'Lưu thay đổi' : 'Cập nhật vị trí'
         }
       </Button>
       {__DEV__ && name === 'work' && (

@@ -14,7 +14,6 @@ export function PositionHistory(props: PositionHistoryProps) {
   const { values } = props
   const [detail, setDetail] = React.useState<PositionDTO>()
 
-  console.log(values.map(v => v.jobTitle?.name))
   return (
     <div>
       <fieldset>
@@ -25,7 +24,7 @@ export function PositionHistory(props: PositionHistoryProps) {
               setDetail(v)
             }
             return (
-              <Timeline.Item color={i === 0 ? 'green' : 'red'}>
+              <Timeline.Item color={i === 0 ? 'green' : 'red'} key={i}>
                 <Button type='link' onClick={openDetail} style={{padding:0}}>
                   <Title level={5}>{v.jobTitle?.name}</Title>
                 </Button>
@@ -41,7 +40,7 @@ export function PositionHistory(props: PositionHistoryProps) {
         visible={!!detail}
         centered
         onCancel={() => setDetail(undefined)}
-        width={600}
+        width={1000}
         destroyOnClose
       >
         <EmployeeWorkForm style={{ marginTop: 25 }} value={detail} />
