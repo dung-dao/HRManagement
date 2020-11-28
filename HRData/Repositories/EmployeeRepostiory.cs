@@ -18,6 +18,7 @@ namespace HRData.Repositories
         void AddEmployee(Employee employee);
         void Update(Employee employee);
         void Delete(Employee employee);
+        bool IsWorking(Employee employee);
         #endregion
 
         #region Position
@@ -63,12 +64,15 @@ namespace HRData.Repositories
         public void NewPosition(Employee employee, Position position)
         {
             var currentPos = GetCurentPosition(employee);
-            currentPos.EndDate = DateTime.Now;
+            if (currentPos.EndDate > position.StartDate)
+                currentPos.EndDate = position.StartDate;
 
             employee.Status = EmployeeStatus.Working;
             position.RecordStatus = RecordStatus.Active;
             employee.Positions.Add(position);
         }
+
+
         public Position GetCurentPosition(Employee employee)
         {
             return (from p in employee.Positions
@@ -83,7 +87,7 @@ namespace HRData.Repositories
                        select p).FirstOrDefault();
             pos.EndDate = DateTime.Now;
 
-            detail.Position = pos;
+            pos.LeaveDetail = detail;
             employee.Status = EmployeeStatus.Leaved;
         }
 
@@ -104,6 +108,12 @@ namespace HRData.Repositories
         public List<Employee> GetInactiveEmployees()
         {
             return _context.Employees.Where(e => e.RecordStatus == RecordStatus.Active).ToList();
+        }
+
+        public bool IsWorking(Employee employee)
+        {
+            var now = DateTime.Now;
+            return employee.Positions.Any(p => p.LeaveDetail is null && p.StartDate < now && p.EndDate > now);
         }
     }
 }

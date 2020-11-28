@@ -4,6 +4,7 @@ using HRData.Models;
 using HRData.Models.JobModels;
 using HRData.Repositories;
 using HRWebApplication.DTO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -171,6 +172,7 @@ namespace HRWebApplication.Controllers
             return Ok();
         }
 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPost("{id}/positions/leave", Name = "[controller]_Leave")]
         public ActionResult<PositionDTO> Leave(int id, LeaveDetailDTO leaveDetail)
         {
@@ -178,7 +180,16 @@ namespace HRWebApplication.Controllers
             if (employee is null)
                 return NotFound();
 
-            var detail = _mapper.Map<LeaveDetail>(leaveDetail);
+            if (!_employeeRepo.IsWorking(employee))
+                return BadRequest();
+
+            var leaveType = _context.LeaveTypes.Find(leaveDetail.Type.Id);
+            var detail = new LeaveDetail()
+            {
+                Date = DateTime.Now,
+                Reason = leaveDetail.Reason,
+                Type = leaveType
+            };
             _employeeRepo.EmployeeLeave(employee, detail);
             Commit();
             return NoContent();

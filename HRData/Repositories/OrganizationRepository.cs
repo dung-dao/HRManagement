@@ -64,7 +64,7 @@ namespace HRData.Repositories
         public int CountEmployee(OrganizationUnit unit)
         {
             return (from p in unit.Positions
-                    where p.StartDate < DateTime.Now && p.LeaveDetail is null
+                    where p.StartDate < DateTime.Now && p.EndDate < DateTime.Now && p.LeaveDetail is null
                     select p).Count();
         }
     }
