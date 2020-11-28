@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HRData.Models;
+using System;
 
 namespace HRWebApplication.DTO
 {
@@ -14,5 +15,6 @@ namespace HRWebApplication.DTO
         public string Address { get; set; }
         public string CurrentAddress { get; set; }
         public string NationalId { get; set; }
+        public EmployeeStatus Status { get; set; }
     }
 }
