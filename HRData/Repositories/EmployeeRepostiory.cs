@@ -131,10 +131,10 @@ namespace HRData.Repositories
             var unit = _context.OrganizationUnits.Find(unitId);
             if (unit is null)
                 return 0;
-            var employees = from e in _context.Employees
+            var employees = (from e in _context.Employees
             join p in _context.Positions on e.Id equals p.Employee.Id
             where p.Unit.Id == unit.Id
-            select e;
+            select e).Distinct();
 
             int no = 0;
 
