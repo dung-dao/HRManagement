@@ -33,7 +33,21 @@ namespace HRWebApplication.Controllers
         public IEnumerable<EmployeeDTO> GetAll()
         {
             var employees = _employeeRepo.GetActiveEmployees();
-            return _mapper.Map<List<EmployeeDTO>>(employees);
+            return from e in employees
+                   select new EmployeeDTO()
+                   {
+                       Address = e.Address,
+                       CurrentAddress = e.CurrentAddress,
+                       DateOfBirth = e.DateOfBirth,
+                       FirstName = e.FirstName,
+                       LastName = e.LastName,
+                       NationalId = e.NationalId,
+                       PersonalEmail = e.PersonalEmail,
+                       Phone = e.Phone,
+                       Sex = e.Sex,
+                       WorkEmail = e.WorkEmail,
+                       Status = _employeeRepo.GetEmployeeStatus(e)
+                   };
         }
 
         [HttpGet("{id}", Name = "GetEmployeeById")]
@@ -43,7 +57,20 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return _mapper.Map<EmployeeDTO>(employee);
+            return new EmployeeDTO()
+            {
+                Address = employee.Address,
+                CurrentAddress = employee.CurrentAddress,
+                DateOfBirth = employee.DateOfBirth,
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                NationalId = employee.NationalId,
+                PersonalEmail = employee.PersonalEmail,
+                Phone = employee.Phone,
+                Sex = employee.Sex,
+                WorkEmail = employee.WorkEmail,
+                Status = _employeeRepo.GetEmployeeStatus(employee)
+            };
         }
 
         [HttpPost(Name = "CreateEmployee")]

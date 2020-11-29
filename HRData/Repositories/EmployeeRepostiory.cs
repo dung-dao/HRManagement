@@ -19,6 +19,7 @@ namespace HRData.Repositories
         void Update(Employee employee);
         void Delete(Employee employee);
         bool IsWorking(Employee employee);
+        EmployeeStatus GetEmployeeStatus(Employee employee);
         #endregion
 
         #region Position
@@ -37,11 +38,14 @@ namespace HRData.Repositories
         }
 
         #region Profile
-        public List<Employee> GetActiveEmployees() => _context.Employees.Where(e => e.Status != EmployeeStatus.Leaved && e.RecordStatus == RecordStatus.Active).ToList();
+        public List<Employee> GetActiveEmployees()
+        {
+            return _context.Employees.Where(e => e.RecordStatus == RecordStatus.Active).ToList();
+        }
 
         public void AddEmployee(Employee employee)
         {
-            employee.Status = EmployeeStatus.Pending;
+            //employee.Status = EmployeeStatus.Pending;
             employee.RecordStatus = RecordStatus.Active;
             _context.Employees.Add(employee);
         }
@@ -49,7 +53,7 @@ namespace HRData.Repositories
         public void Update(Employee employee)
         {
             _context.Entry(employee).State = EntityState.Modified;
-            _context.Entry(employee).Property(e => e.Status).IsModified = false;
+            //_context.Entry(employee).Property(e => e.Status).IsModified = false;
             _context.Entry(employee).Property(e => e.RecordStatus).IsModified = false;
         }
 
@@ -67,7 +71,7 @@ namespace HRData.Repositories
             if (currentPos is not null && currentPos.EndDate > position.StartDate)
                 currentPos.EndDate = position.StartDate;
 
-            employee.Status = EmployeeStatus.Working;
+            //employee.Status = EmployeeStatus.Working;
             position.RecordStatus = RecordStatus.Active;
             employee.Positions.Add(position);
         }
@@ -88,7 +92,7 @@ namespace HRData.Repositories
             position.EndDate = detail.Date;
 
             position.LeaveDetail = detail;
-            employee.Status = EmployeeStatus.Leaved;
+            //employee.Status = EmployeeStatus.Leaved;
         }
 
         public void DeletePosition(Employee employee, Position position)
@@ -114,6 +118,18 @@ namespace HRData.Repositories
         {
             var now = DateTime.Now;
             return employee.Positions.Any(p => p.LeaveDetail is null && p.StartDate < now && p.EndDate > now);
+        }
+
+        public EmployeeStatus GetEmployeeStatus(Employee employee)
+        {
+            if (employee.Positions.Count == 0)
+                return EmployeeStatus.Pending;
+            var posNo = (from p in employee.Positions
+                         where p.StartDate < DateTime.Now && p.EndDate > DateTime.Now && p.LeaveDetail == null
+                         select p).Count();
+            if (posNo > 0)
+                return EmployeeStatus.Working;
+            return EmployeeStatus.Leaved;
         }
     }
 }

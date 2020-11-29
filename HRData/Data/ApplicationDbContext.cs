@@ -66,7 +66,7 @@ namespace HRData.Data
             #endregion
 
             #region Employee
-            builder.Entity<Employee>().Property(p => p.Status).HasConversion<string>();
+            //builder.Entity<Employee>().Property(p => p.Status).HasConversion<string>();
 
             builder.Entity<Employee>().HasMany(e => e.Positions).WithOne(p => p.Employee).OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Position>().HasOne(p => p.JobTitle);
@@ -85,7 +85,7 @@ namespace HRData.Data
             #endregion
 
             #region Jobs
-            builder.Entity<JobTitle>().HasOne(e => e.JobCategory).WithMany(e => e.JobTitles).HasForeignKey(e => e.JobCategoryId);
+            builder.Entity<JobTitle>().HasOne(e => e.JobCategory).WithMany(e => e.JobTitles).HasForeignKey(e => e.JobCategoryId).OnDelete(DeleteBehavior.NoAction);
             #endregion
         }
 

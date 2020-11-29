@@ -25,7 +25,7 @@ namespace HRData.Models
 
         public string NationalId { get; set; }
 
-        public EmployeeStatus Status { get; set; }
+        //public EmployeeStatus Status { get; set; }
 
         #region Navigation
         public virtual List<Position> Positions { get; set; }
