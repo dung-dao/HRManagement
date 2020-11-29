@@ -64,7 +64,7 @@ namespace HRData.Repositories
         public void NewPosition(Employee employee, Position position)
         {
             var currentPos = GetCurentPosition(employee);
-            if (currentPos.EndDate > position.StartDate)
+            if (currentPos is not null && currentPos.EndDate > position.StartDate)
                 currentPos.EndDate = position.StartDate;
 
             employee.Status = EmployeeStatus.Working;
