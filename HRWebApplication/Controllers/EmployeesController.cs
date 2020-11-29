@@ -36,6 +36,7 @@ namespace HRWebApplication.Controllers
             return from e in employees
                    select new EmployeeDTO()
                    {
+                       Id = e.Id,
                        Address = e.Address,
                        CurrentAddress = e.CurrentAddress,
                        DateOfBirth = e.DateOfBirth,
@@ -59,6 +60,7 @@ namespace HRWebApplication.Controllers
                 return NotFound();
             return new EmployeeDTO()
             {
+                Id = employee.Id,
                 Address = employee.Address,
                 CurrentAddress = employee.CurrentAddress,
                 DateOfBirth = employee.DateOfBirth,
