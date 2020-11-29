@@ -82,12 +82,12 @@ namespace HRData.Repositories
 
         public void EmployeeLeave(Employee employee, LeaveDetail detail)
         {
-            var pos = (from p in employee.Positions
-                       orderby p.StartDate descending
-                       select p).FirstOrDefault();
-            pos.EndDate = DateTime.Now;
+            var position = GetCurentPosition(employee);
 
-            pos.LeaveDetail = detail;
+            //Todo: Fix later
+            position.EndDate = detail.Date;
+
+            position.LeaveDetail = detail;
             employee.Status = EmployeeStatus.Leaved;
         }
 

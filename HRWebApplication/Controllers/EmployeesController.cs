@@ -174,7 +174,7 @@ namespace HRWebApplication.Controllers
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPost("{id}/positions/leave", Name = "[controller]_Leave")]
-        public ActionResult<PositionDTO> Leave(int id, LeaveDetailDTO leaveDetail)
+        public ActionResult<PositionDTO> TerminateEmployment(int id, LeaveDetailDTO leaveDetail)
         {
             var employee = _employees.Find(id);
             if (employee is null)
@@ -186,7 +186,8 @@ namespace HRWebApplication.Controllers
             var leaveType = _context.LeaveTypes.Find(leaveDetail.Type.Id);
             var detail = new LeaveDetail()
             {
-                Date = DateTime.Now,
+                RecordStatus = RecordStatus.Active,
+                Date = leaveDetail.Date,
                 Reason = leaveDetail.Reason,
                 Type = leaveType
             };

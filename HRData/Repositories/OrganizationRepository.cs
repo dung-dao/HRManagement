@@ -1,5 +1,6 @@
 ﻿using HRData.Data;
 using HRData.Models.Organization;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,9 +64,11 @@ namespace HRData.Repositories
 
         public int CountEmployee(OrganizationUnit unit)
         {
-            return (from p in unit.Positions
-                    where p.StartDate < DateTime.Now && p.EndDate < DateTime.Now && p.LeaveDetail is null
-                    select p).Count();
+            var now = DateTime.Now;
+            return (from e in _context.Employees
+                    join p in _context.Positions on e.Id equals p.Employee.Id
+                    where p.Unit.Id == unit.Id && p.StartDate < now && p.EndDate > now
+                    select e).Count();
         }
     }
 }
