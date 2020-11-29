@@ -108,7 +108,7 @@ export class EmployeesClient extends ApiClientBase {
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("Bad Request", status, _responseText, _headers, result400);
             });
-        } else if (status === 201 || status === 200) {
+        } else if (status === 201) {
             return response.text().then((_responseText) => {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
@@ -570,7 +570,7 @@ export class EmployeesClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    employees_Leave(id: number, body: LeaveDetailDTO | undefined): Promise<PositionDTO> {
+    employees_Leave(id: number, body: LeaveDetailDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Employees/{id}/positions/leave";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -584,7 +584,6 @@ export class EmployeesClient extends ApiClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
             }
         };
 
@@ -595,22 +594,19 @@ export class EmployeesClient extends ApiClientBase {
         });
     }
 
-    protected processEmployees_Leave(response: Response): Promise<PositionDTO> {
+    protected processEmployees_Leave(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
+        if (status === 204) {
             return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = PositionDTO.fromJS(resultData200);
-            return result200;
+            return;
             });
         } else if (status !== 200 && status !== 204) {
             return response.text().then((_responseText) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             });
         }
-        return Promise.resolve<PositionDTO>(<any>null);
+        return Promise.resolve<void>(<any>null);
     }
 }
 
@@ -2236,6 +2232,12 @@ export interface IProblemDetails {
     instance?: string | undefined;
 }
 
+export enum EmployeeStatus {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+}
+
 export class EmployeeDTO implements IEmployeeDTO {
     id?: number;
     firstName?: string | undefined;
@@ -2248,6 +2250,7 @@ export class EmployeeDTO implements IEmployeeDTO {
     address?: string | undefined;
     currentAddress?: string | undefined;
     nationalId?: string | undefined;
+    status?: EmployeeStatus;
 
     constructor(data?: IEmployeeDTO) {
         if (data) {
@@ -2271,6 +2274,7 @@ export class EmployeeDTO implements IEmployeeDTO {
             this.address = _data["address"];
             this.currentAddress = _data["currentAddress"];
             this.nationalId = _data["nationalId"];
+            this.status = _data["status"];
         }
     }
 
@@ -2294,6 +2298,7 @@ export class EmployeeDTO implements IEmployeeDTO {
         data["address"] = this.address;
         data["currentAddress"] = this.currentAddress;
         data["nationalId"] = this.nationalId;
+        data["status"] = this.status;
         return data; 
     }
 }
@@ -2310,6 +2315,7 @@ export interface IEmployeeDTO {
     address?: string | undefined;
     currentAddress?: string | undefined;
     nationalId?: string | undefined;
+    status?: EmployeeStatus;
 }
 
 /** Vị trí công việc nhân viên bán hàng, nhân viên thu ngân... */

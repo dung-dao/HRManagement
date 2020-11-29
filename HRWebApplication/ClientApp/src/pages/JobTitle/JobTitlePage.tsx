@@ -1,7 +1,7 @@
 import React from 'react';
 import AppBody from '../../components/Layouts/AppBody';
 import { Table } from 'antd';
-import { JobTitleDTO, JobTitleClient } from '../../services/ApiClient';
+import { JobTitleDTO, JobTitleClient, JobCategoryClient, JobCategoryDTO } from 'services/ApiClient';
 import { useTry } from '../../hooks';
 import { JobTitleModal } from './JobTitleModal';
 import { ModalType, PageProvider } from './PageProvider';
@@ -36,11 +36,16 @@ const columns = [
 ];
 
 export function JobTitlePage(props) {
-  const api = React.useRef(new JobTitleClient());
-  const { isPending, $try: tryGetAll, data, setData } = useTry(() => api.current.jobTitle_GetAll());
+  const apiJobTitle = React.useRef(new JobTitleClient());
+  const apiJobCategory = React.useRef(new JobCategoryClient());
+  const [jobCategories, setJobCategories] = React.useState<JobCategoryDTO[]>([]);
+  const { isPending, $try: tryGetAll, data, setData } = useTry(() =>
+    apiJobTitle.current.jobTitle_GetAll(),
+  );
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalType, setModalType] = React.useState<ModalType>('add');
   const [record, setRecord] = React.useState<JobTitleDTO>();
+
   const pageContext = {
     modalVisible,
     setModalVisible,
@@ -48,14 +53,25 @@ export function JobTitlePage(props) {
     setModalType,
     record,
     setRecord,
-    data: data ?? [],
+    data: data || [],
     setData,
-    api: api.current, // won't change
+    api: apiJobTitle.current, // won't change
+    jobCategories,
   };
 
   React.useEffect(() => {
     tryGetAll();
+    apiJobCategory.current.jobCategory_GetAll().then((data) => setJobCategories(data));
   }, []);
+
+  const afterMappingData = React.useMemo(
+    () =>
+      data?.map((jobTitleDto) => ({
+        ...jobTitleDto,
+        jobCategory: jobCategories.find((it) => jobTitleDto.jobCategoryId === it.id),
+      })),
+    [data, jobCategories],
+  );
 
   return (
     <AppBody title="Chức vụ công việc">
@@ -84,7 +100,7 @@ export function JobTitlePage(props) {
       </Row>
       <PageProvider value={pageContext}>
         <Table
-          dataSource={data}
+          dataSource={afterMappingData}
           // model doesn't have action field
           // @ts-ignore
           columns={columns}

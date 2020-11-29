@@ -1,7 +1,7 @@
-import React, {PropsWithChildren} from "react"
-import {JobTitleDTO, JobTitleClient} from "../../services/ApiClient";
+import React, { PropsWithChildren } from 'react';
+import { JobTitleDTO, JobTitleClient, JobCategoryDTO } from '../../services/ApiClient';
 
-export type ModalType = 'add' | 'edit'
+export type ModalType = 'add' | 'edit';
 type PageContextData = {
   setModalVisible: (visible: boolean) => void;
   modalVisible: boolean;
@@ -12,24 +12,21 @@ type PageContextData = {
   data: JobTitleDTO[];
   setData: (data: JobTitleDTO[]) => void;
   api: JobTitleClient;
-}
+  jobCategories: JobCategoryDTO[];
+};
 
-export const PageContext = React.createContext<PageContextData>(undefined as any)
+export const PageContext = React.createContext<PageContextData>(undefined as any);
 
 type Props = PropsWithChildren<{
-  value: PageContextData
-}>
+  value: PageContextData;
+}>;
 
 export function PageProvider(props: Props) {
-  const { children, value } = props
+  const { children, value } = props;
 
-  return (
-    <PageContext.Provider value={value}>
-      {children}
-    </PageContext.Provider>
-  )
+  return <PageContext.Provider value={value}>{children}</PageContext.Provider>;
 }
 
 export function usePage() {
-  return React.useContext(PageContext)
+  return React.useContext(PageContext);
 }

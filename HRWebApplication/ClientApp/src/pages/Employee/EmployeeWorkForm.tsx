@@ -4,8 +4,6 @@ import moment from 'moment';
 import React from 'react';
 import {
   EmployeeDTO,
-  JobCategoryClient,
-  JobCategoryDTO,
   JobTitleClient,
   JobTitleDTO,
   OrganizationUnitDTO,
@@ -14,7 +12,8 @@ import {
   WorkTypeClient,
   WorkTypeDTO,
 } from 'services/ApiClient';
-import { formatCurrency, formItemLayoutWide, required, toNumber } from './EmployeeDetail/utils';
+import { formatSalary, formItemLayoutWide, required, toNumber } from './EmployeeDetail/utils';
+import { message } from 'antd';
 
 type EmployeeFormProps = {
   action?: any;
@@ -27,17 +26,16 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
   const { action: FormAction, style = {}, onSubmit, value } = props;
   const [form] = Form.useForm();
   const apiWorkType = React.useRef(new WorkTypeClient());
-  const apiJobCategory = React.useRef(new JobCategoryClient());
   const apiJobTitle = React.useRef(new JobTitleClient());
   const apiOrganization = React.useRef(new OrganizationUnitsClient());
   const workTypesRef = React.useRef<WorkTypeDTO[]>([]);
-  const jobCategoriesRef = React.useRef<JobCategoryDTO[]>([]);
   const jobTitlesRef = React.useRef<JobTitleDTO[]>([]);
   const organizationsRef = React.useRef<OrganizationUnitDTO[]>([]);
   const [, forceRender] = React.useReducer((x) => ++x, 0);
   const initialValues = React.useMemo(
     () => ({
       ...value,
+      salary: formatSalary(value?.salary || '0'),
       startDate: moment(value?.startDate),
       endDate: moment(value?.endDate),
       workType: value?.workType?.id?.toString(),
@@ -49,10 +47,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
 
   const onFormSubmit = async (data) => {
     const allRefTableLoaded =
-      workTypesRef.current &&
-      jobCategoriesRef.current &&
-      jobTitlesRef.current &&
-      organizationsRef.current;
+      workTypesRef.current && jobTitlesRef.current && organizationsRef.current;
     if (!allRefTableLoaded) {
       console.error('Not all ref table loaded');
       return;
@@ -67,6 +62,13 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
       endDate: data.endDate.toDate(),
       salary: toNumber(String(data.salary)),
     } as PositionDTO;
+
+    const refToNullError = !submitData.workType || !submitData.jobTitle || !submitData.unit;
+    if (refToNullError) {
+      message.error('Một số trường thông tin không sử dụng được!');
+      return;
+    }
+
     // LOG: console.log('> : submitData', form.getFieldsValue(), submitData, workTypesRef.current);
     await onSubmit?.(submitData);
   };
@@ -79,19 +81,15 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
         .workType_GetAll()
         .then((data) => (workTypesRef.current = data))
         .catch((err) => console.error(err));
-      const two = apiJobCategory.current
-        .jobCategory_GetAll()
-        .then((data) => (jobCategoriesRef.current = data))
-        .catch((err) => console.error(err));
-      const three = apiJobTitle.current
+      const two = apiJobTitle.current
         .jobTitle_GetAll()
         .then((data) => (jobTitlesRef.current = data))
         .catch((err) => console.error(err));
-      const four = apiOrganization.current
+      const three = apiOrganization.current
         .organizationUnits_GetAll()
         .then((data) => (organizationsRef.current = data))
         .catch((err) => console.error(err));
-      await Promise.all([one, two, three, four]);
+      await Promise.all([one, two, three]);
       //  LOG:
       // console.log(
       //   'all ref table loaded',
@@ -103,8 +101,6 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
       forceRender();
     })();
   }, [form]);
-
-  console.log('render');
 
   React.useEffect(() => {
     form.setFieldsValue(initialValues);
@@ -145,7 +141,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
               suffix="VNĐ"
               onChange={(e) => {
                 form.setFieldsValue({
-                  salary: formatCurrency(toNumber(e.target.value).toString()),
+                  salary: formatSalary(e.target.value),
                 });
               }}
             />

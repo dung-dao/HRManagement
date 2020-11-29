@@ -30,7 +30,7 @@ const columns = ({
           onClick={() => {
             setIsModalVisible(true);
             setSelectedId(record.id);
-            setModalType('detail');
+            setModalType('edit');
           }}
         />
       );

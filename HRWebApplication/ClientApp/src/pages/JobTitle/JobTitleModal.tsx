@@ -15,30 +15,22 @@ const title = {
 
 export function JobTitleModal() {
   const [form] = Form.useForm<JobTitleDTO>();
-  const { modalVisible, setModalVisible, modalType, record, api, data, setData } = usePage();
+  const {
+    modalVisible,
+    setModalVisible,
+    modalType,
+    record,
+    api,
+    data,
+    setData,
+    jobCategories,
+  } = usePage();
   const initialValues = modalType === 'edit' ? record : undefined;
   const [loading, setLoading] = React.useState(false);
-  const apiJobCategory = React.useRef(new JobCategoryClient());
-  const [categories, setCategories] = React.useState<JobCategoryDTO[]>();
-  const [selectedCategory, setSelectedCategory] = React.useState<JobCategoryDTO>();
-
-  React.useEffect(() => {
-    apiJobCategory.current.jobCategory_GetAll().then((categories) => {
-      setCategories(categories);
-      setSelectedCategory(categories.find((it) => it.id === record?.jobCategory?.id));
-    });
-  }, []);
-
-  React.useEffect(() => {
-    setSelectedCategory(categories?.find((it) => it.id === record?.jobCategory?.id));
-  }, [record]);
 
   const onSubmit = async () => {
     try {
-      const values = {
-        ...(await form.validateFields()),
-        jobCategory: selectedCategory,
-      } as JobTitleDTO;
+      const values = (await form.validateFields()) as JobTitleDTO;
       setLoading(true);
 
       if (modalType === 'add') {
@@ -92,15 +84,12 @@ export function JobTitleModal() {
           <Input />
         </Form.Item>
         <Form.Item
-          label="Loại hình nhân sự "
+          label="Loại hình nhân sự"
+          name="jobCategoryId"
           rules={[{ required: true, message: 'Loại hình nhân sự không được bỏ trống' }]}
         >
-          <Select
-            placeholder="Loại hình nhân sự"
-            value={selectedCategory?.id}
-            onChange={(data) => setSelectedCategory(categories?.find((it) => it.id == data))}
-          >
-            {categories?.map((it) => (
+          <Select placeholder="Loại hình nhân sự">
+            {jobCategories?.map((it) => (
               // @ts-ignore
               <Select.Option value={it.id} key={it.id}>
                 {it.name}
