@@ -21,12 +21,14 @@ namespace HRWebApplication.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly IEmployeeRepostiory _employeeRepostiory;
 
-        public OrganizationUnitsController(ApplicationDbContext context, IMapper mapper, IOrganizationRepository organizationRepository)
+        public OrganizationUnitsController(ApplicationDbContext context, IMapper mapper, IOrganizationRepository organizationRepository, IEmployeeRepostiory employeeRepostiory)
         {
             _context = context;
             _mapper = mapper;
             _organizationRepository = organizationRepository;
+            _employeeRepostiory = employeeRepostiory;
         }
 
         [HttpGet(Name = "[controller]_GetAll")]
@@ -37,7 +39,7 @@ namespace HRWebApplication.Controllers
             foreach (var unit in data)
             {
                 var dtoObj = _mapper.Map<OrganizationUnitDTO>(unit);
-                dtoObj.EmployeeNo = _organizationRepository.CountEmployee(unit);
+                dtoObj.EmployeeNo = _employeeRepostiory.GetEmployeeNoByUnit(unit.Id);
                 yield return dtoObj;
             }
         }
@@ -54,7 +56,7 @@ namespace HRWebApplication.Controllers
             }
 
             var unitDTO = _mapper.Map<OrganizationUnitDTO>(organizationUnit);
-            unitDTO.EmployeeNo = _organizationRepository.CountEmployee(organizationUnit);
+            unitDTO.EmployeeNo = _employeeRepostiory.GetEmployeeNoByUnit(id);
             return unitDTO;
         }
 

@@ -11,7 +11,7 @@ namespace HRData.Repositories
 {
     public interface IOrganizationRepository : IRepository<OrganizationUnit>
     {
-        int CountEmployee(OrganizationUnit unit);
+        //int CountEmployee(OrganizationUnit unit);
         void AddSubUnit(OrganizationUnit parent, OrganizationUnit child);
         bool ChangeParentUnit(OrganizationUnit unit, OrganizationUnit parent);
     }
@@ -62,13 +62,14 @@ namespace HRData.Repositories
             unit.RecordStatus = Models.RecordStatus.InActive;
         }
 
-        public int CountEmployee(OrganizationUnit unit)
-        {
-            var now = DateTime.Now;
-            return (from e in _context.Employees
-                    join p in _context.Positions on e.Id equals p.Employee.Id
-                    where p.Unit.Id == unit.Id && p.StartDate < now && p.EndDate > now
-                    select e).Count();
-        }
+        //public int CountEmployee(OrganizationUnit unit)
+        //{
+        //    var now = DateTime.Now;
+        //    //return (from e in _context.Employees
+        //    //        join p in _context.Positions on e.Id equals p.Employee.Id
+        //    //        where p.Unit.Id == unit.Id && p.StartDate < now && p.EndDate > now
+        //    //        select e).Count();
+            
+        //}
     }
 }

@@ -19,6 +19,7 @@ namespace HRData.Repositories
         void Update(Employee employee);
         void Delete(Employee employee);
         EmployeeStatus GetEmployeeStatus(Employee employee);
+        int GetEmployeeNoByUnit(int unitId);
         #endregion
 
         #region Position
@@ -123,6 +124,28 @@ namespace HRData.Repositories
                 return EmployeeStatus.Working;
 
             return EmployeeStatus.Leaved;
+        }
+
+        public int GetEmployeeNoByUnit(int unitId)
+        {
+            var unit = _context.OrganizationUnits.Find(unitId);
+            if (unit is null)
+                return 0;
+            var employees = from e in _context.Employees
+            join p in _context.Positions on e.Id equals p.Employee.Id
+            where p.Unit.Id == unit.Id
+            select e;
+
+            int no = 0;
+
+            foreach (var e in employees)
+            {
+                if (GetEmployeeStatus(e) == EmployeeStatus.Working)
+                {
+                    no += 1;
+                }
+            }
+            return no;
         }
     }
 }
