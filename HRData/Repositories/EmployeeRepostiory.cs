@@ -122,13 +122,13 @@ namespace HRData.Repositories
 
         public EmployeeStatus GetEmployeeStatus(Employee employee)
         {
-            if (employee.Positions.Count == 0)
+            var currentPos = GetCurentPosition(employee);
+            if (currentPos is null)
                 return EmployeeStatus.Pending;
-            var posNo = (from p in employee.Positions
-                         where p.StartDate < DateTime.Now && p.EndDate > DateTime.Now && p.LeaveDetail == null
-                         select p).Count();
-            if (posNo > 0)
+
+            if (currentPos.LeaveDetail is null)
                 return EmployeeStatus.Working;
+
             return EmployeeStatus.Leaved;
         }
     }
