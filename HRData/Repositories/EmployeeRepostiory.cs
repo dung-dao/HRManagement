@@ -128,24 +128,11 @@ namespace HRData.Repositories
 
         public int GetEmployeeNoByUnit(int unitId)
         {
-            var unit = _context.OrganizationUnits.Find(unitId);
-            if (unit is null)
-                return 0;
-            var employees = (from e in _context.Employees
-            join p in _context.Positions on e.Id equals p.Employee.Id
-            where p.Unit.Id == unit.Id
-            select e).Distinct();
-
-            int no = 0;
-
-            foreach (var e in employees)
-            {
-                if (GetEmployeeStatus(e) == EmployeeStatus.Working)
-                {
-                    no += 1;
-                }
-            }
-            return no;
+            if (_context.OrganizationUnits.Find(unitId) is null) return 0;
+            return _context.Employees
+                .ToList() // NOTE: might hurt hard the performance
+                .Where(employee => GetEmployeeStatus(employee) == EmployeeStatus.Working)
+                .Count(employee => GetCurentPosition(employee).Unit.Id == unitId);
         }
     }
 }
