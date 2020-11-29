@@ -209,7 +209,7 @@ namespace HRWebApplication.Controllers
             if (employee is null)
                 return NotFound();
 
-            if (!_employeeRepo.IsWorking(employee))
+            if (_employeeRepo.GetEmployeeStatus(employee) != EmployeeStatus.Working)
                 return BadRequest();
 
             var leaveType = _context.LeaveTypes.Find(leaveDetail.Type.Id);

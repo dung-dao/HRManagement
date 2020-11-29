@@ -18,7 +18,6 @@ namespace HRData.Repositories
         void AddEmployee(Employee employee);
         void Update(Employee employee);
         void Delete(Employee employee);
-        bool IsWorking(Employee employee);
         EmployeeStatus GetEmployeeStatus(Employee employee);
         #endregion
 
@@ -112,12 +111,6 @@ namespace HRData.Repositories
         public List<Employee> GetInactiveEmployees()
         {
             return _context.Employees.Where(e => e.RecordStatus == RecordStatus.Active).ToList();
-        }
-
-        public bool IsWorking(Employee employee)
-        {
-            var now = DateTime.Now;
-            return employee.Positions.Any(p => p.LeaveDetail is null && p.StartDate < now && p.EndDate > now);
         }
 
         public EmployeeStatus GetEmployeeStatus(Employee employee)
