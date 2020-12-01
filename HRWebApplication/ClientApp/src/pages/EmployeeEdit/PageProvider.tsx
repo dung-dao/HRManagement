@@ -9,6 +9,8 @@ type PageContextData = {
   positions: PositionDTO[];
   setCurrentPosition: (value: PositionDTO) => void;
   currentPosition?: PositionDTO;
+  modalVisible: boolean;
+  setModalVisible: (visible: boolean) => void;
   api: EmployeesClient;
 };
 

@@ -37,7 +37,7 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
       ...value,
       salary: formatSalary(value?.salary || '0'),
       startDate: moment(value?.startDate),
-      endDate: moment(value?.endDate),
+      endDate: value?.endDate ? moment(value.endDate) : undefined,
       workType: value?.workType?.id?.toString(),
       jobTitle: value?.jobTitle?.id?.toString(),
       unit: value?.unit?.id?.toString(),
@@ -69,7 +69,6 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
       return;
     }
 
-    // LOG: console.log('> : submitData', form.getFieldsValue(), submitData, workTypesRef.current);
     await onSubmit?.(submitData);
   };
   const { $try: trySubmitting, isPending } = useTry(onFormSubmit);
@@ -90,14 +89,6 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
         .then((data) => (organizationsRef.current = data))
         .catch((err) => console.error(err));
       await Promise.all([one, two, three]);
-      //  LOG:
-      // console.log(
-      //   'all ref table loaded',
-      //   workTypesRef,
-      //   jobCategoriesRef,
-      //   jobTitlesRef,
-      //   organizationsRef,
-      // );
       forceRender();
     })();
   }, [form]);
@@ -105,8 +96,6 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
   React.useEffect(() => {
     form.setFieldsValue(initialValues);
   }, [form, initialValues]);
-
-  // LOG: console.log(form.getFieldsValue(), 'form', form.getFieldValue('jobTitle'));
 
   return (
     <Form

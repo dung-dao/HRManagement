@@ -1,21 +1,43 @@
-// @ts-nocheck
-import React from 'react';
-import { EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Dropdown, Space, Tag, Tooltip, Popconfirm } from 'antd';
-import { Link } from 'react-router-dom';
+import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
 import moment from 'moment';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { EmployeeDTO, EmployeeStatus } from 'services/ApiClient';
+import { mapSex, mapStatusToTagProps, BeautifyEmployeeStatus } from './utils';
 
-const mapSex = {
-  Male: 'Nam',
-  Female: 'Nữ',
-  Other: 'Khác',
-};
-
-export const columns = ({ onDeleteEmployee }) => ([
+export const columns = ({ onDeleteEmployee }) => [
   // { title: 'STT', key: 'index', render: (value, item, index) => index + 1 },
   // { title: 'Mã nhân viên', dataIndex: 'code' },
+  {
+    title: 'Trạng thái',
+    fixed: 'left',
+    key: 'status',
+    dataIndex: 'status',
+    render: (status: EmployeeStatus, _, index) => (
+      <Tag {...mapStatusToTagProps[status]} key={index} />
+    ),
+    filters: [
+      { text: 'Đang làm việc', value: BeautifyEmployeeStatus.Working },
+      { text: 'Chưa làm việc', value: BeautifyEmployeeStatus.Pending },
+      { text: 'Ngừng làm việc', value: BeautifyEmployeeStatus.Left },
+    ],
+    onFilter: (value: EmployeeStatus, record: EmployeeDTO) => record.status === value,
+    sorter: (a: EmployeeDTO, b: EmployeeDTO) => {
+      const mapPriority = {
+        // the higher value should appear first
+        [BeautifyEmployeeStatus.Working]: 2,
+        [BeautifyEmployeeStatus.Pending]: 1,
+        [BeautifyEmployeeStatus.Left]: 0,
+      };
+      return mapPriority[a.status!] - mapPriority[b.status!];
+    },
+    sortDirections: ['descend'],
+    defaultSortOrder: 'descend',
+  },
   { title: 'Họ', key: 'firstName', dataIndex: 'firstName' },
   { title: 'Tên', key: 'lastName', dataIndex: 'lastName' },
+
   { title: 'Email cá nhân', key: 'personalEmail', dataIndex: 'personalEmail' },
   { title: 'Email công việc', key: 'workEmail', dataIndex: 'workEmail' },
   { title: 'Sđt', key: 'phone', dataIndex: 'phone' },
@@ -42,12 +64,28 @@ export const columns = ({ onDeleteEmployee }) => ([
     title: 'Thao tác',
     key: 'action',
     fixed: 'right',
-    render: (_, record) => (
+    render: (_, record: EmployeeDTO) => (
       <Space size="small">
-        <Link to={'employee/' + record?.id} title="Chỉnh sửa">
-          <Button size="small" type="primary">
-            <EditOutlined />
-          </Button>
+        {/* <Popconfirm
+          placement="right"
+          title={'Bạn có chắc muốn phê duyệt nhân viên này?'}
+          onConfirm={() => onApproveEmployee(record)}
+          okText="Đồng ý"
+          cancelText="Không"
+          disabled={record.status !== UglifyEmployeeStatus.Pending}
+        >
+          <Tooltip title="Phê duyệt">
+            <Button size="small" disabled={record.status !== UglifyEmployeeStatus.Pending} type="dashed">
+              <CheckOutlined />
+            </Button>
+          </Tooltip>
+        </Popconfirm> */}
+        <Link to={'employee/' + record?.id}>
+          <Tooltip title="Chỉnh sửa">
+            <Button size="small" type="primary">
+              <EditOutlined />
+            </Button>
+          </Tooltip>
         </Link>
         <Popconfirm
           placement="right"
@@ -56,9 +94,11 @@ export const columns = ({ onDeleteEmployee }) => ([
           okText="Đồng ý"
           cancelText="Không"
         >
-          <Button size="small" danger>
-            <DeleteOutlined />
-          </Button>
+          <Tooltip title="Xoá">
+            <Button size="small" danger>
+              <DeleteOutlined />
+            </Button>
+          </Tooltip>
         </Popconfirm>
       </Space>
     ),
@@ -170,4 +210,4 @@ export const columns = ({ onDeleteEmployee }) => ([
   //   dataIndex: 'acceptStatus',
   //   render: (acceptStatus) => <Tag {...acceptStatusToTagProps(acceptStatus)} key={acceptStatus} />,
   // },
-]);
+];

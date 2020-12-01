@@ -13,7 +13,7 @@ export type FormType = 'add' | 'edit';
 
 const verbs = {
   add: 'Thêm mới',
-  edit: 'Thay đổi',
+  edit: 'Cập nhật',
 };
 
 function Form1() {

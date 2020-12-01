@@ -20,6 +20,7 @@ import {JobTitlePage} from "./pages/JobTitle";
 import {EmployeeAddPage} from "./pages/EmployeeAdd";
 import { LeaveTypePage } from './pages/LeaveType';
 import {EmployeeEditPage} from "./pages/EmployeeEdit";
+import AuthorizeRoute from "./components/api-authorization/AuthorizeRoute";
 
 export default function App() {
   return (

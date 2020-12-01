@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table, message } from 'antd';
 import { columns } from './columns';
-// import { employees } from '../../data';
 import { EmployeesClient, EmployeeDTO } from 'services/ApiClient';
 
 export default function (props) {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import {
   CheckCircleOutlined,
@@ -5,6 +6,37 @@ import {
   MinusCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
+import { EmployeeStatus } from 'services/ApiClient';
+
+export const mapSex = {
+  Male: 'Nam',
+  Female: 'Nữ',
+  Other: 'Khác',
+};
+
+export const BeautifyEmployeeStatus = {
+  Pending: EmployeeStatus._0,
+  Working: EmployeeStatus._1,
+  Left: EmployeeStatus._2,
+} as const;
+
+export const mapStatusToTagProps = {
+  [BeautifyEmployeeStatus.Pending]: {
+    color: 'warning',
+    icon: <SyncOutlined spin />,
+    children: 'Chưa làm việc',
+  },
+  [BeautifyEmployeeStatus.Working]: {
+    color: 'success',
+    icon: <CheckCircleOutlined />,
+    children: 'Đang làm việc',
+  },
+  [BeautifyEmployeeStatus.Left]: {
+    color: 'default',
+    icon: <MinusCircleOutlined />,
+    children: 'Ngừng làm việc',
+  },
+};
 
 // convert acceptStatus of a merchant to props of an antd <Tag/> component
 export const acceptStatusToTagProps = (status) => {
@@ -53,17 +85,16 @@ export const licenseToTagProps = (license) => {
 
 // sorter of columns of <Table />
 export const sortByField = function (field) {
-    // resolvePath to resolve nested properties: https://stackoverflow.com/a/43849204/9787887
-    // it makes merchant['shop.gender'] be equivalent to merchant['shop']['gender']
-    const resolvePath = (object, path, defaultValue) =>
-        path.split('.').reduce((o, p) => (o ? o[p] : defaultValue), object);
+  // resolvePath to resolve nested properties: https://stackoverflow.com/a/43849204/9787887
+  // it makes merchant['shop.gender'] be equivalent to merchant['shop']['gender']
+  const resolvePath = (object, path, defaultValue) =>
+    path.split('.').reduce((o, p) => (o ? o[p] : defaultValue), object);
 
-    // sortByField copied from: https://github.com/manhdung99/mobile-store-client/blob/master/src/utils/sort.js
-    return (a, b) => {
-        const [aVal, bVal] = [resolvePath(a, field), resolvePath(b, field)];
-        return typeof aVal === 'string' ? aVal.localeCompare(bVal) : aVal - bVal;
-    };
+  // sortByField copied from: https://github.com/manhdung99/mobile-store-client/blob/master/src/utils/sort.js
+  return (a, b) => {
+    const [aVal, bVal] = [resolvePath(a, field), resolvePath(b, field)];
+    return typeof aVal === 'string' ? aVal.localeCompare(bVal) : aVal - bVal;
+  };
 };
 
 export const genderCodeToGender = ['Nữ', 'Nam', 'Cả hai']; // 0->Nữ, 1->Nam, 2->Cả hai
-

@@ -1,34 +1,61 @@
 import React from 'react';
-import {Col, DatePicker, Form, Input, Row, Select} from "antd";
-import {formItemLayout, phoneRegex, required} from "./EmployeeDetail/utils";
-import {EmployeeInfoFormType} from "pages/Employee/EmployeeInfoFormType";
-import {EmployeeDTO} from "services/ApiClient";
-import {useTry} from "../../hooks";
+import { Col, DatePicker, Form, Input, Row, Select, Tag } from 'antd';
+import { formItemLayout, phoneRegex, required } from './EmployeeDetail/utils';
+import { EmployeeInfoFormType } from 'pages/Employee/EmployeeInfoFormType';
+import { EmployeeDTO } from 'services/ApiClient';
+import { useTry } from '../../hooks';
 import moment from 'moment';
+import { mapStatusToTagProps } from './EmployeeList/Table/utils';
 
 type EmployeeFormProps = {
   action: any;
   style?: object;
-  onSubmit: (value: EmployeeDTO) => Promise<any>
-  value?: EmployeeDTO
-}
+  onSubmit: (value: EmployeeDTO) => Promise<any>;
+  value?: EmployeeDTO;
+};
 
 export function EmployeeInfoForm(props: EmployeeFormProps) {
-  const { action: FormAction, style = {}, onSubmit, value } = props
+  const { action: FormAction, style = { marginTop: 10 }, onSubmit, value } = props;
   const [form] = Form.useForm<EmployeeInfoFormType>();
-  const initialValues = { ...value, dateOfBirth: moment(value?.dateOfBirth) }
   const onFormSubmit = async (data) => {
-    const submitData = { ...data, dateOfBirth: data.dateOfBirth.toDate() }
-    await onSubmit(submitData)
-  }
-  const { $try: trySubmitting, isPending } = useTry(onFormSubmit)
+    const submitData = { ...data, dateOfBirth: data.dateOfBirth.toDate() };
+    await onSubmit(submitData);
+  };
+  const { $try: trySubmitting, isPending } = useTry(onFormSubmit);
+  const [, forceRender] = React.useReducer((x) => ++x, 0);
+
+  const initialValues = React.useMemo(
+    () => ({ ...value, dateOfBirth: moment(value?.dateOfBirth) }),
+    [value],
+  );
 
   React.useEffect(() => {
-    form.setFieldsValue(initialValues)
-  }, [form, initialValues])
+    form.setFieldsValue(initialValues);
+    forceRender();
+  }, [form, initialValues]);
 
   return (
-    <Form name='info' form={form} style={style} onFinish={trySubmitting} labelAlign="left" initialValues={initialValues}>
+    <Form
+      name="info"
+      form={form}
+      style={style}
+      onFinish={trySubmitting}
+      labelAlign="left"
+      initialValues={initialValues}
+    >
+      {window.location.pathname.includes('new') ? null : (
+        <Row gutter={40}>
+          <Col span={12}>
+            <Form.Item {...formItemLayout} name="status">
+              <Tag
+                {...mapStatusToTagProps[form.getFieldValue('status')]}
+                style={{ fontSize: 14, marginLeft: 10 }}
+                onClick={() => {}}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      )}
       <Row gutter={40}>
         <Col span={12}>
           <fieldset>
@@ -145,5 +172,5 @@ export function EmployeeInfoForm(props: EmployeeFormProps) {
       </Row>
       <FormAction form={form} loading={isPending} />
     </Form>
-  )
+  );
 }
