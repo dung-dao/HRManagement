@@ -6,6 +6,7 @@ import {
   LeaveTypeDTO,
   LeaveDetailDTO,
   EmployeeDTO,
+  PositionDTO,
 } from 'services/ApiClient';
 import { usePage } from './PageProvider';
 import moment from 'moment';
@@ -25,7 +26,15 @@ export function LeaveDetailModal() {
   const [loading, setLoading] = React.useState(false);
   const apiLeaveType = React.useRef(new LeaveTypeClient());
   const [leaveTypes, setLeaveTypes] = React.useState<LeaveTypeDTO[]>([]);
-  const { api, employee, setEmployee, modalVisible, setModalVisible } = usePage();
+  const {
+    api,
+    employee,
+    setEmployee,
+    modalVisible,
+    setModalVisible,
+    currentPosition,
+    setCurrentPosition,
+  } = usePage();
 
   React.useEffect(() => {
     apiLeaveType.current
@@ -60,6 +69,10 @@ export function LeaveDetailModal() {
         );
         setModalVisible(false);
         setEmployee({ ...employee, status: BeautifyEmployeeStatus.Left } as EmployeeDTO);
+        setCurrentPosition({
+          ...currentPosition,
+          leaveDetail: submitData,
+        } as PositionDTO);
       });
     } catch (e) {
       console.error(e);

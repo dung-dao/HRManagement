@@ -1,18 +1,18 @@
 import React from 'react';
 import { Col, Form, Input, message, Row, Tabs } from 'antd';
 import AppBody from '../../components/Layouts/AppBody';
-import { EmployeeDTO, EmployeesClient, EmployeeStatus, PositionDTO } from 'services/ApiClient';
+import { EmployeeDTO, EmployeesClient, PositionDTO } from 'services/ApiClient';
 import { PageProvider, usePage } from './PageProvider';
 import { EmployeeInfoForm } from '../Employee/EmployeeInfoForm';
 import { EmployeeWorkForm } from '../Employee/EmployeeWorkForm';
 import { EmployeeFormAction } from './EmployeeFormAction';
 import { PositionHistory } from './PositionHistory';
-import { LeaveDetailForm, LeaveDetailModal, useLeaveDetailForm } from './LeaveDetailModal';
+import { LeaveDetailModal } from './LeaveDetailModal';
 import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/Table/utils';
 import moment from 'moment';
 
 function Form1() {
-  const { api, setEmployee, employee, modalVisible, setModalVisible } = usePage();
+  const { api, setEmployee, employee } = usePage();
 
   const onSubmit = async (data: EmployeeDTO) => {
     try {
