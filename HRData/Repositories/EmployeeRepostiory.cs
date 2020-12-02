@@ -120,7 +120,7 @@ namespace HRData.Repositories
             if (currentPos is null)
                 return EmployeeStatus.Pending;
 
-            if (currentPos.LeaveDetail is null)
+            if (!EntityBase.Exists(currentPos.LeaveDetail))
                 return EmployeeStatus.Working;
 
             return EmployeeStatus.Leaved;
