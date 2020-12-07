@@ -8,16 +8,17 @@ namespace HRData.Models.JobModels
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Decimal Salary { get; set; }
-        public int? LeaveDetailId { get; set; }
 
-        #region Navigation
         public virtual Employee Employee { get; set; }
         public virtual JobTitle JobTitle { get; set; }
         public virtual WorkType WorkType { get; set; }
-        //public virtual JobCategory JobCategory { get; set; }
         public virtual OrganizationUnit Unit { get; set; }
 
-        public virtual LeaveDetail LeaveDetail { get; set; }
+        #region LeaveDetail
+        public DateTime? LeaveDate { get; set; }
+        public string? LeaveReason { get; set; }
+
+        public virtual LeaveType LeaveType { get; set; }
         #endregion
     }
 }

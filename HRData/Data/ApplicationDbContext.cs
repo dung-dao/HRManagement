@@ -23,13 +23,10 @@ namespace HRData.Data
         public DbSet<JobCategory> JobCategories { get; set; }
         public DbSet<WorkType> WorkType { get; set; }
         public DbSet<Position> Positions { get; set; }
-        public DbSet<LeaveDetail> LeaveDetails { get; set; }
         public DbSet<LeaveType> LeaveTypes { get; set; }
 
         //public DbSet<TimeSheet> TimeSheets { get; set; }
         #endregion
-
-        public DbSet<TestModel> TestModels { get; set; }
 
         private void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
         {
@@ -46,13 +43,9 @@ namespace HRData.Data
             RegisterEntity<JobTitle>(builder);
             RegisterEntity<JobCategory>(builder);
             RegisterEntity<OrganizationUnit>(builder);
-
             RegisterEntity<WorkType>(builder);
-            //builder.Entity<WorkType>().ToTable("WorkType");
-
             RegisterEntity<Employee>(builder);
             RegisterEntity<Position>(builder);
-            RegisterEntity<LeaveDetail>(builder);
             RegisterEntity<LeaveType>(builder);
 
             #endregion
@@ -66,21 +59,24 @@ namespace HRData.Data
             #endregion
 
             #region Employee
-            //builder.Entity<Employee>().Property(p => p.Status).HasConversion<string>();
-
+            builder.Entity<Employee>(e =>
+            {
+                e.Property(e => e.DateOfBirth).HasColumnType("date");
+            });
             builder.Entity<Employee>().HasMany(e => e.Positions).WithOne(p => p.Employee).OnDelete(DeleteBehavior.Cascade);
+            
             builder.Entity<Position>().HasOne(p => p.JobTitle);
             builder.Entity<Position>().HasOne(p => p.WorkType);
-            //builder.Entity<Position>().HasOne(p => p.JobCategory);
             builder.Entity<Position>().HasOne(p => p.Unit);
 
-            PositionEntity(builder).HasOne(p => p.LeaveDetail).WithOne(ld => ld.Position).HasForeignKey<Position>(p => p.LeaveDetailId);
-
-            builder.Entity<Position>().Property(e => e.StartDate).IsRequired();
             builder.Entity<Position>(po =>
             {
+                po.Property(e => e.StartDate).IsRequired();
                 po.Property(e => e.Salary).IsRequired();
                 po.Property(e => e.Salary).HasColumnType("decimal(18, 6)");
+                po.Property(e => e.StartDate).HasColumnType("date");
+                po.Property(e => e.EndDate).HasColumnType("date");
+                po.Property(e => e.LeaveDate).HasColumnType("date");
             });
             #endregion
 
