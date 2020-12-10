@@ -98,6 +98,11 @@ namespace HRData.Repositories
             if (pos is null)
                 throw new Exception("Position not exists");
 
+            if (GetEmployeeStatus(employee)!= EmployeeStatus.Working)
+            {
+                throw new Exception("No position to leave");
+            }
+
             pos.LeaveDate = data.LeaveDate;
             pos.LeaveReason = data.LeaveReason;
             pos.LeaveType = _context.LeaveTypes.Find(data.LeaveType.Id);
@@ -125,7 +130,10 @@ namespace HRData.Repositories
             if (employee.Positions.Count == 0)
                 return EmployeeStatus.Pending;
             var pos = from p in employee.Positions
-                      where p.StartDate <= DateTime.Now && DateTime.Now <= p.EndDate && DateTime.Now <= p.LeaveDate && p.RecordStatus == RecordStatus.Active
+                      where (
+                      (p.StartDate <= DateTime.Now && DateTime.Now <= p.EndDate && p.LeaveDate is null)
+                      || p.LeaveDate is not null && p.LeaveDate >= DateTime.Now && p.StartDate <= DateTime.Now && DateTime.Now <= p.EndDate)
+                      && p.RecordStatus == RecordStatus.Active
                       select p;
             if (pos.Count() > 0)
                 return EmployeeStatus.Working;
@@ -134,11 +142,19 @@ namespace HRData.Repositories
 
         public int GetEmployeeNoByUnit(int unitId)
         {
-            if (_context.OrganizationUnits.Find(unitId) is null) return 0;
-            return _context.Employees
-                .ToList() // NOTE: might hurt hard the performance
-                .Where(employee => GetEmployeeStatus(employee) == EmployeeStatus.Working)
-                .Count(employee => GetCurentPosition(employee).Unit.Id == unitId);
+            var unit = _context.OrganizationUnits.Find(unitId);
+            if (unit is null) return 0;
+            //return _context.Employees
+            //    .ToList() // NOTE: might hurt hard the performance
+            //    .Where(employee => GetEmployeeStatus(employee) == EmployeeStatus.Working)
+            //    .Count(employee => GetCurentPosition(employee).Unit.Id == unitId);
+            return (from position in _context.Positions
+             join employee in _context.Employees on position.Employee.Id equals employee.Id
+             where
+                 position.Unit.Id == unitId &&
+                 position.StartDate <= DateTime.Now && DateTime.Now <= position.EndDate &&
+                 (position.LeaveDate == null || position.LeaveDate >= DateTime.Now)
+             select employee.Id).Distinct().Count();
         }
     }
 }

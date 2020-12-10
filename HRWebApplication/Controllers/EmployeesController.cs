@@ -33,7 +33,12 @@ namespace HRWebApplication.Controllers
         public IEnumerable<EmployeeDTO> GetAll()
         {
             var employees = _employeeRepo.GetActiveEmployees();
-            return _mapper.Map<List<EmployeeDTO>>(employees);
+            foreach (var e in employees)
+            {
+                var res = _mapper.Map<EmployeeDTO>(e);
+                res.Status = _employeeRepo.GetEmployeeStatus(e);
+                yield return res;
+            }
         }
 
         [HttpGet("{id}", Name = "GetEmployeeById")]
@@ -43,7 +48,9 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return _mapper.Map<EmployeeDTO>(employee);
+            var res = _mapper.Map<EmployeeDTO>(employee);
+            res.Status = _employeeRepo.GetEmployeeStatus(employee);
+            return res;
         }
 
         [HttpPost(Name = "CreateEmployee")]
@@ -194,8 +201,16 @@ namespace HRWebApplication.Controllers
             if (_employeeRepo.GetEmployeeStatus(employee) != EmployeeStatus.Working)
                 return BadRequest();
             var position = _mapper.Map<Position>(data);
-            _employeeRepo.EmployeeLeave(employee, position);
-            Commit();
+            try
+            {
+                _employeeRepo.EmployeeLeave(employee, position);
+                Commit();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+                throw;
+            }
             return NoContent();
         }
         #endregion
