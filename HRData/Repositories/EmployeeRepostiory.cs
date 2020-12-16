@@ -142,19 +142,11 @@ namespace HRData.Repositories
 
         public int GetEmployeeNoByUnit(int unitId)
         {
-            var unit = _context.OrganizationUnits.Find(unitId);
-            if (unit is null) return 0;
-            //return _context.Employees
-            //    .ToList() // NOTE: might hurt hard the performance
-            //    .Where(employee => GetEmployeeStatus(employee) == EmployeeStatus.Working)
-            //    .Count(employee => GetCurentPosition(employee).Unit.Id == unitId);
-            return (from position in _context.Positions
-             join employee in _context.Employees on position.Employee.Id equals employee.Id
-             where
-                 position.Unit.Id == unitId &&
-                 position.StartDate <= DateTime.Now && DateTime.Now <= position.EndDate &&
-                 (position.LeaveDate == null || position.LeaveDate >= DateTime.Now)
-             select employee.Id).Distinct().Count();
+            if (_context.OrganizationUnits.Find(unitId) is null) return 0;
+            return _context.Employees
+                .ToList() // NOTE: might hurt the performance
+                .Where(employee => GetEmployeeStatus(employee) == EmployeeStatus.Working)
+                .Count(employee => GetCurentPosition(employee).Unit.Id == unitId);
         }
     }
 }
