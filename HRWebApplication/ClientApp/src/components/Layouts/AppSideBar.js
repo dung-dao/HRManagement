@@ -6,6 +6,8 @@ import {
   GoldOutlined,
   ReconciliationOutlined,
   ExceptionOutlined,
+  BuildOutlined,
+  CarryOutOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu } from 'antd';
 import React from 'react';
@@ -70,6 +72,12 @@ export default function AppSidebar() {
         </Menu.Item>
         <Menu.Item key={'leave-type'}>
           <ExceptionOutlined /> <Link to={'/leave-type'}>Loại nghỉ việc</Link>
+        </Menu.Item>
+        <Menu.Item key={'leave2-type'}>
+          <BuildOutlined /> <Link to={'/leave2-type'}>Loại nghỉ phép</Link>
+        </Menu.Item>
+        <Menu.Item key={'leave2-list'}>
+          <CarryOutOutlined /> <Link to={'/leave2-list'}>Danh sách nghỉ phép</Link>
         </Menu.Item>
         {/* <Menu.Item key={Constant.MENU.MERCHANTS_PAGE}>
             <ShopFilled />
