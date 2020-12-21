@@ -4,6 +4,7 @@ using HRData.Models;
 using HRData.Models.JobModels;
 using HRData.Repositories;
 using HRWebApplication.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace HRWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,Manager")]
     public class EmployeesController : APIController
     {
         private readonly DbSet<Employee> _employees;

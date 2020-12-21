@@ -1,18 +1,19 @@
 ﻿using HRData.Models;
 using HRData.Models.JobModels;
 using HRData.Models.Organization;
-using IdentityServer4.EntityFramework.Options;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace HRData.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
-        public ApplicationDbContext(
-            DbContextOptions options,
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions) { }
+        public ApplicationDbContext(DbContextOptions options) : base(options)
+        {
+
+        }
 
         #region DbSet
         public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
