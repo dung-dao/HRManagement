@@ -570,7 +570,7 @@ export class EmployeesClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    employees_Leave(id: number, body: LeaveDetailDTO | undefined): Promise<void> {
+    employees_Leave(id: number, body: PositionDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Employees/{id}/positions/leave";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -2510,50 +2510,6 @@ export interface ILeaveTypeDTO {
     description?: string | undefined;
 }
 
-export class LeaveDetailDTO implements ILeaveDetailDTO {
-    date?: Date;
-    reason?: string | undefined;
-    type?: LeaveTypeDTO;
-
-    constructor(data?: ILeaveDetailDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
-            this.reason = _data["reason"];
-            this.type = _data["type"] ? LeaveTypeDTO.fromJS(_data["type"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): LeaveDetailDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeaveDetailDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["reason"] = this.reason;
-        data["type"] = this.type ? this.type.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ILeaveDetailDTO {
-    date?: Date;
-    reason?: string | undefined;
-    type?: LeaveTypeDTO;
-}
-
 export class PositionDTO implements IPositionDTO {
     id?: number;
     startDate?: Date;
@@ -2563,7 +2519,9 @@ export class PositionDTO implements IPositionDTO {
     jobTitle?: JobTitleDTO;
     workType?: WorkTypeDTO;
     unit?: OrganizationUnitDTO;
-    leaveDetail?: LeaveDetailDTO;
+    leaveDate?: Date | undefined;
+    leaveReason?: string | undefined;
+    leaveType?: LeaveTypeDTO;
 
     constructor(data?: IPositionDTO) {
         if (data) {
@@ -2584,7 +2542,9 @@ export class PositionDTO implements IPositionDTO {
             this.jobTitle = _data["jobTitle"] ? JobTitleDTO.fromJS(_data["jobTitle"]) : <any>undefined;
             this.workType = _data["workType"] ? WorkTypeDTO.fromJS(_data["workType"]) : <any>undefined;
             this.unit = _data["unit"] ? OrganizationUnitDTO.fromJS(_data["unit"]) : <any>undefined;
-            this.leaveDetail = _data["leaveDetail"] ? LeaveDetailDTO.fromJS(_data["leaveDetail"]) : <any>undefined;
+            this.leaveDate = _data["leaveDate"] ? new Date(_data["leaveDate"].toString()) : <any>undefined;
+            this.leaveReason = _data["leaveReason"];
+            this.leaveType = _data["leaveType"] ? LeaveTypeDTO.fromJS(_data["leaveType"]) : <any>undefined;
         }
     }
 
@@ -2605,7 +2565,9 @@ export class PositionDTO implements IPositionDTO {
         data["jobTitle"] = this.jobTitle ? this.jobTitle.toJSON() : <any>undefined;
         data["workType"] = this.workType ? this.workType.toJSON() : <any>undefined;
         data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
-        data["leaveDetail"] = this.leaveDetail ? this.leaveDetail.toJSON() : <any>undefined;
+        data["leaveDate"] = this.leaveDate ? this.leaveDate.toISOString() : <any>undefined;
+        data["leaveReason"] = this.leaveReason;
+        data["leaveType"] = this.leaveType ? this.leaveType.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -2619,7 +2581,9 @@ export interface IPositionDTO {
     jobTitle?: JobTitleDTO;
     workType?: WorkTypeDTO;
     unit?: OrganizationUnitDTO;
-    leaveDetail?: LeaveDetailDTO;
+    leaveDate?: Date | undefined;
+    leaveReason?: string | undefined;
+    leaveType?: LeaveTypeDTO;
 }
 
 /** Professionals, Technicians, Officials and Managers */
