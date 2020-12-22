@@ -75,7 +75,7 @@ export function Leave2TypeModal() {
         <Form.Item
           name="description"
           label="Mô tả"
-          rules={[{ required: true, message: 'Mô tả loại nghỉ việc không được bỏ trống' }]}
+          rules={[{ required: true, message: 'Mô tả loại nghỉ phép không được bỏ trống' }]}
         >
           <Input.TextArea />
         </Form.Item>

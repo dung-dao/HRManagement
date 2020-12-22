@@ -7,23 +7,45 @@ import { ModalType, PageProvider } from './PageProvider';
 import { ActionRenderer } from './ActionRenderer';
 import { Table, Button, Col, Row, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-
+// Tên nhân viên, Thời gian bắt đầu, Thời gian kết thúc, Loại nghỉ phép, Lý do, Trạng thái, Actions
+//  + Actions: Đang chờ => Phê duyệt, Đã duyệt => Huỷ, Từ chối => Phê duyệt
 const columns = [
   {
-    key: 'name',
-    title: 'Tên',
-    dataIndex: 'name',
+    key: 'employeeName',
+    title: 'Nhân viên',
+    dataIndex: 'employeeName',
   },
   {
-    key: 'description',
-    title: 'Mô tả',
-    dataIndex: 'description',
+    key: 'startDate',
+    title: 'Thời gian bắt đầu',
+    dataIndex: 'startDate',
   },
+  {
+    key: 'endDate',
+    title: 'Thời gian kết thúc',
+    dataIndex: 'endDate',
+  },
+  {
+    key: 'leave2Type',
+    title: 'Loại nghỉ phép',
+    dataIndex: 'leave2Type',
+  },
+  {
+    key: 'reason',
+    title: 'Lý do',
+    dataIndex: 'reason',
+  },
+  {
+    key: 'status',
+    title: 'Trạng thái',
+    dataIndex: 'status',
+  },
+
   {
     title: 'Thao tác',
     key: 'action',
     fixed: 'right',
-    align: 'center',
+    align: 'left',
     width: '20%',
     render: ActionRenderer,
   },
@@ -54,13 +76,13 @@ export function Leave2ListPage(props) {
   }, []);
 
   return (
-    <AppBody title="Loại nghỉ việc">
+    <AppBody title="Danh sách nghỉ phép">
       <PageProvider value={pageContext}>
         <Row gutter={[16, 16]}>
           <Col span={6}>
             <Input.Search
               size="middle"
-              placeholder="Tìm kiếm loại nghỉ việc"
+              placeholder="Tìm kiếm danh sách nghỉ phép"
               enterButton
               allowClear
             />
@@ -87,7 +109,7 @@ export function Leave2ListPage(props) {
           loading={isPending}
           pagination={false}
           rowKey={(record) => String(record.id)}
-          locale={{ emptyText: 'Không tìm thấy loại nghỉ việc nào' }}
+          locale={{ emptyText: 'Không tìm thấy danh sách nghỉ phép nào' }}
         />
         <Leave2ListModal />
       </PageProvider>

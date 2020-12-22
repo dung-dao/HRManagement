@@ -31,7 +31,7 @@ export function ActionRenderer(text, record) {
       </Button>
       <Popconfirm
         placement="right"
-        title={'Bạn có chắc muốn xoá loại nghỉ việc này?'}
+        title={'Bạn có chắc muốn xoá loại nghỉ phép này?'}
         onConfirm={onDelete}
         okText="Đồng ý"
         cancelText="Không"

@@ -9,8 +9,8 @@ const formLayout = {
 };
 
 const title = {
-  edit: 'Chỉnh sửa loại nghỉ việc',
-  add: 'Thêm mới loại nghỉ việc',
+  edit: 'Chỉnh sửa danh sách nghỉ phép',
+  add: 'Thêm mới danh sách nghỉ phép',
 };
 
 export function Leave2ListModal() {
@@ -25,14 +25,14 @@ export function Leave2ListModal() {
 
       if (modalType === 'add') {
         const result = await api.leaveType_Create(values);
-        message.info(`Thêm mới loại nghỉ việc ${values.name} thành công`);
+        message.info(`Thêm mới danh sách nghỉ phép ${values.name} thành công`);
         setData([...data, result]);
       }
       if (modalType === 'edit') {
         values.id = record?.id!;
         await api.leaveType_Update(values.id, values);
         const newData = await api.leaveType_GetAll();
-        message.info(`Chỉnh sửa loại nghỉ việc ${values?.name} thành công`);
+        message.info(`Chỉnh sửa danh sách nghỉ phép ${values?.name} thành công`);
         setData(newData);
       }
 
@@ -67,15 +67,15 @@ export function Leave2ListModal() {
       <Form {...formLayout} form={form} preserve={false} onFinish={(values) => console.log(values)}>
         <Form.Item
           name="name"
-          label="Tên loại nghỉ việc"
-          rules={[{ required: true, message: 'Tên loại nghỉ việc không được bỏ trống' }]}
+          label="Tên danh sách nghỉ phép"
+          rules={[{ required: true, message: 'Tên danh sách nghỉ phép không được bỏ trống' }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="description"
           label="Mô tả"
-          rules={[{ required: true, message: 'Mô tả loại nghỉ việc không được bỏ trống' }]}
+          rules={[{ required: true, message: 'Mô tả danh sách nghỉ phép không được bỏ trống' }]}
         >
           <Input.TextArea />
         </Form.Item>
