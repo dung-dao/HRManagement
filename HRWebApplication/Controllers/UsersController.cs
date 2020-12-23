@@ -99,7 +99,7 @@ namespace HRWebApplication.Controllers
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var securityToken = tokenHandler.CreateToken(tokenDescriptor);
                 var access_token = tokenHandler.WriteToken(securityToken);
-                return Ok(new { access_token });
+                return Ok(new TokenDTO() { AccessToken = access_token });
             }
             else
                 return BadRequest();
@@ -112,7 +112,8 @@ namespace HRWebApplication.Controllers
         {
             var userId = User.Claims.First(e => e.Type == "UserId").Value;
             var user = await _usermanager.FindByIdAsync(userId);
-            return Ok(new { UserName = user.UserName, Email = user.Email });
+            var resUser = new UserDTO() { UserName = user.UserName, Email = user.Email, Id = user.Id };
+            return Ok(resUser);
         }
 
         [Authorize(Roles = "Admin")]
@@ -129,7 +130,7 @@ namespace HRWebApplication.Controllers
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Interact))]
         [Authorize(Roles = "Admin,Manager")]
-        [HttpPut("Role")]
+        [HttpPost("Roles")]
         public async Task<IActionResult> AddToRole(string userName, string role)
         {
             var user = await _usermanager.FindByNameAsync(userName);
