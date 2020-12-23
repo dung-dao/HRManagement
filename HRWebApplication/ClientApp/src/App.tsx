@@ -14,7 +14,6 @@ import { LeaveTypePage } from './pages/LeaveType';
 import { Leave2TypePage } from './pages/Leave2Type';
 import { Leave2ListPage } from './pages/Leave2List';
 import { EmployeeEditPage } from './pages/EmployeeEdit';
-import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 
 export default function App() {
   return (

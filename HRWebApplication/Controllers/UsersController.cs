@@ -33,7 +33,7 @@ namespace HRWebApplication.Controllers
         }
 
         [Authorize(Roles = "Admin,Manager")]
-        [HttpGet]
+        [HttpGet(Name = "GetListUsers")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<UserDTO> Get()
         {
@@ -48,7 +48,7 @@ namespace HRWebApplication.Controllers
         }
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetUserInfoById")]
         [Authorize(Roles = "Admin,Manager")]
         public ActionResult<UserDTO> Get(string id)
         {
@@ -59,7 +59,7 @@ namespace HRWebApplication.Controllers
         }
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Perform))]
-        [HttpPost]
+        [HttpPost(Name = "SignUp")]
         public async Task<IActionResult> Register([FromBody] UserDTO user)
         {
             var newUser = new IdentityUser()
@@ -77,16 +77,18 @@ namespace HRWebApplication.Controllers
         }
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Interact))]
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginDTO userDTO)
+        [HttpPost("Login", Name = "Login")]
+        public async Task<ActionResult<TokenDTO>> Login(LoginDTO userDTO)
         {
             var user = await _usermanager.FindByNameAsync(userDTO.UserName);
-            if (user != null && await _usermanager.CheckPasswordAsync(user, userDTO.Password))
+            if (user is null) return BadRequest();
+
+            if (await _usermanager.CheckPasswordAsync(user, userDTO.Password))
             {
                 //Get roles
                 var roles = await _usermanager.GetRolesAsync(user);
 
-                var claims = from r in roles select new Claim(ClaimTypes.Role, r);
+                var claims = roles.Select(role => new Claim(ClaimTypes.Role, role));
                 claims.Append(new Claim("UserId", user.Id.ToString()));
 
                 var tokenDescriptor = new SecurityTokenDescriptor
@@ -102,10 +104,12 @@ namespace HRWebApplication.Controllers
                 return Ok(new TokenDTO() { AccessToken = access_token });
             }
             else
+            {
                 return BadRequest();
+            }
         }
 
-        [HttpGet("Profile")]
+        [HttpGet("Profile", Name = "Profile")]
         [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public async Task<IActionResult> GetProfile()
@@ -117,7 +121,7 @@ namespace HRWebApplication.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "Delete")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public async Task<IActionResult> Delete(string id)
         {
