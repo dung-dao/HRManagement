@@ -1,4 +1,4 @@
-import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { CarryOutOutlined, CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
 import moment from 'moment';
 import React from 'react';
@@ -66,20 +66,16 @@ export const columns = ({ onDeleteEmployee }) => [
     fixed: 'right',
     render: (_, record: EmployeeDTO) => (
       <Space size="small">
-        {/* <Popconfirm
-          placement="right"
-          title={'Bạn có chắc muốn phê duyệt nhân viên này?'}
-          onConfirm={() => onApproveEmployee(record)}
-          okText="Đồng ý"
-          cancelText="Không"
-          disabled={record.status !== UglifyEmployeeStatus.Pending}
-        >
-          <Tooltip title="Phê duyệt">
-            <Button size="small" disabled={record.status !== UglifyEmployeeStatus.Pending} type="dashed">
-              <CheckOutlined />
-            </Button>
-          </Tooltip>
-        </Popconfirm> */}
+        <Tooltip title="Nghỉ phép">
+          <Button
+            size="small"
+            disabled={record.status !== BeautifyEmployeeStatus.Working}
+            type="dashed"
+            onClick={() => console.log('open popup nghi phep')}
+          >
+            <CarryOutOutlined />
+          </Button>
+        </Tooltip>
         <Link to={'employee/' + record?.id}>
           <Tooltip title="Chỉnh sửa">
             <Button size="small" type="primary">

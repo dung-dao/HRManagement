@@ -1,12 +1,16 @@
-import authService from '../components/api-authorization/AuthorizeService';
+import authService from 'services/AuthService';
 
 export class ApiClientBase {
-    protected transformOptions = async (options: RequestInit): Promise<RequestInit> => {
-        const token = await authService.getAccessToken();
-        options.headers = {
-            ...options.headers,
-            Authorization: 'Bearer ' + token,
-        };
-        return Promise.resolve(options);
-    };
+  protected transformOptions = (options: RequestInit): Promise<RequestInit> => {
+    try {
+      const token = authService.getAccessToken();
+      options.headers = {
+        ...options.headers,
+        Authorization: 'Bearer ' + token,
+      };
+      return Promise.resolve(options);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  };
 }

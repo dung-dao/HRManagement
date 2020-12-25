@@ -6,10 +6,12 @@ import {
   GoldOutlined,
   ReconciliationOutlined,
   ExceptionOutlined,
+  BuildOutlined,
+  CarryOutOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu } from 'antd';
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Logo = styled.div`
@@ -25,17 +27,63 @@ const LogoHead = styled.h1`
   padding-top: 10px;
   padding-left: 5px;
 `;
-const { Sider } = Layout;
+
+const menuItems = [
+  {
+    key: 'organization',
+    url: '/organization',
+    icon: <ApartmentOutlined />,
+    label: 'Tổ chức',
+  },
+  {
+    key: 'employee',
+    url: '/employees',
+    icon: <TeamOutlined />,
+    label: 'Nhân viên',
+  },
+  {
+    key: 'job-title',
+    url: '/job-title',
+    icon: <IdcardOutlined />,
+    label: 'Chức vụ công việc',
+  },
+  {
+    key: 'job-category',
+    url: '/job-category',
+    icon: <GoldOutlined />,
+    label: 'Loại hình nhân sự',
+  },
+  {
+    key: 'work-type',
+    url: '/work-type',
+    icon: <ReconciliationOutlined />,
+    label: 'Loại công việc',
+  },
+  {
+    key: 'leave-type',
+    url: '/leave-type',
+    icon: <ExceptionOutlined />,
+    label: 'Loại nghỉ việc',
+  },
+  {
+    key: 'leave2-type',
+    url: '/leave2-type',
+    icon: <BuildOutlined />,
+    label: 'Loại nghỉ phép',
+  },
+  {
+    key: 'leave2-list',
+    url: '/leave2-list',
+    icon: <CarryOutOutlined />,
+    label: 'Danh sách nghỉ phép',
+  },
+];
 
 export default function AppSidebar() {
-  const { pathname } = useLocation();
   const getSelectedKey = () => {
-    if (pathname.includes('organization')) return 'organization';
-    if (pathname.includes('employee')) return 'employee';
-    if (pathname.includes('job-title')) return 'job-title';
-    if (pathname.includes('job-category')) return 'job-category';
-    if (pathname.includes('work-type')) return 'work-type';
-    if (pathname.includes('leave-type')) return 'leave-type';
+    for (const { key } of menuItems) {
+      if (window.location.pathname.includes(key)) return key;
+    }
   };
 
   return (
@@ -53,47 +101,11 @@ export default function AppSidebar() {
         <LogoHead>HR Management</LogoHead>
       </Logo>
       <Menu theme="dark" mode="inline" selectedKeys={[getSelectedKey()]} style={{ marginTop: 20 }}>
-        <Menu.Item key={'organization'} active>
-          <ApartmentOutlined /> <Link to={'/organization'}>Tổ chức</Link>
-        </Menu.Item>
-        <Menu.Item key={'employee'}>
-          <TeamOutlined /> <Link to={'/employees'}>Nhân viên</Link>
-        </Menu.Item>
-        <Menu.Item key={'job-title'}>
-          <IdcardOutlined /> <Link to={'/job-title'}>Chức vụ công việc</Link>
-        </Menu.Item>
-        <Menu.Item key={'job-category'}>
-          <GoldOutlined /> <Link to={'/job-category'}>Loại hình nhân sự</Link>
-        </Menu.Item>
-        <Menu.Item key={'work-type'}>
-          <ReconciliationOutlined /> <Link to={'/work-type'}>Loại công việc</Link>
-        </Menu.Item>
-        <Menu.Item key={'leave-type'}>
-          <ExceptionOutlined /> <Link to={'/leave-type'}>Loại nghỉ việc</Link>
-        </Menu.Item>
-        {/* <Menu.Item key={Constant.MENU.MERCHANTS_PAGE}>
-            <ShopFilled />
-            <span>Đối tác</span>
-            <Link to={Constant.ROUTER_URL.MERCHANTS_PAGE}></Link>
+        {menuItems.map(({ key, url, icon, label }) => (
+          <Menu.Item key={key}>
+            {icon} <Link to={url}>{label}</Link>
           </Menu.Item>
-          <Menu.Item key="statistics">
-            <HomeOutlined />
-            <span>Thống kê</span>
-          </Menu.Item>
-          <Menu.SubMenu key={Constant.MENU.PARENT_CATEGORY_MENU} title={<span>Danh mục</span>}>
-            <Menu.Item key={Constant.MENU.ATTRIBUTE_MENU}>
-              <span>Quản lý thuộc tính</span>
-              <Link to={Constant.ROUTER_URL.ATTRIBUTE_PAGE} />
-            </Menu.Item>
-            <Menu.Item key={Constant.MENU.GROUP_SET_ATTR_MENU}>
-              <span>Nhóm thuộc tính </span>
-              <Link to={Constant.ROUTER_URL.GROUP_SET_ATTRIBUTE_PAGE} />
-            </Menu.Item>
-            <Menu.Item key={Constant.MENU.CATEGORY_MENU}>
-              <span>Quản lý danh mục</span>
-              <Link to={Constant.ROUTER_URL.CATEGORY_PAGE} />
-            </Menu.Item>
-          </Menu.SubMenu> */}
+        ))}
       </Menu>
     </Layout.Sider>
   );
