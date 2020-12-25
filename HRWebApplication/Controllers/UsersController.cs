@@ -105,7 +105,7 @@ namespace HRWebApplication.Controllers
         [HttpGet("Profile")]
         [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public IActionResult GetProfile()
+        public async Task<ActionResult<UserDTO>> GetProfile()
         {
             var user = _userRepository.GetById(GetUserId());
             var res = _mapper.Map<UserDTO>(user);
