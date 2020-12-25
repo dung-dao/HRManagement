@@ -47,7 +47,7 @@ namespace HRWebApplication.Controllers
         }
 
         [Authorize(Roles = "Admin,Manager")]
-        [HttpGet(Name = "GetListUsers")]
+        [HttpGet]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<UserDTO> Get()
         {
@@ -63,7 +63,7 @@ namespace HRWebApplication.Controllers
         }
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        [HttpGet("{id}", Name = "GetUserInfoById")]
+        [HttpGet("{id}")]
         [Authorize(Roles = "Admin,Manager")]
         public ActionResult<UserDTO> Get(string id)
         {
@@ -74,7 +74,7 @@ namespace HRWebApplication.Controllers
         }
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Perform))]
-        [HttpPost(Name = "SignUp")]
+        [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserDTO user)
         {
             var newUser = new User()
@@ -92,46 +92,25 @@ namespace HRWebApplication.Controllers
         }
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Interact))]
-        [HttpPost("Login", Name = "Login")]
-        public async Task<ActionResult<TokenDTO>> Login(LoginDTO userDTO)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginDTO userDTO)
         {
-            var user = await _usermanager.FindByNameAsync(userDTO.UserName);
-            if (user is null) return BadRequest();
+            var token = await _userRepository.GenerateLoginToken(userDTO.UserName, userDTO.Password, "Some_kind_of_secret");
 
-            if (await _usermanager.CheckPasswordAsync(user, userDTO.Password))
-            {
-                //Get roles
-                var roles = await _usermanager.GetRolesAsync(user);
-
-                var claims = roles.Select(role => new Claim(ClaimTypes.Role, role));
-                claims.Append(new Claim("UserId", user.Id.ToString()));
-
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.UtcNow.AddDays(1),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Some_kind_of_secret")), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-                var access_token = tokenHandler.WriteToken(securityToken);
-                return Ok(new TokenDTO() { AccessToken = access_token });
-            }
-            else
-            {
+            if (token is null)
                 return BadRequest();
-            }
+            return Ok(new TokenDTO() { AccessToken = token });
         }
 
-        [HttpGet("Profile", Name = "Profile")]
+        [HttpGet("Profile")]
         [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IActionResult GetProfile()
         {
-            var userId = GetUserId();
-            var user = _userRepository.GetById(userId);
-            return Ok(_mapper.Map<UserDTO>(user));
+            var user = _userRepository.GetById(GetUserId());
+            var res = _mapper.Map<UserDTO>(user);
+            res.Employee.Status = _employeeRepostiory.GetEmployeeStatus(user.Employee);
+            return Ok(res);
         }
 
         [HttpPut("Profile")]
@@ -139,21 +118,25 @@ namespace HRWebApplication.Controllers
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public IActionResult UpdateProfile(EmployeeDTO employeeData)
         {
-            var userId = GetUserId();
-            var user = _userRepository.GetById(userId);
+            var user = _userRepository.GetById(GetUserId());
 
             var newEmployee = _mapper.Map<Employee>(employeeData);
 
-            _employeeRepostiory.AddEmployee(newEmployee);
-            _unitOfWork.Commit();
-
-            user.Employee = newEmployee;
-            _unitOfWork.Commit();
-            return NoContent();
+            _userRepository.UpdateProfile(user, newEmployee);
+            try
+            {
+                _unitOfWork.Commit();
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+                throw;
+            }
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}", Name = "Delete")]
+        [HttpDelete("{id}")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public async Task<IActionResult> Delete(string id)
         {

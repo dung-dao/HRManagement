@@ -12,7 +12,7 @@ namespace HRData.Repositories
         void Commit();
         Task CommitAsync();
     }
-    class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
 

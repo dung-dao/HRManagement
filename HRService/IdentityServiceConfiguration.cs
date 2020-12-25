@@ -1,5 +1,6 @@
 ﻿using HRData.Data;
 using HRData.Models;
+using HRData.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +41,8 @@ namespace HRService
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+
+            services.AddScoped<IUserRepository, UserRepository>();
         }
     }
 }

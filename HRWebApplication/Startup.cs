@@ -40,6 +40,8 @@ namespace HRWebApplication
                options.UseLazyLoadingProxies().UseSqlServer(
                    Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddUnitOfWork();
             #endregion
 
             services.AddControllersWithViews();
