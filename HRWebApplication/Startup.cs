@@ -2,6 +2,7 @@ using AutoMapper;
 using HRData;
 using HRData.Data;
 using HRData.Models;
+using HRService;
 using HRWebApplication.DTO;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,31 +42,6 @@ namespace HRWebApplication
             services.AddDatabaseDeveloperPageExceptionFilter();
             #endregion
 
-            #region Identity
-            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
-                            .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Some_kind_of_secret")),
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
-            #endregion
-
             services.AddControllersWithViews();
             services.AddRazorPages();
 
@@ -87,10 +63,11 @@ namespace HRWebApplication
                 });
             });
             #endregion
+
+            services.AddUserService("Some_kind_of_secret");
             services.AddHRServices();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -117,6 +94,7 @@ namespace HRWebApplication
 
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -8,11 +8,10 @@ using Microsoft.Extensions.Options;
 
 namespace HRData.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
-
         }
 
         #region DbSet
@@ -24,12 +23,12 @@ namespace HRData.Data
         public DbSet<JobCategory> JobCategories { get; set; }
         public DbSet<WorkType> WorkType { get; set; }
         public DbSet<Position> Positions { get; set; }
-        public DbSet<LeaveType> LeaveTypes { get; set; }
 
-        //public DbSet<TimeSheet> TimeSheets { get; set; }
+        public DbSet<LeaveType> LeaveTypes { get; set; }
+        public DbSet<LeaveDetail> LeaveDetails { get; set; }
         #endregion
 
-        private void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
+        private static void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
         {
             builder.Entity<T>().HasKey(e => e.Id);
             builder.Entity<T>().Property(e => e.RecordStatus).HasConversion<int>();
@@ -39,7 +38,7 @@ namespace HRData.Data
             //Use preconfigured api config
             base.OnModelCreating(builder);
 
-            #region KeyAndProperty
+            #region Properties
             RegisterEntity<OrganizationUnit>(builder);
             RegisterEntity<JobTitle>(builder);
             RegisterEntity<JobCategory>(builder);
@@ -47,29 +46,19 @@ namespace HRData.Data
             RegisterEntity<WorkType>(builder);
             RegisterEntity<Employee>(builder);
             RegisterEntity<Position>(builder);
+
             RegisterEntity<LeaveType>(builder);
+            RegisterEntity<LeaveDetail>(builder);
 
-            #endregion
-
-            #region Organization
-
-            builder.Entity<OrganizationUnit>()
-                .HasMany(e => e.Children).WithOne(e => e.Parent)
-                .HasForeignKey(e => e.ParentId)
-                .OnDelete(DeleteBehavior.NoAction);
-            #endregion
-
+            RegisterEntity<Holiday>(builder);
             #region Employee
             builder.Entity<Employee>(e =>
             {
                 e.Property(e => e.DateOfBirth).HasColumnType("date");
             });
-            builder.Entity<Employee>().HasMany(e => e.Positions).WithOne(p => p.Employee).OnDelete(DeleteBehavior.Cascade);
-            
-            builder.Entity<Position>().HasOne(p => p.JobTitle);
-            builder.Entity<Position>().HasOne(p => p.WorkType);
-            builder.Entity<Position>().HasOne(p => p.Unit);
+            #endregion
 
+            #region Position
             builder.Entity<Position>(po =>
             {
                 po.Property(e => e.StartDate).IsRequired();
@@ -81,14 +70,52 @@ namespace HRData.Data
             });
             #endregion
 
-            #region Jobs
+            #endregion
+
+            #region Relationships
+
+            #region Organization
+            builder.Entity<OrganizationUnit>()
+                .HasMany(e => e.Children).WithOne(e => e.Parent)
+                .HasForeignKey(e => e.ParentId)
+                .OnDelete(DeleteBehavior.NoAction);
+            #endregion
+
+            #region Position
+            builder.Entity<Employee>().HasMany(e => e.Positions).WithOne(p => p.Employee).OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Position>().HasOne(p => p.JobTitle);
+            builder.Entity<Position>().HasOne(p => p.WorkType);
+            builder.Entity<Position>().HasOne(p => p.Unit);
             builder.Entity<JobTitle>().HasOne(e => e.JobCategory).WithMany(e => e.JobTitles).HasForeignKey(e => e.JobCategoryId).OnDelete(DeleteBehavior.NoAction);
             #endregion
-        }
 
-        private static Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<Position> PositionEntity(ModelBuilder builder)
-        {
-            return builder.Entity<Position>();
+            #region User
+            builder.Entity<User>()
+                .HasOne(u => u.Employee)
+                .WithOne(e => e.User)
+                .HasForeignKey<Employee>(e => e.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+            #endregion
+
+            #region TimeSheet
+            builder.Entity<LeaveDetail>(ld =>
+            {
+                ld.HasOne(ld => ld.LeaveType)
+                .WithMany(lt => lt.LeaveDetails);
+
+                ld.HasOne(ld => ld.Employee)
+                .WithMany(em => em.LeaveDetails)
+                .HasForeignKey(ld => ld.EmployeeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+                ld.HasOne(ld => ld.Reviewer)
+                .WithMany(em => em.ApprovedDetails)
+                .HasForeignKey(ld => ld.ReviewerId)
+                .OnDelete(DeleteBehavior.NoAction);
+            });
+            #endregion
+
+            #endregion
         }
     }
 }

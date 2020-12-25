@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30509.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRData", "HRData\HRData.csproj", "{8C522604-222B-4F1F-95EB-0EF386E30E3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRData", "HRData\HRData.csproj", "{8C522604-222B-4F1F-95EB-0EF386E30E3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRWebApplication", "HRWebApplication\HRWebApplication.csproj", "{D26306E7-E7E0-40E4-BC87-BA29CE0EA2A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRWebApplication", "HRWebApplication\HRWebApplication.csproj", "{D26306E7-E7E0-40E4-BC87-BA29CE0EA2A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRService", "HRService\HRService.csproj", "{A7F4DD27-183B-4B8F-9CF4-CDA42F1E7A37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D26306E7-E7E0-40E4-BC87-BA29CE0EA2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D26306E7-E7E0-40E4-BC87-BA29CE0EA2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D26306E7-E7E0-40E4-BC87-BA29CE0EA2A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7F4DD27-183B-4B8F-9CF4-CDA42F1E7A37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7F4DD27-183B-4B8F-9CF4-CDA42F1E7A37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7F4DD27-183B-4B8F-9CF4-CDA42F1E7A37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7F4DD27-183B-4B8F-9CF4-CDA42F1E7A37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,6 +16,10 @@ namespace HRWebApplication.DTO
             CreateMap<JobTitle, JobTitleDTO>().ReverseMap();
             CreateMap<LeaveType, LeaveTypeDTO>().ReverseMap();
             CreateMap<Position, PositionDTO>().ReverseMap();
+
+            CreateMap<LeaveDetail, LeaveDetailDTO>().ReverseMap();
+            CreateMap<User, UserDTO>()
+                .ForMember(u => u.Password, opt => opt.Ignore());
         }
     }
 }

@@ -15,6 +15,7 @@ namespace HRData.Repositories
         #region Employee
         List<Employee> GetActiveEmployees();
         List<Employee> GetInactiveEmployees();
+        Employee GetById(int id);
         void AddEmployee(Employee employee);
         void Update(Employee employee);
         void Delete(Employee employee);
@@ -42,6 +43,8 @@ namespace HRData.Repositories
         {
             return _context.Employees.Where(e => e.RecordStatus == RecordStatus.Active).ToList();
         }
+
+        public Employee GetById(int id) => _context.Employees.Find(id);
 
         public void AddEmployee(Employee employee)
         {
@@ -105,7 +108,7 @@ namespace HRData.Repositories
 
             pos.LeaveDate = data.LeaveDate;
             pos.LeaveReason = data.LeaveReason;
-            pos.LeaveType = _context.LeaveTypes.Find(data.LeaveType.Id);
+            //pos.LeaveType = _context.LeaveTypes.Find(data.LeaveType.Id);
         }
 
         public void DeletePosition(Employee employee, Position position)

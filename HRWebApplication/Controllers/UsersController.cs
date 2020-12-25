@@ -1,4 +1,7 @@
-﻿using HRWebApplication.DTO;
+﻿using AutoMapper;
+using HRData.Models;
+using HRData.Repositories;
+using HRWebApplication.DTO;
 using HRWebApplication.Helpers.ApiConventions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,16 +23,27 @@ namespace HRWebApplication.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _usermanager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUserRepository _userRepository;
+        private readonly IEmployeeRepostiory _employeeRepostiory;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public UsersController(
-            UserManager<IdentityUser> usermanager,
-            RoleManager<IdentityRole> roleManager
+            IUserRepository userRepository,
+            IEmployeeRepostiory employeeRepostiory,
+            IUnitOfWork unitOfWork,
+            IMapper mapper
             )
         {
-            _usermanager = usermanager;
-            _roleManager = roleManager;
+            _userRepository = userRepository;
+            _employeeRepostiory = employeeRepostiory;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }
+
+        private string GetUserId()
+        {
+            return User.Claims.First(e => e.Type == "UserId").Value;
         }
 
         [Authorize(Roles = "Admin,Manager")]
@@ -37,7 +51,8 @@ namespace HRWebApplication.Controllers
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<UserDTO> Get()
         {
-            return from u in _usermanager.Users
+            var users = _userRepository.GetAll();
+            return from u in users
                    select new UserDTO
                    {
                        Id = u.Id,
@@ -52,7 +67,7 @@ namespace HRWebApplication.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public ActionResult<UserDTO> Get(string id)
         {
-            var user = _usermanager.Users.FirstOrDefault(e => e.Id == id);
+            var user = _userRepository.GetById(id);
             if (user is null)
                 return NotFound();
             return new UserDTO() { Id = user.Id, UserName = user.UserName, Password = null, Email = user.Email };
@@ -62,12 +77,12 @@ namespace HRWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserDTO user)
         {
-            var newUser = new IdentityUser()
+            var newUser = new User()
             {
                 UserName = user.UserName,
                 Email = user.Email
             };
-            var res = await _usermanager.CreateAsync(newUser, user.Password);
+            var res = await _userRepository.Create(newUser, user.Password);
             if (!res.Succeeded)
             {
                 return BadRequest();
@@ -80,40 +95,39 @@ namespace HRWebApplication.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDTO userDTO)
         {
-            var user = await _usermanager.FindByNameAsync(userDTO.UserName);
-            if (user != null && await _usermanager.CheckPasswordAsync(user, userDTO.Password))
-            {
-                //Get roles
-                var roles = await _usermanager.GetRolesAsync(user);
+            var token = await _userRepository.GenerateLoginToken(userDTO.UserName, userDTO.Password, "Some_kind_of_secret");
 
-                var claims = from r in roles select new Claim(ClaimTypes.Role, r);
-                claims.Append(new Claim("UserId", user.Id.ToString()));
-
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.UtcNow.AddDays(1),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Some_kind_of_secret")), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-                var access_token = tokenHandler.WriteToken(securityToken);
-                return Ok(new TokenDTO() { AccessToken = access_token });
-            }
-            else
+            if (token is null)
                 return BadRequest();
+            return Ok(new TokenDTO() { AccessToken = token });
         }
 
         [HttpGet("Profile")]
         [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<IActionResult> GetProfile()
+        public IActionResult GetProfile()
         {
-            var userId = User.Claims.First(e => e.Type == "UserId").Value;
-            var user = await _usermanager.FindByIdAsync(userId);
-            var resUser = new UserDTO() { UserName = user.UserName, Email = user.Email, Id = user.Id };
-            return Ok(resUser);
+            var userId = GetUserId();
+            var user = _userRepository.GetById(userId);
+            return Ok(_mapper.Map<UserDTO>(user));
+        }
+
+        [HttpPut("Profile")]
+        [Authorize(Roles = "Admin,Manager,Employee")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
+        public IActionResult UpdateProfile(EmployeeDTO employeeData)
+        {
+            var userId = GetUserId();
+            var user = _userRepository.GetById(userId);
+
+            var newEmployee = _mapper.Map<Employee>(employeeData);
+
+            _employeeRepostiory.AddEmployee(newEmployee);
+            _unitOfWork.Commit();
+
+            user.Employee = newEmployee;
+            _unitOfWork.Commit();
+            return NoContent();
         }
 
         [Authorize(Roles = "Admin")]
@@ -121,10 +135,9 @@ namespace HRWebApplication.Controllers
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public async Task<IActionResult> Delete(string id)
         {
-            var user = await _usermanager.FindByIdAsync(id);
+            var user = await _userRepository.Delete(id);
             if (user is null)
                 return NotFound();
-            await _usermanager.DeleteAsync(user);
             return Ok();
         }
 
@@ -133,27 +146,14 @@ namespace HRWebApplication.Controllers
         [HttpPost("Roles")]
         public async Task<IActionResult> AddToRole(string userName, string role)
         {
-            var user = await _usermanager.FindByNameAsync(userName);
-            if (user is null)
-                return NotFound();
-
-            var dbRole = await _roleManager.FindByNameAsync(role);
-            if (dbRole is null)
-                return NotFound();
-
             if (!User.IsInRole("Admin") && role.Normalize() == "Admin".Normalize())
                 return Forbid();
 
-            try
-            {
-                await _usermanager.AddToRoleAsync(user, dbRole.Name);
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-                throw;
-            }
+            var resRole = await _userRepository.AddToRole(userName, role);
+            if (resRole is null)
+                return NotFound();
+
+            return NoContent();
         }
     }
 }

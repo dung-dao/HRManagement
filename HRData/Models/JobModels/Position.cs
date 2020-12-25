@@ -1,5 +1,6 @@
 ﻿using HRData.Models.Organization;
 using System;
+using System.Collections.Generic;
 
 namespace HRData.Models.JobModels
 {
@@ -7,6 +8,8 @@ namespace HRData.Models.JobModels
     {
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+
+        //public Decimal Allowance { get; set; }
         public Decimal Salary { get; set; }
 
         public virtual Employee Employee { get; set; }
@@ -18,7 +21,7 @@ namespace HRData.Models.JobModels
         public DateTime? LeaveDate { get; set; }
         public string? LeaveReason { get; set; }
 
-        public virtual LeaveType LeaveType { get; set; }
+        //public virtual LeaveType LeaveType { get; set; }
         #endregion
     }
 }

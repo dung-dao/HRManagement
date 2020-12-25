@@ -16,6 +16,6 @@ namespace HRWebApplication.DTO
 
         public DateTime? LeaveDate { get; set; }
         public string? LeaveReason { get; set; }
-        public virtual LeaveTypeDTO LeaveType { get; set; }
+        //public virtual LeaveType LeaveType { get; set; }
     }
 }
