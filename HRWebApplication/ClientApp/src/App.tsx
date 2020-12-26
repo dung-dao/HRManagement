@@ -15,54 +15,47 @@ import { Leave2TypePage } from './pages/Leave2Type';
 import { Leave2ListPage } from './pages/Leave2List';
 import { EmployeeEditPage } from './pages/EmployeeEdit';
 import { ProfilePage } from './pages/Profile';
-import authService from 'services/AuthService';
+import { useAuth } from 'context/AuthContext';
+import { Roles } from 'services/AuthService';
 
-type Roles = 'Unauthenticated' | 'User' | 'Manager' | 'Admin';
+type RoleNames = Exclude<Roles, undefined> | 'Unauthorized';
 
-type AuthRouteProps = RouteProps & {
-  component: Exclude<RouteProps['component'], undefined>;
-  requireRole: {
-    type: '>=' | '<=' | '==';
-    role: Roles;
-  };
-};
-
-const roleLevel: Record<Roles, number> = {
-  Unauthenticated: 0,
+export const roleLevel: Record<RoleNames, number> = {
+  Unauthorized: 0,
   User: 1,
   Manager: 2,
   Admin: 3,
 } as const;
 
-const returnRoute: Record<Roles, string> = {
-  Unauthenticated: '/login',
-  User: '/me', 
+export const returnRoute: Record<RoleNames, string> = {
+  Unauthorized: '/login',
+  User: '/me',
   Manager: '/employees',
   Admin: '/employees',
 } as const;
 
+type AuthRouteProps = RouteProps & {
+  component: Exclude<RouteProps['component'], undefined>;
+  requireRole: {
+    type: '>=' | '<=' | '==';
+    role: RoleNames;
+  };
+};
+
 function AuthRoute(routeProps: AuthRouteProps) {
   const { component: Component, requireRole, ...rest } = routeProps;
-  const [userRole, setUserRole] = React.useState<Roles>(authService.getRole() || 'Unauthenticated');
-
-  React.useEffect(() => {
-    const subscriptionId = authService.subscribe(() => {
-      setUserRole(authService.getRole() || 'Unauthenticated');
-    });
-
-    return () => authService.unsubscribe(subscriptionId);
-  }, []);
+  const role = useAuth().userRole || 'Unauthorized';
 
   return (
     <Route
       {...rest}
       render={(props) => {
         const accessValid =
-          (requireRole.type === '>=' && roleLevel[userRole] >= roleLevel[requireRole.role]) ||
-          (requireRole.type === '<=' && roleLevel[userRole] <= roleLevel[requireRole.role]) ||
-          (requireRole.type === '==' && roleLevel[userRole] === roleLevel[requireRole.role]);
+          (requireRole.type === '>=' && roleLevel[role] >= roleLevel[requireRole.role]) ||
+          (requireRole.type === '<=' && roleLevel[role] <= roleLevel[requireRole.role]) ||
+          (requireRole.type === '==' && roleLevel[role] === roleLevel[requireRole.role]);
 
-        if (!accessValid) return <Redirect to={returnRoute[userRole]} />;
+        if (!accessValid) return <Redirect to={returnRoute[role]} />;
 
         return <Component {...props} />;
       }}
@@ -79,7 +72,7 @@ export default function App() {
             exact
             path={['/', '/login']}
             component={LoginPage}
-            requireRole={{ type: '==', role: 'Unauthenticated' }}
+            requireRole={{ type: '==', role: 'Unauthorized' }}
           />
           <AuthRoute
             exact

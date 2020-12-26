@@ -1,13 +1,10 @@
 import React from 'react';
-import { Col, Form, Input, message, Row, Tabs } from 'antd';
-import AppBody from '../../components/Layouts/AppBody';
+import AppBody from 'components/Layouts/AppBody';
 
-import authService from 'services/AuthService';
-import { UsersClient } from 'services/ApiClient';
-import { useTry } from 'hooks';
+import { useAuth } from 'context/AuthContext';
 
 export function ProfilePage(props) {
-  // const apiUsers = React.useRef(new UsersClient());
+  const { userProfile } = useAuth();
 
-  return <AppBody title="Tài khoản">{`Hello ${authService.getUserProfile()?.username}`}</AppBody>;
+  return <AppBody title="Tài khoản">{`Hello ${userProfile?.username}`}</AppBody>;
 }

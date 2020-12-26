@@ -1,10 +1,12 @@
 import { UsersClient, LoginDTO } from 'services/ApiClient';
 import jwt_decode from 'jwt-decode';
 
-interface User {
+export type Roles = 'Admin' | 'Manager' | 'User' | undefined;
+
+export interface User {
   accessToken: string;
   tokenExpiresAt?: Date;
-  role: 'Admin' | 'Manager' | 'User';
+  role: Roles;
   profile?: {
     username: string;
     email?: string;
@@ -32,6 +34,10 @@ export class AuthService {
 
   isAuthenticated() {
     return !!this._user;
+  }
+
+  get userInstance() {
+    return this._user;
   }
 
   getRole() {
