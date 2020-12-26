@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from 'context/AuthContext';
 import authService from 'services/AuthService';
+import { isRoleValid } from 'services/AuthService.util';
 
 const LogoHead = styled.h1`
   color: white;
@@ -50,50 +51,58 @@ const menuItems = [
     url: '/organization',
     icon: <ApartmentOutlined />,
     label: 'Tổ chức',
+    requireRole: { type: '>=', role: 'Manager' },
   },
   {
     key: 'employee',
     url: '/employees',
     icon: <TeamOutlined />,
     label: 'Nhân viên',
+    requireRole: { type: '>=', role: 'Manager' },
   },
   {
     key: 'job-title',
     url: '/job-title',
     icon: <IdcardOutlined />,
     label: 'Chức vụ công việc',
+    requireRole: { type: '>=', role: 'Manager' },
   },
   {
     key: 'job-category',
     url: '/job-category',
     icon: <GoldOutlined />,
     label: 'Loại hình nhân sự',
+    requireRole: { type: '>=', role: 'Manager' },
   },
   {
     key: 'work-type',
     url: '/work-type',
     icon: <ReconciliationOutlined />,
     label: 'Loại công việc',
+    requireRole: { type: '>=', role: 'Manager' },
   },
   {
     key: 'leave-type',
     url: '/leave-type',
     icon: <ExceptionOutlined />,
     label: 'Loại nghỉ việc',
+    requireRole: { type: '>=', role: 'Manager' },
   },
   {
     key: 'leave2-type',
     url: '/leave2-type',
     icon: <BuildOutlined />,
     label: 'Loại nghỉ phép',
+    requireRole: { type: '>=', role: 'Manager' },
   },
   {
     key: 'leave2-list',
     url: '/leave2-list',
     icon: <CarryOutOutlined />,
     label: 'Danh sách nghỉ phép',
+    requireRole: { type: '>=', role: 'Manager' },
   },
-];
+] as const;
 
 export default function AppSidebar() {
   const getSelectedKey = () => {
@@ -121,11 +130,13 @@ export default function AppSidebar() {
           </Tooltip>
         </LogoHead>
         <Menu theme="dark" mode="inline" selectedKeys={[getSelectedKey() || '']}>
-          {menuItems.map(({ key, url, icon, label }) => (
-            <Menu.Item key={key}>
-              {icon} <Link to={url}>{label}</Link>
-            </Menu.Item>
-          ))}
+          {menuItems.map(({ key, url, icon, label, requireRole }) =>
+            isRoleValid(requireRole, userRole) ? (
+              <Menu.Item key={key}>
+                {icon} <Link to={url}>{label}</Link>
+              </Menu.Item>
+            ) : null,
+          )}
         </Menu>
         <LogoutButton>
           <Tooltip title="Log out">
