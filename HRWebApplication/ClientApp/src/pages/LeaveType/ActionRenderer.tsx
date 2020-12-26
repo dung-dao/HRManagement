@@ -8,7 +8,7 @@ export function ActionRenderer(text, record) {
   const onDelete = async () => {
     try {
       await api.leaveType_Delete(record.id);
-      message.info(`Xoá loại nghỉ việc ${record.name} thành công`);
+      message.info(`Xoá loại nghỉ phép ${record.name} thành công`);
       setData(data.filter((d) => d.id !== record.id));
     } catch (e) {
       console.error(e);
@@ -31,7 +31,7 @@ export function ActionRenderer(text, record) {
       </Button>
       <Popconfirm
         placement="right"
-        title={'Bạn có chắc muốn xoá loại nghỉ việc này?'}
+        title={'Bạn có chắc muốn xoá loại nghỉ phép này?'}
         onConfirm={onDelete}
         okText="Đồng ý"
         cancelText="Không"

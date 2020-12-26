@@ -9,8 +9,8 @@ const formLayout = {
 };
 
 const title = {
-  edit: 'Chỉnh sửa loại nghỉ việc',
-  add: 'Thêm mới loại nghỉ việc',
+  edit: 'Chỉnh sửa loại nghỉ phép',
+  add: 'Thêm mới loại nghỉ phép',
 };
 
 export function LeaveTypeModal() {
@@ -25,14 +25,14 @@ export function LeaveTypeModal() {
 
       if (modalType === 'add') {
         const result = await api.leaveType_Create(values);
-        message.info(`Thêm mới loại nghỉ việc ${values.name} thành công`);
+        message.info(`Thêm mới loại nghỉ phép ${values.name} thành công`);
         setData([...data, result]);
       }
       if (modalType === 'edit') {
         values.id = record?.id!;
         await api.leaveType_Update(values.id, values);
         const newData = await api.leaveType_GetAll();
-        message.info(`Chỉnh sửa loại nghỉ việc ${values?.name} thành công`);
+        message.info(`Chỉnh sửa loại nghỉ phép ${values?.name} thành công`);
         setData(newData);
       }
 
@@ -67,15 +67,15 @@ export function LeaveTypeModal() {
       <Form {...formLayout} form={form} preserve={false} onFinish={(values) => console.log(values)}>
         <Form.Item
           name="name"
-          label="Tên loại nghỉ việc"
-          rules={[{ required: true, message: 'Tên loại nghỉ việc không được bỏ trống' }]}
+          label="Tên loại nghỉ phép"
+          rules={[{ required: true, message: 'Tên loại nghỉ phép không được bỏ trống' }]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="description"
           label="Mô tả"
-          rules={[{ required: true, message: 'Mô tả loại nghỉ việc không được bỏ trống' }]}
+          rules={[{ required: true, message: 'Mô tả loại nghỉ phép không được bỏ trống' }]}
         >
           <Input.TextArea />
         </Form.Item>

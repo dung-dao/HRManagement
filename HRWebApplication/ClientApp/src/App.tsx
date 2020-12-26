@@ -78,12 +78,6 @@ export default function App() {
           />
           <AuthRoute
             exact
-            path={'/leave2-type'}
-            component={Leave2TypePage}
-            requireRole={{ type: '>=', role: 'Manager' }}
-          />
-          <AuthRoute
-            exact
             path={'/leave2-list'}
             component={Leave2ListPage}
             requireRole={{ type: '>=', role: 'Manager' }}

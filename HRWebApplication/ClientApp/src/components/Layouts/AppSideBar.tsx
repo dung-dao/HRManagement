@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Layout, Menu, Tooltip } from 'antd';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAuth } from 'context/AuthContext';
 import authService from 'services/AuthService';
@@ -24,6 +24,10 @@ const LogoHead = styled.h1`
   place-content: center;
   padding: 1.25em 1.5em 1.25em 0;
   background: rgb(2, 34, 62);
+
+  .profile-button {
+    cursor: pointer;
+  }
 `;
 
 const LogoutButton = styled.div`
@@ -46,6 +50,13 @@ const SiderContainer = styled.div`
 `;
 
 const menuItems = [
+  {
+    key: 'me',
+    url: '/me',
+    icon: <UserOutlined />,
+    label: 'Tài khoản',
+    requireRole: { type: '>=', role: 'User' },
+  },
   {
     key: 'organization',
     url: '/organization',
@@ -85,13 +96,6 @@ const menuItems = [
     key: 'leave-type',
     url: '/leave-type',
     icon: <ExceptionOutlined />,
-    label: 'Loại nghỉ việc',
-    requireRole: { type: '>=', role: 'Manager' },
-  },
-  {
-    key: 'leave2-type',
-    url: '/leave2-type',
-    icon: <BuildOutlined />,
     label: 'Loại nghỉ phép',
     requireRole: { type: '>=', role: 'Manager' },
   },
@@ -111,6 +115,7 @@ export default function AppSidebar() {
     }
   };
   const { userRole, userProfile } = useAuth();
+  const history = useHistory();
 
   return (
     <Layout.Sider
@@ -125,8 +130,10 @@ export default function AppSidebar() {
       <SiderContainer>
         <LogoHead>
           <Tooltip title={'Role: ' + userRole}>
-            <UserOutlined style={{ marginRight: 10, fontSize: 22 }} />
-            {userProfile?.username}
+            <div className="profile-button" onClick={() => history.push('/me')}>
+              <UserOutlined style={{ marginRight: 10, fontSize: 22 }} />
+              {userProfile?.username}
+            </div>
           </Tooltip>
         </LogoHead>
         <Menu theme="dark" mode="inline" selectedKeys={[getSelectedKey() || '']}>

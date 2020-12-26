@@ -11,7 +11,7 @@ import { LeaveDetailModal } from './LeaveDetailModal';
 import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/Table/utils';
 import moment from 'moment';
 
-function Form1() {
+function FormInfo() {
   const { api, setEmployee, employee } = usePage();
 
   const onSubmit = async (data: EmployeeDTO) => {
@@ -44,7 +44,7 @@ function Form1() {
     </>
   );
 }
-function Form2() {
+function FormWork() {
   const {
     api,
     employee,
@@ -78,12 +78,11 @@ function Form2() {
   };
 
   React.useEffect(() => {
-    const leavePosition = positions.filter((it) => it.leaveDate && it.leaveType).sort()?.[0];
+    const leavePosition = positions.filter((it) => it.leaveDate).sort()?.[0];
     if (!leavePosition) return;
 
     leaveDetailForm.setFieldsValue({
       leaveDate: moment(leavePosition.leaveDate).format('DD-MM-YYYY'),
-      leaveType: leavePosition.leaveType?.name,
       leaveReason: leavePosition.leaveReason,
     });
   }, [positions, leaveDetailForm]);
@@ -97,9 +96,6 @@ function Form2() {
               <fieldset>
                 <legend>Lý do nghỉ việc:</legend>
                 <Form.Item name="leaveDate" label="Ngày kết thúc">
-                  <Input readOnly />
-                </Form.Item>
-                <Form.Item name="leaveType" label="Loại lý do">
                   <Input readOnly />
                 </Form.Item>
                 <Form.Item name="leaveReason" label="Mô tả">
@@ -155,10 +151,10 @@ export function EmployeeEditPage(props) {
       <PageProvider value={contextValue}>
         <Tabs>
           <Tabs.TabPane tab="Thông tin" key="1">
-            <Form1 />
+            <FormInfo />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Công việc" key="2">
-            <Form2 />
+            <FormWork />
           </Tabs.TabPane>
         </Tabs>
       </PageProvider>
