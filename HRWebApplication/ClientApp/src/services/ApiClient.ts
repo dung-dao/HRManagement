@@ -1172,6 +1172,224 @@ export class JobTitleClient extends ApiClientBase {
     }
 }
 
+export class LeaveDetailsClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    leaveDetails(): Promise<LeaveDetailDTO[]> {
+        let url_ = this.baseUrl + "/api/LeaveDetails";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLeaveDetails(_response);
+        });
+    }
+
+    protected processLeaveDetails(response: Response): Promise<LeaveDetailDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LeaveDetailDTO.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<LeaveDetailDTO[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    all(): Promise<LeaveDetailDTO[]> {
+        let url_ = this.baseUrl + "/api/LeaveDetails/all";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processAll(_response);
+        });
+    }
+
+    protected processAll(response: Response): Promise<LeaveDetailDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LeaveDetailDTO.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<LeaveDetailDTO[]>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    requestLeave(body: LeaveDetailDTO | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/LeaveDetails/RequestLeave";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processRequestLeave(_response);
+        });
+    }
+
+    protected processRequestLeave(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    approveLeave(body: LeaveDetailDTO | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/LeaveDetails/ApproveLeave";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processApproveLeave(_response);
+        });
+    }
+
+    protected processApproveLeave(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    rejectLeave(body: LeaveDetailDTO | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/LeaveDetails/RejectLeave";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processRejectLeave(_response);
+        });
+    }
+
+    protected processRejectLeave(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+}
+
 export class LeaveTypeClient extends ApiClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -2277,6 +2495,62 @@ export class UsersClient extends ApiClientBase {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    profile2(body: EmployeeDTO | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Users/Profile";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processProfile2(_response);
+        });
+    }
+
+    protected processProfile2(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
      * @param userName (optional) 
      * @param role (optional) 
      * @return Success
@@ -2906,50 +3180,6 @@ export interface IOrganizationUnitDTO {
     parentId?: number | undefined;
 }
 
-export class LeaveTypeDTO implements ILeaveTypeDTO {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
-
-    constructor(data?: ILeaveTypeDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-        }
-    }
-
-    static fromJS(data: any): LeaveTypeDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeaveTypeDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        return data; 
-    }
-}
-
-export interface ILeaveTypeDTO {
-    id?: number;
-    name?: string | undefined;
-    description?: string | undefined;
-}
-
 export class PositionDTO implements IPositionDTO {
     id?: number;
     startDate?: Date;
@@ -2961,7 +3191,6 @@ export class PositionDTO implements IPositionDTO {
     unit?: OrganizationUnitDTO;
     leaveDate?: Date | undefined;
     leaveReason?: string | undefined;
-    leaveType?: LeaveTypeDTO;
 
     constructor(data?: IPositionDTO) {
         if (data) {
@@ -2984,7 +3213,6 @@ export class PositionDTO implements IPositionDTO {
             this.unit = _data["unit"] ? OrganizationUnitDTO.fromJS(_data["unit"]) : <any>undefined;
             this.leaveDate = _data["leaveDate"] ? new Date(_data["leaveDate"].toString()) : <any>undefined;
             this.leaveReason = _data["leaveReason"];
-            this.leaveType = _data["leaveType"] ? LeaveTypeDTO.fromJS(_data["leaveType"]) : <any>undefined;
         }
     }
 
@@ -3007,7 +3235,6 @@ export class PositionDTO implements IPositionDTO {
         data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
         data["leaveDate"] = this.leaveDate ? this.leaveDate.toISOString() : <any>undefined;
         data["leaveReason"] = this.leaveReason;
-        data["leaveType"] = this.leaveType ? this.leaveType.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -3023,7 +3250,6 @@ export interface IPositionDTO {
     unit?: OrganizationUnitDTO;
     leaveDate?: Date | undefined;
     leaveReason?: string | undefined;
-    leaveType?: LeaveTypeDTO;
 }
 
 export class JobCategoryDTO implements IJobCategoryDTO {
@@ -3068,6 +3294,98 @@ export interface IJobCategoryDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
+}
+
+export class LeaveTypeDTO implements ILeaveTypeDTO {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+
+    constructor(data?: ILeaveTypeDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+        }
+    }
+
+    static fromJS(data: any): LeaveTypeDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeaveTypeDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        return data; 
+    }
+}
+
+export interface ILeaveTypeDTO {
+    id?: number;
+    name?: string | undefined;
+    description?: string | undefined;
+}
+
+export class LeaveDetailDTO implements ILeaveDetailDTO {
+    id?: number;
+    date?: Date;
+    status?: string | undefined;
+    leaveType?: LeaveTypeDTO;
+
+    constructor(data?: ILeaveDetailDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            this.leaveType = _data["leaveType"] ? LeaveTypeDTO.fromJS(_data["leaveType"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): LeaveDetailDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeaveDetailDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["leaveType"] = this.leaveType ? this.leaveType.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ILeaveDetailDTO {
+    id?: number;
+    date?: Date;
+    status?: string | undefined;
+    leaveType?: LeaveTypeDTO;
 }
 
 export class IdentityRole implements IIdentityRole {
@@ -3159,6 +3477,7 @@ export class UserDTO implements IUserDTO {
     userName?: string | undefined;
     password?: string | undefined;
     email?: string | undefined;
+    employee?: EmployeeDTO;
 
     constructor(data?: IUserDTO) {
         if (data) {
@@ -3175,6 +3494,7 @@ export class UserDTO implements IUserDTO {
             this.userName = _data["userName"];
             this.password = _data["password"];
             this.email = _data["email"];
+            this.employee = _data["employee"] ? EmployeeDTO.fromJS(_data["employee"]) : <any>undefined;
         }
     }
 
@@ -3191,6 +3511,7 @@ export class UserDTO implements IUserDTO {
         data["userName"] = this.userName;
         data["password"] = this.password;
         data["email"] = this.email;
+        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -3200,6 +3521,7 @@ export interface IUserDTO {
     userName?: string | undefined;
     password?: string | undefined;
     email?: string | undefined;
+    employee?: EmployeeDTO;
 }
 
 export class LoginDTO implements ILoginDTO {

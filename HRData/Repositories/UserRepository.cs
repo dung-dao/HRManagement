@@ -78,7 +78,9 @@ namespace HRData.Repositories
             {
                 claims.Add(new Claim(ClaimTypes.Role, item));
             }
-            claims.Add(new Claim("UserId", user.Id));
+            claims.Add(new Claim("userid", user.Id));
+            claims.Add(new Claim("username", user.UserName));
+            claims.Add(new Claim("email", user.Email));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
