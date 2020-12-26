@@ -1,5 +1,4 @@
 import {
-  SolutionOutlined,
   ApartmentOutlined,
   TeamOutlined,
   IdcardOutlined,
@@ -8,24 +7,41 @@ import {
   ExceptionOutlined,
   BuildOutlined,
   CarryOutOutlined,
+  UserOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
-import { Button, Layout, Menu } from 'antd';
+import { Button, Layout, Menu, Tooltip } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { useAuth } from 'context/AuthContext';
+import authService from 'services/AuthService';
 
-const Logo = styled.div`
-  height: 64px;
-  margin-right: 5px;
-  background: rgb(2, 34, 62);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 const LogoHead = styled.h1`
   color: white;
-  padding-top: 10px;
-  padding-left: 5px;
+  display: grid;
+  place-content: center;
+  padding: 1.25em 1.5em 1.25em 0;
+  background: rgb(2, 34, 62);
+`;
+
+const LogoutButton = styled.div`
+  margin-top: auto;
+  text-align: center;
+  padding: 1.25em;
+  background: rgb(2, 34, 62);
+
+  > button {
+    background: transparent !important;
+    color: white;
+    border: none;
+  }
+`;
+
+const SiderContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const menuItems = [
@@ -85,6 +101,7 @@ export default function AppSidebar() {
       if (window.location.pathname.includes(key)) return key;
     }
   };
+  const { userRole, userProfile } = useAuth();
 
   return (
     <Layout.Sider
@@ -96,17 +113,30 @@ export default function AppSidebar() {
         left: 0,
       }}
     >
-      <Logo>
-        <Button type="primary" icon={<SolutionOutlined style={{ fontSize: 24 }} />} size="large" />
-        <LogoHead>HR Management</LogoHead>
-      </Logo>
-      <Menu theme="dark" mode="inline" selectedKeys={[getSelectedKey()]} style={{ marginTop: 20 }}>
-        {menuItems.map(({ key, url, icon, label }) => (
-          <Menu.Item key={key}>
-            {icon} <Link to={url}>{label}</Link>
-          </Menu.Item>
-        ))}
-      </Menu>
+      <SiderContainer>
+        <LogoHead>
+          <Tooltip title={'Role: ' + userRole}>
+            <UserOutlined style={{ marginRight: 10, fontSize: 22 }} />
+            {userProfile?.username}
+          </Tooltip>
+        </LogoHead>
+        <Menu theme="dark" mode="inline" selectedKeys={[getSelectedKey() || '']}>
+          {menuItems.map(({ key, url, icon, label }) => (
+            <Menu.Item key={key}>
+              {icon} <Link to={url}>{label}</Link>
+            </Menu.Item>
+          ))}
+        </Menu>
+        <LogoutButton>
+          <Tooltip title="Log out">
+            <Button
+              icon={<LogoutOutlined style={{ fontSize: 24 }} />}
+              size="large"
+              onClick={authService.signOut}
+            />
+          </Tooltip>
+        </LogoutButton>
+      </SiderContainer>
     </Layout.Sider>
   );
 }
