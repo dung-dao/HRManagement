@@ -2231,13 +2231,14 @@ export class UsersClient extends ApiClientBase {
     /**
      * @return Success
      */
-    profile(): Promise<void> {
+    profile(): Promise<UserDTO> {
         let url_ = this.baseUrl + "/api/Users/Profile";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <RequestInit>{
             method: "GET",
             headers: {
+                "Accept": "text/plain"
             }
         };
 
@@ -2248,7 +2249,7 @@ export class UsersClient extends ApiClientBase {
         });
     }
 
-    protected processProfile(response: Response): Promise<void> {
+    protected processProfile(response: Response): Promise<UserDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -2260,7 +2261,10 @@ export class UsersClient extends ApiClientBase {
             });
         } else if (status === 200) {
             return response.text().then((_responseText) => {
-            return;
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserDTO.fromJS(resultData200);
+            return result200;
             });
         } else {
             return response.text().then((_responseText) => {

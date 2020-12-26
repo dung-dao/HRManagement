@@ -26,23 +26,16 @@ export class AuthService {
   _nextSubscriptionId: SubscriptionId = 0;
 
   constructor() {
-    const accessToken = this._tokenStorage.get();
-    if (!accessToken) return;
-
-    const { role, exp } = jwt_decode<any>(accessToken);
-    const tokenExpiresAt = new Date(exp * 1000);
-    const tokenExpiredAlready = tokenExpiresAt <= new Date();
-    if (tokenExpiredAlready) return;
-
-    this._updateUser({
-      accessToken,
-      role,
-      tokenExpiresAt,
-    });
+    this._updateUserByTokenStorage();
+    window.addEventListener('storage', () => this._updateUserByTokenStorage());
   }
 
   isAuthenticated() {
-    return !!this.getUserProfile();
+    return !!this._user;
+  }
+
+  getRole() {
+    return this._user?.role;
   }
 
   getUserProfile() {
@@ -65,6 +58,15 @@ export class AuthService {
     };
   }
 
+  _updateUserByTokenStorage() {
+    const accessToken = this._tokenStorage.get();
+    if (accessToken) {
+      this._updateUserByToken(accessToken);
+    } else {
+      this._updateUser(null);
+    }
+  }
+
   /**
    * update token storage (currently localStorage) accordingly to this._user
    */
@@ -74,6 +76,24 @@ export class AuthService {
     } else {
       this._tokenStorage.set(this._user.accessToken);
     }
+  }
+
+  _updateUserByToken(accessToken: string) {
+    const { username, email, role, exp } = jwt_decode<any>(accessToken);
+
+    const tokenExpiresAt = new Date(exp * 1000);
+    const tokenExpiredAlready = tokenExpiresAt <= new Date();
+    if (tokenExpiredAlready) return;
+
+    this._updateUser({
+      accessToken,
+      role,
+      tokenExpiresAt: new Date(exp * 1000),
+      profile: {
+        username,
+        email,
+      },
+    });
   }
 
   _updateUser(user: User | null) {
@@ -102,28 +122,15 @@ export class AuthService {
     return this._nextSubscriptionId - 1;
   }
 
-  unsubscribe(subscriptionId: SubscriptionId): boolean {
-    if (this._subscription[subscriptionId] !== undefined) {
-      delete this._subscription[subscriptionId];
-      return true;
-    }
-    return false;
+  unsubscribe(subscriptionId: SubscriptionId) {
+    delete this._subscription[subscriptionId];
   }
 
   async signIn(loginInfo: LoginDTO) {
     try {
       const { accessToken } = await apiUsers.login(loginInfo);
       if (!accessToken) throw Error("Can't get access token");
-
-      const { role, exp } = jwt_decode<any>(accessToken);
-      this._updateUser({
-        accessToken,
-        role,
-        tokenExpiresAt: new Date(exp * 1000),
-        profile: {
-          username: loginInfo.userName!,
-        },
-      });
+      this._updateUserByToken(accessToken);
     } catch (error) {
       console.log('signIn error', error);
       throw error;
