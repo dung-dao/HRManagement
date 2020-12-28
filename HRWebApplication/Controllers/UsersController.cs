@@ -105,11 +105,12 @@ namespace HRWebApplication.Controllers
         [HttpGet("Profile", Name = "Profile")]
         [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<UserDTO>> GetProfile()
+        public ActionResult<UserDTO> GetProfile()
         {
             var user = _userRepository.GetById(GetUserId());
             var res = _mapper.Map<UserDTO>(user);
-            res.Employee.Status = _employeeRepostiory.GetEmployeeStatus(user.Employee);
+            if (user.Employee is not null)
+                res.Employee.Status = _employeeRepostiory.GetEmployeeStatus(user.Employee);
             return Ok(res);
         }
 
