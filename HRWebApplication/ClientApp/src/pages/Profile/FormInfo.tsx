@@ -1,7 +1,7 @@
-import { Button, Col, DatePicker, Form, Input, Row, Select, Skeleton } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select, Skeleton } from 'antd';
 import { phoneRegex, required } from 'pages/Employee/EmployeeDetail/utils';
 import React from 'react';
-import { UserDTO } from 'services/ApiClient';
+import { UserDTO, UsersClient } from 'services/ApiClient';
 import { ChangePasswordModal } from './ChangePasswordModal';
 import { usePage } from './PageProvider';
 
@@ -15,18 +15,27 @@ export function FormInfo() {
   const { user, userReady } = usePage();
   const [form] = Form.useForm<UserDTO>();
   const [changePasswordModalVisible, setChangePasswordModalVisible] = React.useState(false);
+  const [profileSubmitting, setProfileSubmitting] = React.useState(false);
+  const apiUsers = React.useRef(new UsersClient());
+
   if (!userReady) return <Skeleton />;
 
-  const initialValues = user;
+  const onSubmitProfile = async () => {
+    try {
+      setProfileSubmitting(true);
+      const profileUpdate = form.getFieldsValue().employee!;
+      await apiUsers.current.profile2(profileUpdate);
+      message.info('Cập nhật thông tin thành công');
+    } catch {
+      message.error('Không thể cập nhật thông tin');
+    } finally {
+      setProfileSubmitting(false);
+    }
+  };
 
   return (
     <div>
-      <Form
-        form={form}
-        // onFinish={trySubmitting}
-        initialValues={initialValues}
-        labelAlign="left"
-      >
+      <Form form={form} onFinish={onSubmitProfile} initialValues={user} labelAlign="left">
         <Row gutter={40}>
           <Col span={12}>
             <fieldset>
@@ -173,7 +182,13 @@ export function FormInfo() {
             </fieldset>
           </Col>
         </Row>
-        {/* <FormAction form={form} loading={isPending} /> */}
+        {user?.employee ? (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', columnGap: 10 }}>
+            <Button type="primary" htmlType="submit" loading={profileSubmitting}>
+              Cập nhật thông tin
+            </Button>
+          </div>
+        ) : null}
       </Form>
       <ChangePasswordModal
         visible={changePasswordModalVisible}
