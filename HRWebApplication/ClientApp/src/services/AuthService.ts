@@ -1,4 +1,4 @@
-import { UsersClient, LoginDTO } from 'services/ApiClient';
+import { UsersClient, LoginDTO, UserDTO } from 'services/ApiClient';
 import jwt_decode from 'jwt-decode';
 
 export type Roles = 'Admin' | 'Manager' | 'User' | undefined;
@@ -93,7 +93,7 @@ export class AuthService {
 
     this._updateUser({
       accessToken,
-      role,
+      role: role || 'User',
       tokenExpiresAt: new Date(exp * 1000),
       profile: {
         username,
@@ -148,6 +148,16 @@ export class AuthService {
       this._updateUser(null);
     } catch (error) {
       console.log('signOut error', error);
+      throw error;
+    }
+  };
+
+  signUp = async (userDTO: UserDTO) => {
+    try {
+      console.log('sign up with', userDTO);
+      await apiUsers.signUp(userDTO);
+    } catch (error) {
+      console.log('signUp error', error);
       throw error;
     }
   };

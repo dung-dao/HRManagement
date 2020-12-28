@@ -24,7 +24,7 @@ export function FormInfo() {
     try {
       setProfileSubmitting(true);
       const profileUpdate = form.getFieldsValue().employee!;
-      await apiUsers.current.profile2(profileUpdate);
+      await apiUsers.current.updateProfile(profileUpdate);
       message.info('Cập nhật thông tin thành công');
     } catch {
       message.error('Không thể cập nhật thông tin');

@@ -114,7 +114,7 @@ namespace HRWebApplication.Controllers
             return Ok(res);
         }
 
-        [HttpPut("Profile")]
+        [HttpPut("UpdateProfile")]
         [Authorize(Roles = "Admin,Manager,Employee")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public IActionResult UpdateProfile(EmployeeDTO employeeData)
