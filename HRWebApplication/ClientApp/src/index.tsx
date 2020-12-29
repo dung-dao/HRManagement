@@ -6,16 +6,19 @@ import App from './App';
 
 // styles
 import 'antd/dist/antd.css';
-import {isNearHuscarl} from "./constants";
+import { isNearHuscarl } from './constants';
+import { AuthProvider } from 'context/AuthContext';
 
 if (isNearHuscarl) {
-  const { browser } = require('./mocks/browser')
-  browser.start()
+  const { browser } = require('./mocks/browser');
+  browser.start();
 }
 
 ReactDOM.render(
   <BrowserRouter basename={process.env.PUBLIC_URL}>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </BrowserRouter>,
   document.getElementById('root'),
 );

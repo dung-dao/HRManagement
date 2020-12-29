@@ -21,7 +21,9 @@ const breadCrumbs = {
   'add': 'Thêm',
   'new': 'Thêm mới',
   'edit': 'Chỉnh sửa',
-  'leave-type': 'Loại nghỉ việc',
+  'leave-type': 'Loại nghỉ phép',
+  'leave2-list': 'Danh sách nghỉ phép',
+  'me': 'Tài khoản',
 };
 
 const breadcrumbStyle = {

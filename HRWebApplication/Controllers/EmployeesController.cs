@@ -4,6 +4,7 @@ using HRData.Models;
 using HRData.Models.JobModels;
 using HRData.Repositories;
 using HRWebApplication.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace HRWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin,Manager")]
     public class EmployeesController : APIController
     {
         private readonly DbSet<Employee> _employees;
@@ -33,22 +35,12 @@ namespace HRWebApplication.Controllers
         public IEnumerable<EmployeeDTO> GetAll()
         {
             var employees = _employeeRepo.GetActiveEmployees();
-            return from e in employees
-                   select new EmployeeDTO()
-                   {
-                       Id = e.Id,
-                       Address = e.Address,
-                       CurrentAddress = e.CurrentAddress,
-                       DateOfBirth = e.DateOfBirth,
-                       FirstName = e.FirstName,
-                       LastName = e.LastName,
-                       NationalId = e.NationalId,
-                       PersonalEmail = e.PersonalEmail,
-                       Phone = e.Phone,
-                       Sex = e.Sex,
-                       WorkEmail = e.WorkEmail,
-                       Status = _employeeRepo.GetEmployeeStatus(e)
-                   };
+            foreach (var e in employees)
+            {
+                var res = _mapper.Map<EmployeeDTO>(e);
+                res.Status = _employeeRepo.GetEmployeeStatus(e);
+                yield return res;
+            }
         }
 
         [HttpGet("{id}", Name = "GetEmployeeById")]
@@ -58,21 +50,9 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return new EmployeeDTO()
-            {
-                Id = employee.Id,
-                Address = employee.Address,
-                CurrentAddress = employee.CurrentAddress,
-                DateOfBirth = employee.DateOfBirth,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                NationalId = employee.NationalId,
-                PersonalEmail = employee.PersonalEmail,
-                Phone = employee.Phone,
-                Sex = employee.Sex,
-                WorkEmail = employee.WorkEmail,
-                Status = _employeeRepo.GetEmployeeStatus(employee)
-            };
+            var res = _mapper.Map<EmployeeDTO>(employee);
+            res.Status = _employeeRepo.GetEmployeeStatus(employee);
+            return res;
         }
 
         [HttpPost(Name = "CreateEmployee")]
@@ -132,12 +112,13 @@ namespace HRWebApplication.Controllers
         #region Position
         [HttpGet("{id}/positions", Name = "[controller]_GetPosition")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public ActionResult<IEnumerable<PositionDTO>> GetPosition(int id)
+        public ActionResult<IEnumerable<PositionDTO>> GetPositions(int id)
         {
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return _mapper.Map<List<PositionDTO>>(_employeeRepo.GetPositions(employee));
+            var positions = _employeeRepo.GetPositions(employee);
+            return _mapper.Map<List<PositionDTO>>(positions);
         }
 
         [HttpGet("{id}/positions/{positionId}", Name = "[controller]_GetPositionById")]
@@ -147,9 +128,11 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return _mapper.Map<List<PositionDTO>>(_employeeRepo.GetPositionById(employee, positionId));
+            var pos = _employeeRepo.GetPositionById(positionId);
+            return _mapper.Map<List<PositionDTO>>(pos);
         }
 
+        #region GetCurrentPosition
         [HttpGet("{id}/positions/current", Name = "[controller]_GetCurrentPosition")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<PositionDTO> GetCurrentPosition(int id)
@@ -157,8 +140,10 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
-            return _mapper.Map<PositionDTO>(_employeeRepo.GetCurentPosition(employee));
+            var curPos = _employeeRepo.GetCurentPosition(employee);
+            return _mapper.Map<PositionDTO>(curPos);
         }
+        #endregion
 
         [HttpPost("{id}/positions", Name = "[controller]_AddToPosition")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
@@ -167,6 +152,12 @@ namespace HRWebApplication.Controllers
             var employee = _employees.Find(id);
             if (employee is null)
                 return NotFound();
+            var jobTitle = _context.JobTitles.Find(data.JobTitle.Id);
+            var workType = _context.WorkType.Find(data.WorkType.Id);
+            var unit = _context.OrganizationUnits.Find(data.Unit.Id);
+
+            if (jobTitle is null || workType is null || unit is null)
+                return BadRequest();
 
             //Manual mapping Position to avoid record status bug
             var position = new Position()
@@ -175,9 +166,9 @@ namespace HRWebApplication.Controllers
                 StartDate = data.StartDate,
                 EndDate = data.EndDate,
                 Salary = data.Salary,
-                JobTitle = _context.JobTitles.Find(data.JobTitle.Id),
-                WorkType = _context.WorkType.Find(data.WorkType.Id),
-                Unit = _context.OrganizationUnits.Find(data.Unit.Id)
+                JobTitle = jobTitle,
+                WorkType = workType,
+                Unit = unit
             };
 
             _employeeRepo.NewPosition(employee, position);
@@ -203,7 +194,7 @@ namespace HRWebApplication.Controllers
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPost("{id}/positions/leave", Name = "[controller]_Leave")]
-        public ActionResult<PositionDTO> TerminateEmployment(int id, LeaveDetailDTO leaveDetail)
+        public ActionResult<PositionDTO> TerminateEmployment(int id, PositionDTO data)
         {
             var employee = _employees.Find(id);
             if (employee is null)
@@ -211,17 +202,17 @@ namespace HRWebApplication.Controllers
 
             if (_employeeRepo.GetEmployeeStatus(employee) != EmployeeStatus.Working)
                 return BadRequest();
-
-            var leaveType = _context.LeaveTypes.Find(leaveDetail.Type.Id);
-            var detail = new LeaveDetail()
+            var position = _mapper.Map<Position>(data);
+            try
             {
-                RecordStatus = RecordStatus.Active,
-                Date = leaveDetail.Date,
-                Reason = leaveDetail.Reason,
-                Type = leaveType
-            };
-            _employeeRepo.EmployeeLeave(employee, detail);
-            Commit();
+                _employeeRepo.EmployeeLeave(employee, position);
+                Commit();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+                throw;
+            }
             return NoContent();
         }
         #endregion

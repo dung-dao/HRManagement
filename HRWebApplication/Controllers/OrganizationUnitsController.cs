@@ -15,7 +15,7 @@ namespace HRWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "admin")]
+    [Authorize(Roles = "Admin,Manager")]
     public class OrganizationUnitsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

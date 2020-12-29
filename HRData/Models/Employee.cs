@@ -26,9 +26,13 @@ namespace HRData.Models
         public string NationalId { get; set; }
 
         //public EmployeeStatus Status { get; set; }
+        public string UserId { get; set; }
 
         #region Navigation
+        public virtual List<LeaveDetail> LeaveDetails { get; set; }
+        public virtual List<LeaveDetail> ApprovedDetails { get; set; }
         public virtual List<Position> Positions { get; set; }
+        public virtual User User { get; set; }
         //public virtual OrganizationUnit Unit { get; set; }
         #endregion
     }

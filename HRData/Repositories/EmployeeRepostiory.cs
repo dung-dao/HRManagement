@@ -15,6 +15,7 @@ namespace HRData.Repositories
         #region Employee
         List<Employee> GetActiveEmployees();
         List<Employee> GetInactiveEmployees();
+        Employee GetById(int id);
         void AddEmployee(Employee employee);
         void Update(Employee employee);
         void Delete(Employee employee);
@@ -24,10 +25,10 @@ namespace HRData.Repositories
 
         #region Position
         List<Position> GetPositions(Employee employee);
-        Position GetPositionById(Employee employee, int positionId);
+        Position GetPositionById(int positionId);
         Position GetCurentPosition(Employee employee);
         void NewPosition(Employee employee, Position position);
-        void EmployeeLeave(Employee employee, LeaveDetail detail);
+        void EmployeeLeave(Employee employee, Position position);
         void DeletePosition(Employee employee, Position position);
         #endregion
     }
@@ -42,6 +43,8 @@ namespace HRData.Repositories
         {
             return _context.Employees.Where(e => e.RecordStatus == RecordStatus.Active).ToList();
         }
+
+        public Employee GetById(int id) => _context.Employees.Find(id);
 
         public void AddEmployee(Employee employee)
         {
@@ -64,14 +67,23 @@ namespace HRData.Repositories
         #endregion
 
         #region Position
-        public List<Position> GetPositions(Employee employee) => employee.Positions.OrderBy(po => po.StartDate).ToList();
+        public List<Position> GetPositions(Employee employee)
+        {
+            return employee.Positions
+                .Where(e => e.RecordStatus == RecordStatus.Active)
+                .OrderBy(po => po.StartDate).ToList();
+        }
+
         public void NewPosition(Employee employee, Position position)
         {
+            //Leave old position
             var currentPos = GetCurentPosition(employee);
-            if (currentPos is not null && currentPos.EndDate > position.StartDate)
-                currentPos.EndDate = position.StartDate;
+            if (currentPos is not null)
+            {
+                currentPos.LeaveDate = DateTime.Now;
+            }
 
-            //employee.Status = EmployeeStatus.Working;
+            //Create new position
             position.RecordStatus = RecordStatus.Active;
             employee.Positions.Add(position);
         }
@@ -79,33 +91,35 @@ namespace HRData.Repositories
 
         public Position GetCurentPosition(Employee employee)
         {
-            return (from p in employee.Positions
-                    orderby p.StartDate descending
-                    select p).FirstOrDefault();
+            return employee.Positions.Find(p => p.LeaveDate is null);
         }
 
-        public void EmployeeLeave(Employee employee, LeaveDetail detail)
+
+        public void EmployeeLeave(Employee employee, Position data)
         {
-            var position = GetCurentPosition(employee);
+            var pos = employee.Positions.Find(p => p.Id == data.Id);
+            if (pos is null)
+                throw new Exception("Position not exists");
 
-            //Todo: Fix later
-            position.EndDate = detail.Date;
+            if (GetEmployeeStatus(employee)!= EmployeeStatus.Working)
+            {
+                throw new Exception("No position to leave");
+            }
 
-            position.LeaveDetail = detail;
-            //employee.Status = EmployeeStatus.Leaved;
+            pos.LeaveDate = data.LeaveDate;
+            pos.LeaveReason = data.LeaveReason;
+            //pos.LeaveType = _context.LeaveTypes.Find(data.LeaveType.Id);
         }
 
         public void DeletePosition(Employee employee, Position position)
         {
-            employee.Positions.Remove(position);
+            var pos = employee.Positions.Find(p => p.Id == position.Id);
+            pos.RecordStatus = RecordStatus.InActive;
         }
 
-        public Position GetPositionById(Employee employee, int positionId)
+        public Position GetPositionById(int positionId)
         {
-            return (from p in employee.Positions
-                    where p.Id == positionId
-                    select p
-             ).FirstOrDefault();
+            return _context.Positions.Find(positionId);
         }
         #endregion
 
@@ -116,13 +130,16 @@ namespace HRData.Repositories
 
         public EmployeeStatus GetEmployeeStatus(Employee employee)
         {
-            var currentPos = GetCurentPosition(employee);
-            if (currentPos is null)
+            if (employee.Positions.Count == 0)
                 return EmployeeStatus.Pending;
-
-            if (!EntityBase.Exists(currentPos.LeaveDetail))
+            var pos = from p in employee.Positions
+                      where (
+                      (p.StartDate <= DateTime.Now && DateTime.Now <= p.EndDate && p.LeaveDate is null)
+                      || p.LeaveDate is not null && p.LeaveDate >= DateTime.Now && p.StartDate <= DateTime.Now && DateTime.Now <= p.EndDate)
+                      && p.RecordStatus == RecordStatus.Active
+                      select p;
+            if (pos.Count() > 0)
                 return EmployeeStatus.Working;
-
             return EmployeeStatus.Leaved;
         }
 
@@ -130,7 +147,7 @@ namespace HRData.Repositories
         {
             if (_context.OrganizationUnits.Find(unitId) is null) return 0;
             return _context.Employees
-                .ToList() // NOTE: might hurt hard the performance
+                .ToList() // NOTE: might hurt the performance
                 .Where(employee => GetEmployeeStatus(employee) == EmployeeStatus.Working)
                 .Count(employee => GetCurentPosition(employee).Unit.Id == unitId);
         }

@@ -11,7 +11,7 @@ import { LeaveDetailModal } from './LeaveDetailModal';
 import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/Table/utils';
 import moment from 'moment';
 
-function Form1() {
+function FormInfo() {
   const { api, setEmployee, employee } = usePage();
 
   const onSubmit = async (data: EmployeeDTO) => {
@@ -44,7 +44,8 @@ function Form1() {
     </>
   );
 }
-function Form2() {
+
+function FormWork() {
   const {
     api,
     employee,
@@ -71,46 +72,34 @@ function Form2() {
     }
   };
 
-  // React.useEffect(() => {
-  //   if (employee?.status === BeautifyEmployeeStatus.Left) {
-  //     leaveDetailForm.setFieldsValue({
-  //       ...currentPosition?.leaveDetail,
-  //       type: currentPosition?.id,
-  //       date: moment(currentPosition?.leaveDetail?.date),
-  //     });
-  //   }
-  // }, [leaveDetailForm, employee?.status]);
-  const [form] = Form.useForm();
+  const [leaveDetailForm] = Form.useForm();
   const formLayout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
   };
 
   React.useEffect(() => {
-    if (!currentPosition?.leaveDetail) return;
+    const leavePosition = positions.filter((it) => it.leaveDate).sort()?.[0];
+    if (!leavePosition) return;
 
-    form.setFieldsValue({
-      date: moment(currentPosition.leaveDetail.date).format('DD-MM-YYYY'),
-      type: currentPosition.leaveDetail.type?.name,
-      reason: currentPosition.leaveDetail.reason,
+    leaveDetailForm.setFieldsValue({
+      leaveDate: moment(leavePosition.leaveDate).format('DD-MM-YYYY'),
+      leaveReason: leavePosition.leaveReason,
     });
-  }, [currentPosition?.leaveDetail]);
+  }, [positions, leaveDetailForm]);
 
   return (
     <>
       {employee?.status === BeautifyEmployeeStatus.Left ? (
-        <Form {...formLayout} preserve={false} form={form} labelAlign="left">
+        <Form {...formLayout} preserve={false} form={leaveDetailForm} labelAlign="left">
           <Row gutter={20}>
             <Col span={12}>
               <fieldset>
                 <legend>Lý do nghỉ việc:</legend>
-                <Form.Item name="date" label="Ngày kết thúc">
+                <Form.Item name="leaveDate" label="Ngày kết thúc">
                   <Input readOnly />
                 </Form.Item>
-                <Form.Item name="type" label="Loại lý do">
-                  <Input readOnly />
-                </Form.Item>
-                <Form.Item name="reason" label="Mô tả">
+                <Form.Item name="leaveReason" label="Mô tả">
                   <Input.TextArea readOnly />
                 </Form.Item>
               </fieldset>
@@ -163,10 +152,10 @@ export function EmployeeEditPage(props) {
       <PageProvider value={contextValue}>
         <Tabs>
           <Tabs.TabPane tab="Thông tin" key="1">
-            <Form1 />
+            <FormInfo />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Công việc" key="2">
-            <Form2 />
+            <FormWork />
           </Tabs.TabPane>
         </Tabs>
       </PageProvider>

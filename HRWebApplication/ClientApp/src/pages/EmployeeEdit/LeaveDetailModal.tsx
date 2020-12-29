@@ -1,31 +1,17 @@
-import React from 'react';
-import { DatePicker, Form, Input, message, Modal, Select } from 'antd';
-import {
-  JobCategoryDTO,
-  LeaveTypeClient,
-  LeaveTypeDTO,
-  LeaveDetailDTO,
-  EmployeeDTO,
-  PositionDTO,
-} from 'services/ApiClient';
-import { usePage } from './PageProvider';
+import { DatePicker, Form, Input, message, Modal } from 'antd';
 import moment from 'moment';
 import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/Table/utils';
+import React from 'react';
+import { EmployeeDTO, PositionDTO } from 'services/ApiClient';
+import { usePage } from './PageProvider';
 
 const formLayout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
 
-type LeaveDetailFormType = Omit<LeaveDetailDTO, 'date'> & {
-  date: moment.Moment;
-};
-
 export function LeaveDetailModal() {
-  const [form] = Form.useForm<LeaveDetailFormType>();
-  const [loading, setLoading] = React.useState(false);
-  const apiLeaveType = React.useRef(new LeaveTypeClient());
-  const [leaveTypes, setLeaveTypes] = React.useState<LeaveTypeDTO[]>([]);
+  const [form] = Form.useForm();
   const {
     api,
     employee,
@@ -37,31 +23,27 @@ export function LeaveDetailModal() {
   } = usePage();
 
   React.useEffect(() => {
-    apiLeaveType.current
-      .leaveType_GetAll()
-      .then((data) => setLeaveTypes(data))
-      .catch((err) => console.error(err));
-  }, []);
-
-  React.useEffect(() => {
     modalVisible &&
       form.setFieldsValue({
-        date: moment(),
+        leaveDate: moment(),
       });
   }, [form, modalVisible]);
 
   const onSubmit = async () => {
     try {
-      const leaveType = leaveTypes.find((it) => it.id == form.getFieldValue('type'));
-      if (!employee || !leaveType) return;
+      if (!employee) return;
 
-      const submitData = {
+      const leaveDetail = {
         ...form.getFieldsValue(),
-        date: (form.getFieldValue('date') as moment.Moment).toDate(),
-        type: leaveType,
-      } as LeaveDetailDTO;
+        leaveDate: (form.getFieldValue('leaveDate') as moment.Moment).toDate(),
+      };
 
-      api.employees_Leave(employee.id!, submitData).then(() => {
+      const newPosition = {
+        ...currentPosition,
+        ...leaveDetail,
+      } as PositionDTO;
+
+      api.employees_Leave(employee.id!, newPosition).then(() => {
         message.info(
           `Kết thúc hợp đồng với nhân viên ${
             employee.firstName + ' ' + employee.lastName
@@ -69,10 +51,7 @@ export function LeaveDetailModal() {
         );
         setModalVisible(false);
         setEmployee({ ...employee, status: BeautifyEmployeeStatus.Left } as EmployeeDTO);
-        setCurrentPosition({
-          ...currentPosition,
-          leaveDetail: submitData,
-        } as PositionDTO);
+        setCurrentPosition(newPosition);
       });
     } catch (e) {
       console.error(e);
@@ -90,7 +69,6 @@ export function LeaveDetailModal() {
       onOk={onSubmit}
       onCancel={() => setModalVisible(false)}
       width={600}
-      confirmLoading={loading}
       destroyOnClose
     >
       <Form
@@ -101,27 +79,14 @@ export function LeaveDetailModal() {
         labelAlign="left"
       >
         <Form.Item
-          name="date"
+          name="leaveDate"
           label="Ngày kết thúc"
           rules={[{ required: true, message: 'Ngày kết thúc không được bỏ trống' }]}
         >
           <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
         </Form.Item>
         <Form.Item
-          name="type"
-          label="Loại lý do"
-          rules={[{ required: true, message: 'Loại lý do không được bỏ trống' }]}
-        >
-          <Select placeholder="Loại lý do" style={{ marginRight: '10px' }}>
-            {leaveTypes.map((it) => (
-              <Select.Option value={it.id!.toString()} key={it.id}>
-                {it.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="reason"
+          name="leaveReason"
           label="Mô tả"
           rules={[{ required: true, message: 'Mô tả không được bỏ trống' }]}
         >
