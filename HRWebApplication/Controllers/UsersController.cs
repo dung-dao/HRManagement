@@ -49,7 +49,7 @@ namespace HRWebApplication.Controllers
             return claim.Value;
         }
 
-        //[Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet(Name = "GetListUsers")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<UserDTO> Get()
@@ -103,6 +103,20 @@ namespace HRWebApplication.Controllers
             if (token is null)
                 return BadRequest();
             return Ok(new TokenDTO() { AccessToken = token });
+        }
+
+        [HttpPut("Password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromQuery] string password, [FromQuery] string newpassword)
+        {
+            var user = _userRepository.GetById(GetUserId());
+
+            var res = await _userRepository.ChangePassword(user, password, newpassword);
+
+            if (res.Succeeded)
+                return NoContent();
+            else
+                return BadRequest();
         }
 
         [HttpGet("Profile", Name = "Profile")]

@@ -16,6 +16,7 @@ namespace HRData.Repositories
     {
         IEnumerable<User> GetAll();
         void UpdateProfile(User user, Employee employee);
+        Task<IdentityResult> ChangePassword(User user, string password, string newpassword);
         User GetById(string Id);
         Task<IdentityResult> Create(User user, string password);
         Task<string> GenerateLoginToken(string username, string password, string secret);
@@ -47,6 +48,11 @@ namespace HRData.Repositories
 
             await _userManager.AddToRoleAsync(user, dbRole.Name);
             return role;
+        }
+
+        public async Task<IdentityResult> ChangePassword(User user, string password, string newpassword)
+        {
+            return await _userManager.ChangePasswordAsync(user, password, newpassword);
         }
 
         public async Task<IdentityResult> Create(User user, string password)
