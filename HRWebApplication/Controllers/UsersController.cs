@@ -43,7 +43,7 @@ namespace HRWebApplication.Controllers
 
         private string GetUserId()
         {
-            var claim = User.Claims.FirstOrDefault(e => e.Type == "userid");
+            var claim = User.Claims.FirstOrDefault(e => e.Type == "UserId");
             if (claim is null)
                 return null;
             return claim.Value;
@@ -105,7 +105,7 @@ namespace HRWebApplication.Controllers
             return Ok(new TokenDTO() { AccessToken = token });
         }
 
-        [HttpPut("Password")]
+        [HttpPut("Password", Name="ChangePassword")]
         [Authorize]
         public async Task<IActionResult> ChangePassword([FromQuery] string password, [FromQuery] string newpassword)
         {
