@@ -43,10 +43,13 @@ namespace HRWebApplication.Controllers
 
         private string GetUserId()
         {
-            return User.Claims.First(e => e.Type == "UserId").Value;
+            var claim = User.Claims.FirstOrDefault(e => e.Type == "userid");
+            if (claim is null)
+                return null;
+            return claim.Value;
         }
 
-        [Authorize(Roles = "Admin,Manager")]
+        //[Authorize(Roles = "Admin,Manager")]
         [HttpGet(Name = "GetListUsers")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public IEnumerable<UserDTO> Get()
@@ -105,16 +108,19 @@ namespace HRWebApplication.Controllers
         [HttpGet("Profile", Name = "Profile")]
         [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public async Task<ActionResult<UserDTO>> GetProfile()
+        public ActionResult<UserDTO> GetProfile()
         {
-            var user = _userRepository.GetById(GetUserId());
+            var userId = GetUserId();
+            if (userId is null)
+                return Unauthorized();
+            var user = _userRepository.GetById(userId);
             var res = _mapper.Map<UserDTO>(user);
             res.Employee.Status = _employeeRepostiory.GetEmployeeStatus(user.Employee);
             return Ok(res);
         }
 
         [HttpPut("Profile")]
-        [Authorize(Roles = "Admin,Manager,Employee")]
+        [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public IActionResult UpdateProfile(EmployeeDTO employeeData)
         {
@@ -125,7 +131,7 @@ namespace HRWebApplication.Controllers
             _userRepository.UpdateProfile(user, newEmployee);
             try
             {
-                _unitOfWork.Commit();
+                _unitOfWork.Save();
                 return NoContent();
             }
             catch (Exception)

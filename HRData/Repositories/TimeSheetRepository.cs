@@ -14,6 +14,8 @@ namespace HRData.Repositories
     {
         List<LeaveDetail> GetActiveLeaves();
         List<LeaveDetail> GetLeaves();
+        List<LeaveDetail> GetLeaves(Employee employee);
+
         void RequestLeave(LeaveDetail detail, Employee employee);
         void ApproveLeave(LeaveDetail leaveDetail, Employee reviewer);
         void RejectLeave(LeaveDetail leaveDetail, Employee reviewer);
@@ -85,6 +87,14 @@ namespace HRData.Repositories
         {
             leaveDetail.Status = LeaveStatuses.Rejected;
             leaveDetail.Reviewer = reviewer;
+        }
+
+        public List<LeaveDetail> GetLeaves(Employee employee)
+        {
+            return employee.LeaveDetails
+                .Where(ld => ld.RecordStatus == RecordStatus.Active)
+                .OrderByDescending(ld => ld.Date)
+                .ToList();
         }
 
         #region Old

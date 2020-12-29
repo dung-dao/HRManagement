@@ -17,7 +17,7 @@ namespace HRData.Models
         public DateTime Date { get; set; }
         public string Status { get; set; }
         public int EmployeeId { get; set; }
-        public int ReviewerId { get; set; }
+        public int? ReviewerId { get; set; }
         public virtual LeaveType LeaveType { get; set; }
         public virtual Employee Employee { get; set; }
         public virtual Employee Reviewer { get; set; }

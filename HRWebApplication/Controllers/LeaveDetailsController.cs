@@ -2,18 +2,18 @@
 using HRData.Models;
 using HRData.Repositories;
 using HRWebApplication.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HRWebApplication.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class LeaveDetailsController : ControllerBase
+    public class LeaveDetailsController : ApiControllerBase
     {
         private readonly ITimeSheetRepository _timeSheetRepository;
         private readonly IEmployeeRepostiory _employeeRepostiory;
@@ -34,15 +34,31 @@ namespace HRWebApplication.Controllers
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            
+
         }
         [HttpGet]
+        [Authorize]
         public IEnumerable<LeaveDetailDTO> GetActiveLeaves()
         {
-            var leaves = _timeSheetRepository.GetActiveLeaves();
-            return _mapper.Map<List<LeaveDetailDTO>>(leaves);
+            var canManage = (User.Claims.FirstOrDefault(e =>
+            {
+                return e.Type == ClaimTypes.Role
+                && (e.Value == "Admin" || e.Value == "Manager");
+            }) is null) ? false : true;
+
+            List<LeaveDetail> details;
+            if (canManage)
+                details = _timeSheetRepository.GetLeaves();
+            else
+            {
+                var user = _userRepository.GetById(GetUserId());
+
+                details = _timeSheetRepository.GetLeaves(user.Employee);
+            }
+            return _mapper.Map<List<LeaveDetailDTO>>(details);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpGet("all")]
         public IEnumerable<LeaveDetailDTO> GetLeaves()
         {
@@ -50,12 +66,11 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<List<LeaveDetailDTO>>(leaves);
         }
 
+        [Authorize]
         [HttpPost("RequestLeave")]
         public IActionResult RequestLeave(LeaveDetailDTO detail)
         {
-            var userId = User.Claims.First(e => e.Type == "UserId").Value;
-
-            var user = _userRepository.GetById(userId);
+            var user = _userRepository.GetById(GetUserId());
 
             var employee = user.Employee;
             if (employee is null)
@@ -71,16 +86,15 @@ namespace HRWebApplication.Controllers
             };
 
             _timeSheetRepository.RequestLeave(leave, employee);
-            _unitOfWork.Commit();
+            _unitOfWork.Save();
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("ApproveLeave")]
         public IActionResult ApproveLeave(LeaveDetailDTO detail)
         {
-            var userId = User.Claims.First(e => e.Type == "UserId").Value;
-
-            var user = _userRepository.GetById(userId);
+            var user = _userRepository.GetById(GetUserId());
 
             var employee = user.Employee;
             if (employee is null)
@@ -90,16 +104,15 @@ namespace HRWebApplication.Controllers
 
             _timeSheetRepository.ApproveLeave(leave, employee);
 
-            _unitOfWork.Commit();
+            _unitOfWork.Save();
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("RejectLeave")]
         public IActionResult RejectLeave(LeaveDetailDTO detail)
         {
-            var userId = User.Claims.First(e => e.Type == "UserId").Value;
-
-            var user = _userRepository.GetById(userId);
+            var user = _userRepository.GetById(GetUserId());
 
             var employee = user.Employee;
             if (employee is null)
@@ -109,7 +122,7 @@ namespace HRWebApplication.Controllers
 
             _timeSheetRepository.RejectLeave(leave, employee);
 
-            _unitOfWork.Commit();
+            _unitOfWork.Save();
             return NoContent();
         }
     }
