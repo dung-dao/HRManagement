@@ -115,12 +115,13 @@ namespace HRWebApplication.Controllers
                 return Unauthorized();
             var user = _userRepository.GetById(userId);
             var res = _mapper.Map<UserDTO>(user);
-            res.Employee.Status = _employeeRepostiory.GetEmployeeStatus(user.Employee);
+            if (user.Employee is not null)
+                res.Employee.Status = _employeeRepostiory.GetEmployeeStatus(user.Employee);
             return Ok(res);
         }
 
-        [HttpPut("Profile")]
-        [Authorize]
+        [HttpPut("UpdateProfile")]
+        [Authorize(Roles = "Admin,Manager,Employee")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public IActionResult UpdateProfile(EmployeeDTO employeeData)
         {

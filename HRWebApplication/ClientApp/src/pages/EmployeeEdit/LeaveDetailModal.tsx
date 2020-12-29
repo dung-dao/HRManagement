@@ -1,13 +1,8 @@
-import { DatePicker, Form, Input, message, Modal, Select } from 'antd';
+import { DatePicker, Form, Input, message, Modal } from 'antd';
 import moment from 'moment';
 import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/Table/utils';
 import React from 'react';
-import {
-  EmployeeDTO, LeaveTypeClient,
-  LeaveTypeDTO,
-
-  PositionDTO
-} from 'services/ApiClient';
+import { EmployeeDTO, PositionDTO } from 'services/ApiClient';
 import { usePage } from './PageProvider';
 
 const formLayout = {
@@ -15,12 +10,8 @@ const formLayout = {
   wrapperCol: { span: 16 },
 };
 
-
 export function LeaveDetailModal() {
   const [form] = Form.useForm();
-  const [loading, setLoading] = React.useState(false);
-  const apiLeaveType = React.useRef(new LeaveTypeClient());
-  const [leaveTypes, setLeaveTypes] = React.useState<LeaveTypeDTO[]>([]);
   const {
     api,
     employee,
@@ -32,13 +23,6 @@ export function LeaveDetailModal() {
   } = usePage();
 
   React.useEffect(() => {
-    apiLeaveType.current
-      .leaveType_GetAll()
-      .then((data) => setLeaveTypes(data))
-      .catch((err) => console.error(err));
-  }, []);
-
-  React.useEffect(() => {
     modalVisible &&
       form.setFieldsValue({
         leaveDate: moment(),
@@ -47,13 +31,11 @@ export function LeaveDetailModal() {
 
   const onSubmit = async () => {
     try {
-      const leaveType = leaveTypes.find((it) => it.id == form.getFieldValue('leaveType'));
-      if (!employee || !leaveType) return;
+      if (!employee) return;
 
       const leaveDetail = {
         ...form.getFieldsValue(),
         leaveDate: (form.getFieldValue('leaveDate') as moment.Moment).toDate(),
-        leaveType,
       };
 
       const newPosition = {
@@ -87,7 +69,6 @@ export function LeaveDetailModal() {
       onOk={onSubmit}
       onCancel={() => setModalVisible(false)}
       width={600}
-      confirmLoading={loading}
       destroyOnClose
     >
       <Form
@@ -103,19 +84,6 @@ export function LeaveDetailModal() {
           rules={[{ required: true, message: 'Ngày kết thúc không được bỏ trống' }]}
         >
           <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
-        </Form.Item>
-        <Form.Item
-          name="leaveType"
-          label="Loại lý do"
-          rules={[{ required: true, message: 'Loại lý do không được bỏ trống' }]}
-        >
-          <Select placeholder="Loại lý do" style={{ marginRight: '10px' }}>
-            {leaveTypes.map((it) => (
-              <Select.Option value={it.id!.toString()} key={it.id}>
-                {it.name}
-              </Select.Option>
-            ))}
-          </Select>
         </Form.Item>
         <Form.Item
           name="leaveReason"

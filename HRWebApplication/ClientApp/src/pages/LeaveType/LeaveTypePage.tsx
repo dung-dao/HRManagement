@@ -54,13 +54,13 @@ export function LeaveTypePage(props) {
   }, []);
 
   return (
-    <AppBody title="Loại nghỉ việc">
+    <AppBody title="Loại nghỉ phép">
       <PageProvider value={pageContext}>
         <Row gutter={[16, 16]}>
           <Col span={6}>
             <Input.Search
               size="middle"
-              placeholder="Tìm kiếm loại nghỉ việc"
+              placeholder="Tìm kiếm loại nghỉ phép"
               enterButton
               allowClear
             />
@@ -87,7 +87,7 @@ export function LeaveTypePage(props) {
           loading={isPending}
           pagination={false}
           rowKey={(record) => String(record.id)}
-          locale={{ emptyText: 'Không tìm thấy loại nghỉ việc nào' }}
+          locale={{ emptyText: 'Không tìm thấy loại nghỉ phép nào' }}
         />
         <LeaveTypeModal />
       </PageProvider>

@@ -1,4 +1,4 @@
-import { UsersClient, LoginDTO } from 'services/ApiClient';
+import { UsersClient, LoginDTO, UserDTO } from 'services/ApiClient';
 import jwt_decode from 'jwt-decode';
 
 export type Roles = 'Admin' | 'Manager' | 'User' | undefined;
@@ -32,28 +32,8 @@ export class AuthService {
     window.addEventListener('storage', () => this._updateUserByTokenStorage());
   }
 
-  isAuthenticated() {
-    return !!this._user;
-  }
-
   get userInstance() {
     return this._user;
-  }
-
-  getRole() {
-    return this._user?.role;
-  }
-
-  getUserProfile() {
-    return this._user?.profile;
-  }
-
-  getAccessToken() {
-    return this._user?.accessToken;
-  }
-
-  _notifySubscribers() {
-    Object.values(this._subscription).forEach((callback) => callback());
   }
 
   get _tokenStorage() {
@@ -64,27 +44,47 @@ export class AuthService {
     };
   }
 
-  _updateUserByTokenStorage() {
+  isAuthenticated = () => {
+    return !!this._user;
+  };
+
+  getRole = () => {
+    return this._user?.role;
+  };
+
+  getUserProfile = () => {
+    return this._user?.profile;
+  };
+
+  getAccessToken = () => {
+    return this._user?.accessToken;
+  };
+
+  _notifySubscribers = () => {
+    Object.values(this._subscription).forEach((callback) => callback());
+  };
+
+  _updateUserByTokenStorage = () => {
     const accessToken = this._tokenStorage.get();
     if (accessToken) {
       this._updateUserByToken(accessToken);
     } else {
       this._updateUser(null);
     }
-  }
+  };
 
   /**
    * update token storage (currently localStorage) accordingly to this._user
    */
-  _updateTokenStorage() {
+  _updateTokenStorage = () => {
     if (!this._user) {
       this._tokenStorage.drop();
     } else {
       this._tokenStorage.set(this._user.accessToken);
     }
-  }
+  };
 
-  _updateUserByToken(accessToken: string) {
+  _updateUserByToken = (accessToken: string) => {
     const { username, email, role, exp } = jwt_decode<any>(accessToken);
 
     const tokenExpiresAt = new Date(exp * 1000);
@@ -93,16 +93,16 @@ export class AuthService {
 
     this._updateUser({
       accessToken,
-      role,
+      role: role || 'User',
       tokenExpiresAt: new Date(exp * 1000),
       profile: {
         username,
         email,
       },
     });
-  }
+  };
 
-  _updateUser(user: User | null) {
+  _updateUser = (user: User | null) => {
     console.log('user has updated', user);
 
     if (user && user.tokenExpiresAt) {
@@ -121,18 +121,18 @@ export class AuthService {
     this._user = user;
     this._notifySubscribers();
     this._updateTokenStorage();
-  }
+  };
 
-  subscribe(callback: Function): SubscriptionId {
+  subscribe = (callback: Function): SubscriptionId => {
     this._subscription[this._nextSubscriptionId++] = callback;
     return this._nextSubscriptionId - 1;
-  }
+  };
 
-  unsubscribe(subscriptionId: SubscriptionId) {
+  unsubscribe = (subscriptionId: SubscriptionId) => {
     delete this._subscription[subscriptionId];
-  }
+  };
 
-  async signIn(loginInfo: LoginDTO) {
+  signIn = async (loginInfo: LoginDTO) => {
     try {
       const { accessToken } = await apiUsers.login(loginInfo);
       if (!accessToken) throw Error("Can't get access token");
@@ -141,16 +141,26 @@ export class AuthService {
       console.log('signIn error', error);
       throw error;
     }
-  }
+  };
 
-  async signOut() {
+  signOut = () => {
     try {
       this._updateUser(null);
     } catch (error) {
       console.log('signOut error', error);
       throw error;
     }
-  }
+  };
+
+  signUp = async (userDTO: UserDTO) => {
+    try {
+      console.log('sign up with', userDTO);
+      await apiUsers.signUp(userDTO);
+    } catch (error) {
+      console.log('signUp error', error);
+      throw error;
+    }
+  };
 
   static get instance() {
     return authService;
