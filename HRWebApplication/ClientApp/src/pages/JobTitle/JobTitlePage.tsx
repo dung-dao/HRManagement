@@ -1,13 +1,12 @@
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Col, Input, Row, Table } from 'antd';
 import React from 'react';
+import { JobCategoryClient, JobCategoryDTO, JobTitleClient, JobTitleDTO } from 'services/ApiClient';
 import AppBody from '../../components/Layouts/AppBody';
-import { Table } from 'antd';
-import { JobTitleDTO, JobTitleClient, JobCategoryClient, JobCategoryDTO } from 'services/ApiClient';
 import { useTry } from '../../hooks';
+import { ActionRenderer } from './ActionRenderer';
 import { JobTitleModal } from './JobTitleModal';
 import { ModalType, PageProvider } from './PageProvider';
-import { ActionRenderer } from './ActionRenderer';
-import { Button, Col, Row, Input } from 'antd';
-import { PlusOutlined, SyncOutlined, UserAddOutlined } from '@ant-design/icons';
 
 const columns = [
   {
@@ -45,6 +44,8 @@ export function JobTitlePage(props) {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalType, setModalType] = React.useState<ModalType>('add');
   const [record, setRecord] = React.useState<JobTitleDTO>();
+  const searchInputRef = React.useRef<any>();
+  const [searchKeyword, setSearchKeyword] = React.useState('');
 
   const pageContext = {
     modalVisible,
@@ -66,11 +67,13 @@ export function JobTitlePage(props) {
 
   const afterMappingData = React.useMemo(
     () =>
-      data?.map((jobTitleDto) => ({
-        ...jobTitleDto,
-        jobCategory: jobCategories.find((it) => jobTitleDto.jobCategoryId === it.id),
-      })),
-    [data, jobCategories],
+      data
+        ?.map((jobTitleDto) => ({
+          ...jobTitleDto,
+          jobCategory: jobCategories.find((it) => jobTitleDto.jobCategoryId === it.id),
+        }))
+        .filter((it) => JSON.stringify(it).match(new RegExp(searchKeyword, 'i'))),
+    [data, jobCategories, searchKeyword],
   );
 
   return (
@@ -82,6 +85,8 @@ export function JobTitlePage(props) {
             placeholder="Tìm kiếm chức vụ công việc"
             enterButton
             allowClear
+            ref={searchInputRef}
+            onSearch={setSearchKeyword}
           />
         </Col>
         <Col style={{ marginLeft: 'auto' }}>

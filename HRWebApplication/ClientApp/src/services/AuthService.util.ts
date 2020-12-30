@@ -26,6 +26,6 @@ export const roleLevel: Record<RoleNames, number> = {
 export const returnRoute: Record<RoleNames, string> = {
   Unauthorized: '/login',
   User: '/me',
-  Manager: '/employees',
-  Admin: '/employees',
+  Manager: '/dashboard',
+  Admin: '/dashboard',
 } as const;

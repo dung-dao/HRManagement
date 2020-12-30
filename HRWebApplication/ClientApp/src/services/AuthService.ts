@@ -1,5 +1,7 @@
 import { UsersClient, LoginDTO, UserDTO } from 'services/ApiClient';
 import jwt_decode from 'jwt-decode';
+import { isArray, maxBy } from 'lodash';
+import { roleLevel } from './AuthService.util';
 
 export type Roles = 'Admin' | 'Manager' | 'User' | undefined;
 
@@ -91,9 +93,14 @@ export class AuthService {
     const tokenExpiredAlready = tokenExpiresAt <= new Date();
     if (tokenExpiredAlready) return;
 
+    let finalRole = role || 'User';
+    if (isArray(role)) {
+      finalRole = maxBy(role, (it) => roleLevel[it]);
+    }
+
     this._updateUser({
       accessToken,
-      role: role || 'User',
+      role: finalRole,
       tokenExpiresAt: new Date(exp * 1000),
       profile: {
         username,

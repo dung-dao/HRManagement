@@ -28,7 +28,6 @@ export function FormWork() {
         .employees_GetCurrentPosition(employeeId)
         .then(setCurrentPosition)
         .finally(() => setCurrentPositionReady(true));
-
       apiEmployees.current
         .employees_GetPosition(employeeId)
         .then(setPositions)
@@ -39,10 +38,10 @@ export function FormWork() {
     }
   }, [thisAccountHasEmployeeInfo]);
 
-  if (!currentPositionReady || !positionsReady) return <Skeleton />;
-
   if (!thisAccountHasEmployeeInfo || someError)
     return <h2>Tài khoản này không có dữ liệu về công việc</h2>;
+
+  if (!currentPositionReady || !positionsReady) return <Skeleton />;
 
   const initialValues = {
     ...currentPosition,

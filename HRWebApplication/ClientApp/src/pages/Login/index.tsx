@@ -5,6 +5,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { LoginDTO, UserDTO } from 'services/ApiClient';
 import authService from 'services/AuthService';
+import { returnRoute } from 'services/AuthService.util';
 import Container from './style';
 
 type LoginForm = LoginDTO & {
@@ -32,7 +33,7 @@ export default function () {
   async function onLogin() {
     try {
       await trySignIn();
-      history.push('/employees');
+      history.push(returnRoute[String(authService.getRole())]);
     } catch (error) {
       message.error('Đăng nhập không thành công');
     }

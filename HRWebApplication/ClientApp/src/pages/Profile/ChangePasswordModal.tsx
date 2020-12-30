@@ -1,5 +1,6 @@
-import { Form, Input, Modal } from 'antd';
+import { Form, Input, Modal, message } from 'antd';
 import React from 'react';
+import { usePage } from './PageProvider';
 
 type Props = {
   visible: boolean;
@@ -12,15 +13,21 @@ const formLayout = {
 };
 
 export function ChangePasswordModal(props: Props) {
+  const { apiUsers } = usePage();
   const { visible, setVisible } = props;
   const [form] = Form.useForm();
 
-  const onSubmit = () => {
-    form.validateFields();
-    console.log(
-      '>  ~ file: ChangePasswordModal.tsx ~ line 28 ~ form.getFieldsValue()',
-      form.getFieldsValue(),
-    );
+  const onSubmit = async () => {
+    try {
+      const { currentPassword, newPassword } = await form.validateFields();
+      await apiUsers.changePassword(currentPassword, newPassword);
+      message.info('Đổi mật khẩu thành công');
+      setVisible(false);
+    } catch (err) {
+      if (err.isApiException) {
+        message.error('Đổi mật khẩu không thành công');
+      }
+    }
   };
 
   return (

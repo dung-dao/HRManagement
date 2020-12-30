@@ -2162,6 +2162,104 @@ export class RolesClient extends ApiClientBase {
     }
 }
 
+export class StatisticClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    employeeNoByUnit(): Promise<EmployeeStatisticItem[]> {
+        let url_ = this.baseUrl + "/api/Statistic/EmployeeNoByUnit";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployeeNoByUnit(_response);
+        });
+    }
+
+    protected processEmployeeNoByUnit(response: Response): Promise<EmployeeStatisticItem[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(EmployeeStatisticItem.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<EmployeeStatisticItem[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    employeeNoByWorkType(): Promise<EmployeeStatisticItem[]> {
+        let url_ = this.baseUrl + "/api/Statistic/EmployeeNoByWorkType";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processEmployeeNoByWorkType(_response);
+        });
+    }
+
+    protected processEmployeeNoByWorkType(response: Response): Promise<EmployeeStatisticItem[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(EmployeeStatisticItem.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<EmployeeStatisticItem[]>(<any>null);
+    }
+}
+
 export class UsersClient extends ApiClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -2444,6 +2542,47 @@ export class UsersClient extends ApiClientBase {
             });
         }
         return Promise.resolve<TokenDTO>(<any>null);
+    }
+
+    /**
+     * @param password (optional) 
+     * @param newpassword (optional) 
+     * @return Success
+     */
+    changePassword(password: string | null | undefined, newpassword: string | null | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Users/Password?";
+        if (password !== undefined && password !== null)
+            url_ += "password=" + encodeURIComponent("" + password) + "&";
+        if (newpassword !== undefined && newpassword !== null)
+            url_ += "newpassword=" + encodeURIComponent("" + newpassword) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "PUT",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processChangePassword(_response);
+        });
+    }
+
+    protected processChangePassword(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
     }
 
     /**
@@ -3470,6 +3609,46 @@ export class RoleDTO implements IRoleDTO {
 
 export interface IRoleDTO {
     name?: string | undefined;
+}
+
+export class EmployeeStatisticItem implements IEmployeeStatisticItem {
+    name?: string | undefined;
+    employeeNo?: number;
+
+    constructor(data?: IEmployeeStatisticItem) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.employeeNo = _data["employeeNo"];
+        }
+    }
+
+    static fromJS(data: any): EmployeeStatisticItem {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmployeeStatisticItem();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["employeeNo"] = this.employeeNo;
+        return data; 
+    }
+}
+
+export interface IEmployeeStatisticItem {
+    name?: string | undefined;
+    employeeNo?: number;
 }
 
 export class UserDTO implements IUserDTO {

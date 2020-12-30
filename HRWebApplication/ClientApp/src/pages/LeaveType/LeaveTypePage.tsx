@@ -37,6 +37,9 @@ export function LeaveTypePage(props) {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalType, setModalType] = React.useState<ModalType>('add');
   const [record, setRecord] = React.useState<LeaveTypeDTO>();
+  const searchInputRef = React.useRef<any>();
+  const [searchKeyword, setSearchKeyword] = React.useState('');
+
   const pageContext = {
     modalVisible,
     setModalVisible,
@@ -63,6 +66,8 @@ export function LeaveTypePage(props) {
               placeholder="Tìm kiếm loại nghỉ phép"
               enterButton
               allowClear
+              ref={searchInputRef}
+              onSearch={setSearchKeyword}
             />
           </Col>
           <Col style={{ marginLeft: 'auto' }}>
@@ -80,7 +85,9 @@ export function LeaveTypePage(props) {
           </Col>
         </Row>
         <Table
-          dataSource={data}
+          dataSource={data?.filter((it) =>
+            JSON.stringify(it).match(new RegExp(searchKeyword, 'i')),
+          )}
           // model doesn't have action field
           // @ts-ignore
           columns={columns}
