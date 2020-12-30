@@ -85,12 +85,23 @@ namespace HRWebApplication.Controllers
                 UserName = user.UserName,
                 Email = user.Email
             };
+
+            var employee = user.Employee;
+            if (employee is null)
+                return BadRequest();
+
+
             var res = await _userRepository.Create(newUser, user.Password);
             if (!res.Succeeded)
             {
                 return BadRequest();
             }
 
+            var newEmployee = _mapper.Map<Employee>(user.Employee);
+            newEmployee.RecordStatus = RecordStatus.Active;
+            _employeeRepostiory.AddEmployee(newEmployee);
+            newEmployee.User = newUser;
+            _unitOfWork.Save();
             return NoContent();
         }
 
@@ -135,7 +146,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpPut("UpdateProfile")]
-        [Authorize(Roles = "Admin,Manager,Employee")]
+        [Authorize(Roles = "Admin,Manager,User")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public IActionResult UpdateProfile(EmployeeDTO employeeData)
         {

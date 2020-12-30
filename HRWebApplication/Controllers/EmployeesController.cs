@@ -16,7 +16,6 @@ namespace HRWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Manager")]
     public class EmployeesController : APIController
     {
         private readonly DbSet<Employee> _employees;
