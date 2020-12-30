@@ -35,6 +35,9 @@ export function WorkTypePage(props) {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalType, setModalType] = React.useState<ModalType>('add');
   const [record, setRecord] = React.useState<WorkTypeDTO>();
+  const searchInputRef = React.useRef<any>();
+  const [searchKeyword, setSearchKeyword] = React.useState('');
+
   const pageContext = {
     modalVisible,
     setModalVisible,
@@ -60,6 +63,8 @@ export function WorkTypePage(props) {
             placeholder="Tìm kiếm loại công việc"
             enterButton
             allowClear
+            ref={searchInputRef}
+            onSearch={setSearchKeyword}
           />
         </Col>
         <Col style={{ marginLeft: 'auto' }}>
@@ -78,7 +83,9 @@ export function WorkTypePage(props) {
       </Row>
       <PageProvider value={pageContext}>
         <Table
-          dataSource={data}
+          dataSource={data?.filter((it) =>
+            JSON.stringify(it).match(new RegExp(searchKeyword, 'i')),
+          )}
           // model doesn't have action field
           // @ts-ignore
           columns={columns}
