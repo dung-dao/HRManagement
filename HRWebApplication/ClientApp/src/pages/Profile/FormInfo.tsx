@@ -1,7 +1,7 @@
 import { Button, Col, DatePicker, Form, Input, message, Row, Select, Skeleton } from 'antd';
 import { phoneRegex, required } from 'pages/Employee/EmployeeDetail/utils';
 import React from 'react';
-import { UserDTO, UsersClient } from 'services/ApiClient';
+import { UserDTO } from 'services/ApiClient';
 import { ChangePasswordModal } from './ChangePasswordModal';
 import { usePage } from './PageProvider';
 
@@ -12,11 +12,10 @@ const formItemLayout = {
 };
 
 export function FormInfo() {
-  const { user, userReady } = usePage();
+  const { apiUsers, user, userReady } = usePage();
   const [form] = Form.useForm<UserDTO>();
   const [changePasswordModalVisible, setChangePasswordModalVisible] = React.useState(false);
   const [profileSubmitting, setProfileSubmitting] = React.useState(false);
-  const apiUsers = React.useRef(new UsersClient());
 
   if (!userReady) return <Skeleton />;
 
@@ -24,7 +23,7 @@ export function FormInfo() {
     try {
       setProfileSubmitting(true);
       const profileUpdate = form.getFieldsValue().employee!;
-      await apiUsers.current.updateProfile(profileUpdate);
+      await apiUsers.updateProfile(profileUpdate);
       message.info('Cập nhật thông tin thành công');
     } catch {
       message.error('Không thể cập nhật thông tin');

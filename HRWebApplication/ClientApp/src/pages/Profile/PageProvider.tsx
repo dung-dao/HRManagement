@@ -38,6 +38,7 @@ export type ModifyProp<T extends {}, TFrom, TTo> = {
 type UserDTOForForm = ModifyProp<UserDTO, Date, moment.Moment>;
 
 type PageContextData = {
+  apiUsers: UsersClient;
   user: UserDTOForForm | undefined;
   userReady: boolean;
 };
@@ -74,6 +75,7 @@ export function PageProvider(props: Props) {
   return (
     <PageContext.Provider
       value={{
+        apiUsers: apiUsers.current,
         user,
         userReady,
       }}
