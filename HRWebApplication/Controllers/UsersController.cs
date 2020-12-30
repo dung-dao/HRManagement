@@ -92,6 +92,7 @@ namespace HRWebApplication.Controllers
 
 
             var res = await _userRepository.Create(newUser, user.Password);
+            await _userRepository.AddToRole(newUser.UserName, "User");
             if (!res.Succeeded)
             {
                 return BadRequest();
