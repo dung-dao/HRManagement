@@ -73,7 +73,7 @@ namespace HRWebApplication.Controllers
             var user = _userRepository.GetById(id);
             if (user is null)
                 return NotFound();
-            return new UserDTO() { Id = user.Id, UserName = user.UserName, Password = null, Email = user.Email };
+            return new UserDTO() { Id = user.Id, UserName = user.UserName, Password = null, Email = user.Email, Employee = _mapper.Map<EmployeeDTO>(user.Employee) };
         }
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Perform))]
@@ -102,7 +102,8 @@ namespace HRWebApplication.Controllers
             _employeeRepostiory.AddEmployee(newEmployee);
             newEmployee.User = newUser;
             _unitOfWork.Save();
-            return NoContent();
+
+            return CreatedAtAction("Get", new { id = newUser.Id }, _mapper.Map<UserDTO>(newUser));
         }
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Interact))]
