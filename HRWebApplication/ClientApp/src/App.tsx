@@ -1,22 +1,22 @@
+import { useAuth } from 'context/AuthContext';
 import React from 'react';
-import { Switch, Route, BrowserRouter, RouteProps, Redirect } from 'react-router-dom';
+import { BrowserRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
+import { isRoleValid, returnRoute, RoleRequired } from 'services/AuthService.util';
+import ErrorBoundary from './components/ErrorBoundary';
+import EmployeeDetail from './pages/Employee/EmployeeDetail/EmployeeDetail';
+import EmployeeList from './pages/Employee/EmployeeList';
+import { EmployeeAddPage } from './pages/EmployeeAdd';
+import { EmployeeEditPage } from './pages/EmployeeEdit';
+import { JobCategoryPage } from './pages/JobCategory';
+import { JobTitlePage } from './pages/JobTitle';
+import { Leave2ListPage } from './pages/Leave2List';
+import { LeaveTypePage } from './pages/LeaveType';
 import LoginPage from './pages/Login';
 import NotFoundPage from './pages/NotFound/NotFound';
 import OrganizationStructure from './pages/OrganizationStructure/OrganizationStructure';
-import EmployeeList from './pages/Employee/EmployeeList';
-import EmployeeDetail from './pages/Employee/EmployeeDetail/EmployeeDetail';
-import ErrorBoundary from './components/ErrorBoundary';
-import { WorkTypePage } from './pages/WorkType';
-import { JobCategoryPage } from './pages/JobCategory';
-import { JobTitlePage } from './pages/JobTitle';
-import { EmployeeAddPage } from './pages/EmployeeAdd';
-import { LeaveTypePage } from './pages/LeaveType';
-import { Leave2TypePage } from './pages/Leave2Type';
-import { Leave2ListPage } from './pages/Leave2List';
-import { EmployeeEditPage } from './pages/EmployeeEdit';
 import { ProfilePage } from './pages/Profile';
-import { useAuth } from 'context/AuthContext';
-import { isRoleValid, returnRoute, RoleRequired } from 'services/AuthService.util';
+import { WorkTypePage } from './pages/WorkType';
+import { DashboardPage } from './pages/Dashboard';
 
 type AuthRouteProps = RouteProps & {
   component: Exclude<RouteProps['component'], undefined>;
@@ -51,6 +51,12 @@ export default function App() {
             path={['/', '/login']}
             component={LoginPage}
             requireRole={{ type: '==', role: 'Unauthorized' }}
+          />
+          <AuthRoute
+            exact
+            path={'/dashboard'}
+            component={DashboardPage}
+            requireRole={{ type: '>=', role: 'Manager' }}
           />
           <AuthRoute
             exact

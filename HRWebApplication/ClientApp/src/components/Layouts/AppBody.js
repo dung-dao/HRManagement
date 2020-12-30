@@ -24,6 +24,7 @@ const breadCrumbs = {
   'leave-type': 'Loại nghỉ phép',
   'leave2-list': 'Danh sách nghỉ phép',
   'me': 'Tài khoản',
+  'dashboard': 'Bảng điều khiển',
 };
 
 const breadcrumbStyle = {

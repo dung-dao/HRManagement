@@ -5,10 +5,10 @@ import {
   GoldOutlined,
   ReconciliationOutlined,
   ExceptionOutlined,
-  BuildOutlined,
   CarryOutOutlined,
   UserOutlined,
   LogoutOutlined,
+  FundOutlined,
 } from '@ant-design/icons';
 import { Button, Layout, Menu, Tooltip } from 'antd';
 import React from 'react';
@@ -50,6 +50,13 @@ const SiderContainer = styled.div`
 `;
 
 const menuItems = [
+  {
+    key: 'dashboard',
+    url: '/dashboard',
+    icon: <FundOutlined />,
+    label: 'Bảng điều khiển',
+    requireRole: { type: '>=', role: 'Manager' },
+  },
   {
     key: 'me',
     url: '/me',
