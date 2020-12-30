@@ -2327,7 +2327,7 @@ export class UsersClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    signUp(body: UserDTO | undefined): Promise<void> {
+    signUp(body: UserDTO | undefined): Promise<UserDTO> {
         let url_ = this.baseUrl + "/api/Users";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2338,6 +2338,7 @@ export class UsersClient extends ApiClientBase {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Accept": "text/plain"
             }
         };
 
@@ -2348,26 +2349,31 @@ export class UsersClient extends ApiClientBase {
         });
     }
 
-    protected processSignUp(response: Response): Promise<void> {
+    protected processSignUp(response: Response): Promise<UserDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 204) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status === 400) {
+        if (status === 400) {
             return response.text().then((_responseText) => {
             let result400: any = null;
             let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result400 = ProblemDetails.fromJS(resultData400);
             return throwException("Bad Request", status, _responseText, _headers, result400);
             });
-        } else if (status !== 200 && status !== 204) {
+        } else if (status === 201) {
             return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = UserDTO.fromJS(resultData201);
+            return result201;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
             });
         }
-        return Promise.resolve<void>(<any>null);
     }
 
     /**
@@ -2694,7 +2700,7 @@ export class UsersClient extends ApiClientBase {
      * @param role (optional) 
      * @return Success
      */
-    roles2(userName: string | null | undefined, role: string | null | undefined): Promise<void> {
+    addRoleForUser(userName: string | null | undefined, role: string | null | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/Users/Roles?";
         if (userName !== undefined && userName !== null)
             url_ += "userName=" + encodeURIComponent("" + userName) + "&";
@@ -2711,11 +2717,11 @@ export class UsersClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processRoles2(_response);
+            return this.processAddRoleForUser(_response);
         });
     }
 
-    protected processRoles2(response: Response): Promise<void> {
+    protected processAddRoleForUser(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {

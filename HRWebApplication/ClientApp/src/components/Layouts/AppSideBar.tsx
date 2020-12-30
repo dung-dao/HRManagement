@@ -61,7 +61,7 @@ const menuItems = [
     key: 'me',
     url: '/me',
     icon: <UserOutlined />,
-    label: 'Tài khoản',
+    label: 'Hồ sơ',
     requireRole: { type: '>=', role: 'User' },
   },
   {
@@ -99,20 +99,20 @@ const menuItems = [
     label: 'Loại công việc',
     requireRole: { type: '>=', role: 'Manager' },
   },
-  {
-    key: 'leave-type',
-    url: '/leave-type',
-    icon: <ExceptionOutlined />,
-    label: 'Loại nghỉ phép',
-    requireRole: { type: '>=', role: 'Manager' },
-  },
-  {
-    key: 'leave2-list',
-    url: '/leave2-list',
-    icon: <CarryOutOutlined />,
-    label: 'Danh sách nghỉ phép',
-    requireRole: { type: '>=', role: 'Manager' },
-  },
+  // {
+  //   key: 'leave-type',
+  //   url: '/leave-type',
+  //   icon: <ExceptionOutlined />,
+  //   label: 'Loại nghỉ phép',
+  //   requireRole: { type: '>=', role: 'Manager' },
+  // },
+  // {
+  //   key: 'leave2-list',
+  //   url: '/leave2-list',
+  //   icon: <CarryOutOutlined />,
+  //   label: 'Danh sách nghỉ phép',
+  //   requireRole: { type: '>=', role: 'Manager' },
+  // },
 ] as const;
 
 export default function AppSidebar() {

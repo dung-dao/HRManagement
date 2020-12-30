@@ -2,11 +2,18 @@ import React from 'react';
 import AppBody from '../../components/Layouts/AppBody';
 import { message, Steps } from 'antd';
 import { PageProvider, usePage } from './PageProvider';
-import { EmployeeDTO, EmployeesClient, PositionDTO } from 'services/ApiClient';
+import {
+  EmployeeDTO,
+  EmployeesClient,
+  PositionDTO,
+  UserDTO,
+  UsersClient,
+} from 'services/ApiClient';
 import { EmployeeInfoForm } from '../Employee/EmployeeInfoForm';
 import { EmployeeWorkForm } from '../Employee/EmployeeWorkForm';
 import { EmployeeFormAction } from './EmployeeFormAction';
 import { useHistory } from 'react-router-dom';
+import { pick } from 'lodash';
 
 const { Step } = Steps;
 export type FormType = 'add' | 'edit';
@@ -18,14 +25,22 @@ const verbs = {
 
 function Form1() {
   const { api, nextPage, setEmployee, employee } = usePage();
+  const apiUsers = React.useRef(new UsersClient());
   const type: FormType = employee ? 'edit' : 'add';
   const verb = verbs[type];
   const onSubmit = async (data: EmployeeDTO) => {
     try {
       if (type === 'add') {
-        const newEmployee = await api.createEmployee(data);
+        // TODO: rework
+        const newUserDTO = {
+          ...pick(data, 'userName', 'password'),
+          email: data.personalEmail,
+          employee: { ...data },
+        } as UserDTO;
+        const { employee } = await apiUsers.current.signUp(newUserDTO);
+        apiUsers.current.addRoleForUser(newUserDTO.userName, 'User');
         message.info(`${verb} thông tin nhân viên ${data.firstName} thành công`);
-        setEmployee(newEmployee);
+        setEmployee(employee!);
       } else if (type === 'edit') {
         await api.updateEmployeeById(data.id!, data);
         message.info(`${verb} thông tin nhân viên ${data.firstName} thành công`);

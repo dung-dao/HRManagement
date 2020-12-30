@@ -76,9 +76,9 @@ namespace HRWebApplication.Controllers
             return new UserDTO() { Id = user.Id, UserName = user.UserName, Password = null, Email = user.Email, Employee = _mapper.Map<EmployeeDTO>(user.Employee) };
         }
 
-        [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Perform))]
         [HttpPost(Name = "SignUp")]
-        public async Task<IActionResult> Register([FromBody] UserDTO user)
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
+        public async Task<ActionResult<UserDTO>> Register([FromBody] UserDTO user)
         {
             var newUser = new User()
             {
@@ -92,7 +92,6 @@ namespace HRWebApplication.Controllers
 
 
             var res = await _userRepository.Create(newUser, user.Password);
-            await _userRepository.AddToRole(newUser.UserName, "User");
             if (!res.Succeeded)
             {
                 return BadRequest();
@@ -148,7 +147,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpPut("UpdateProfile")]
-        [Authorize(Roles = "Admin,Manager,User")]
+        [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public IActionResult UpdateProfile(EmployeeDTO employeeData)
         {
@@ -182,7 +181,7 @@ namespace HRWebApplication.Controllers
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Interact))]
         [Authorize(Roles = "Admin,Manager")]
-        [HttpPost("Roles")]
+        [HttpPost("Roles", Name="AddRoleForUser")]
         public async Task<IActionResult> AddToRole(string userName, string role)
         {
             if (!User.IsInRole("Admin") && role.Normalize() == "Admin".Normalize())

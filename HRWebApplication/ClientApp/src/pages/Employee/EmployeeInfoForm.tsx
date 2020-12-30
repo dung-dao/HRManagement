@@ -25,7 +25,7 @@ export function EmployeeInfoForm(props: EmployeeFormProps) {
   const [, forceRender] = React.useReducer((x) => ++x, 0);
 
   const initialValues = React.useMemo(
-    () => ({ ...value, dateOfBirth: moment(value?.dateOfBirth) }),
+    () => ({ ...value, dateOfBirth: value ? moment(value?.dateOfBirth) : undefined }),
     [value],
   );
 
@@ -43,7 +43,53 @@ export function EmployeeInfoForm(props: EmployeeFormProps) {
       labelAlign="left"
       initialValues={initialValues}
     >
-      {window.location.pathname.includes('new') ? null : (
+      {window.location.pathname.includes('new') ? (
+        <Row gutter={40}>
+          <Col span={12}>
+            <fieldset>
+              <legend>Thông tin tài khoản:</legend>
+              <Form.Item
+                {...formItemLayout}
+                label="Tài khoản"
+                name="userName"
+                rules={[{ required: true, message: 'Tài khoản không được bỏ trống' }]}
+              >
+                <Input placeholder="user001" />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Mật khẩu"
+                name="password"
+                rules={[
+                  { required: true, message: 'Mật khẩu hiện tại không được bỏ trống' },
+                  { min: 6, message: 'Mật khẩu phải dài ít nhất 6 ký tự' },
+                ]}
+              >
+                <Input.Password placeholder="password" />
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Nhập lại mật khẩu"
+                name="confirmPassword"
+                dependencies={['password']}
+                rules={[
+                  { required: true, message: 'Mật khẩu hiện tại không được bỏ trống' },
+                  ({ getFieldValue }) => ({
+                    validator(rule, value) {
+                      if (!value || getFieldValue('password') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject('Nhập lại mật khẩu không khớp');
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder="password" />
+              </Form.Item>
+            </fieldset>
+          </Col>
+        </Row>
+      ) : (
         <Row gutter={40}>
           <Col span={12}>
             <Form.Item {...formItemLayout} name="status">
@@ -60,7 +106,7 @@ export function EmployeeInfoForm(props: EmployeeFormProps) {
         <Col span={12}>
           <fieldset>
             <legend>Thông tin cá nhân:</legend>
-            <Form.Item {...formItemLayout} label="ID" hidden name="id" rules={[required('Họ')]}>
+            <Form.Item {...formItemLayout} label="ID" hidden name="id">
               <Input />
             </Form.Item>
             <Form.Item {...formItemLayout} label="Họ" name="firstName" rules={[required('Họ')]}>

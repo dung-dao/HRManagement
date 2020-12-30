@@ -3,6 +3,7 @@ import AppBody from 'components/Layouts/AppBody';
 import React from 'react';
 import { ChartComponentProps, Pie } from 'react-chartjs-2';
 import { EmployeeStatisticItem, StatisticClient } from 'services/ApiClient';
+import styled from 'styled-components';
 
 const backgroundColorArray = [
   'rgba(255, 99, 132, 0.2)',
@@ -43,10 +44,15 @@ const dataToChartProps = (preprocessedData: EmployeeStatisticItem[]): ChartCompo
   };
 };
 
+const Title = styled.h2`
+  text-align: center;
+  margin-bottom: 1em;
+`;
+
 export function DashboardPage(props) {
   const apiDashboard = React.useRef(new StatisticClient());
-  const [byUnit, setByUnit] = React.useState<EmployeeStatisticItem[]>();
-  const [byWorkType, setByWorkType] = React.useState<EmployeeStatisticItem[]>();
+  const [byUnit, setByUnit] = React.useState<EmployeeStatisticItem[]>([]);
+  const [byWorkType, setByWorkType] = React.useState<EmployeeStatisticItem[]>([]);
 
   React.useEffect(() => {
     async function fetchStatistic() {
@@ -63,21 +69,27 @@ export function DashboardPage(props) {
 
   return (
     <AppBody title="Bảng điều khiển">
-      <Row gutter={40}>
-        {byUnit ? (
-          <Col span={12}>
-            <h2 style={{ textAlign: 'center', marginBottom: '1em' }}>Thống kê theo đơn vị</h2>
-            <Pie {...dataToChartProps(byUnit)} />
-          </Col>
-        ) : null}
-        {byWorkType ? (
-          <Col span={12}>
-            <h2 style={{ textAlign: 'center', marginBottom: '1em' }}>
-              Thống kê theo loại hình làm việc
-            </h2>
-            <Pie {...dataToChartProps(byWorkType)} />
-          </Col>
-        ) : null}
+      <Row gutter={100}>
+        <Col span={12}>
+          {byUnit.length ? (
+            <>
+              <Title>Thống kê theo đơn vị</Title>
+              <Pie {...dataToChartProps(byUnit)} />
+            </>
+          ) : (
+            <Title>Không có thống kê theo đơn vị</Title>
+          )}
+        </Col>
+        <Col span={12}>
+          {byWorkType.length ? (
+            <>
+              <Title>Thống kê theo loại hình làm việc</Title>
+              <Pie {...dataToChartProps(byWorkType)} />
+            </>
+          ) : (
+            <Title>Không có thống kê theo loại hình làm việc</Title>
+          )}
+        </Col>
       </Row>
     </AppBody>
   );
