@@ -86,6 +86,17 @@ export function EmployeeInfoForm(props: EmployeeFormProps) {
               >
                 <Input.Password placeholder="password" />
               </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                label="Quyền"
+                name="role"
+                rules={[required('Quyền')]}
+              >
+                <Select placeholder="Chọn quyền">
+                  <Select.Option value="Manager">Quản lý</Select.Option>
+                  <Select.Option value="User">Nhân viên</Select.Option>
+                </Select>
+              </Form.Item>
             </fieldset>
           </Col>
         </Row>

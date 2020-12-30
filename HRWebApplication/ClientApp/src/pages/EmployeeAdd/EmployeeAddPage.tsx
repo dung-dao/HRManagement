@@ -38,7 +38,7 @@ function Form1() {
           employee: { ...data },
         } as UserDTO;
         const { employee } = await apiUsers.current.signUp(newUserDTO);
-        apiUsers.current.addRoleForUser(newUserDTO.userName, 'User');
+        await apiUsers.current.addRoleForUser(newUserDTO.userName, (data as any).role);
         message.info(`${verb} thông tin nhân viên ${data.firstName} thành công`);
         setEmployee(employee!);
       } else if (type === 'edit') {
