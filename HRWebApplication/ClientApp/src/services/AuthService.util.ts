@@ -1,3 +1,4 @@
+import { ROUTES } from 'routes';
 import { Roles } from './AuthService';
 
 export type RoleRequired = {
@@ -24,8 +25,8 @@ export const roleLevel: Record<RoleNames, number> = {
 } as const;
 
 export const returnRoute: Record<RoleNames, string> = {
-  Unauthorized: '/login',
-  User: '/me',
-  Manager: '/dashboard',
-  Admin: '/dashboard',
+  Unauthorized: ROUTES.login,
+  User: ROUTES.accountPersonal,
+  Manager: ROUTES.report,
+  Admin: ROUTES.report,
 } as const;

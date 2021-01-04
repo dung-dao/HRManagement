@@ -1,4 +1,4 @@
-import {randomBetween} from "common";
+import {randomBetween} from "utils";
 import moment from "moment";
 import {EmployeeInfoFormType} from "pages/Employee/EmployeeInfoFormType";
 import {FormInstance} from "antd/lib/form";

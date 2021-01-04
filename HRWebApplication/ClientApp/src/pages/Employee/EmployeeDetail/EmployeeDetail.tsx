@@ -1,5 +1,5 @@
 import { Tabs } from 'antd';
-import AppBody from 'components/Layouts/AppBody';
+
 import React from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { EmployeesClient } from 'services/ApiClient';
@@ -27,36 +27,34 @@ function Index() {
   }, [pathname]);
 
   return (
-    <AppBody title="Nhân viên">
-      <Tabs
-        activeKey={getPageType === 'edit-info' || getPageType === 'add' ? '1' : '2'}
-        onChange={(newActiveKey) => {
-          if (getPageType === 'add') return;
-          if (getPageType === 'edit-info' && newActiveKey === '2') {
-            history.push('work');
-          } else if (getPageType === 'edit-work' && newActiveKey === '1') {
-            history.push('info');
-          }
-        }}
-      >
-        <Tabs.TabPane tab="Thông tin" key="1">
-          <InfoTab
+    <Tabs
+      activeKey={getPageType === 'edit-info' || getPageType === 'add' ? '1' : '2'}
+      onChange={(newActiveKey) => {
+        if (getPageType === 'add') return;
+        if (getPageType === 'edit-info' && newActiveKey === '2') {
+          history.push('work');
+        } else if (getPageType === 'edit-work' && newActiveKey === '1') {
+          history.push('info');
+        }
+      }}
+    >
+      <Tabs.TabPane tab="Thông tin" key="1">
+        <InfoTab
+          detailPageType={detailPageType}
+          employeeId={+employeeId}
+          apiEmployee={apiEmployee}
+        />
+      </Tabs.TabPane>
+      {getPageType !== 'add' ? (
+        <Tabs.TabPane tab="Công việc" key="2">
+          <WorkTab
             detailPageType={detailPageType}
             employeeId={+employeeId}
             apiEmployee={apiEmployee}
           />
         </Tabs.TabPane>
-        {getPageType !== 'add' ? (
-          <Tabs.TabPane tab="Công việc" key="2">
-            <WorkTab
-              detailPageType={detailPageType}
-              employeeId={+employeeId}
-              apiEmployee={apiEmployee}
-            />
-          </Tabs.TabPane>
-        ) : null}
-      </Tabs>
-    </AppBody>
+      ) : null}
+    </Tabs>
   );
 }
 

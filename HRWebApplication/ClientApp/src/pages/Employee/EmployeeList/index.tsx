@@ -1,16 +1,16 @@
 import { UserAddOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row } from 'antd';
-import AppBody from 'components/Layouts/AppBody';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ROUTES } from 'routes';
 import Table from './Table';
 
-function Index() {
+export const EmployeeList = React.memo(function () {
   const searchInputRef = React.useRef<any>();
   const [searchKeyword, setSearchKeyword] = React.useState('');
 
   return (
-    <AppBody title="Nhân viên">
+    <div>
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Input.Search
@@ -23,7 +23,7 @@ function Index() {
           />
         </Col>
         <Col style={{ marginLeft: 'auto' }}>
-          <Link to="employee/new" style={{ marginLeft: 10 }}>
+          <Link to={ROUTES.employeeNew} style={{ marginLeft: 10 }}>
             <Button type="primary" icon={<UserAddOutlined />} size="middle">
               Thêm mới nhân viên
             </Button>
@@ -31,8 +31,6 @@ function Index() {
         </Col>
       </Row>
       <Table searchKeyword={searchKeyword} />
-    </AppBody>
+    </div>
   );
-}
-
-export default React.memo(Index);
+});

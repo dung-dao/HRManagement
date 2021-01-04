@@ -1,5 +1,5 @@
 import React from 'react';
-import AppBody from '../../components/Layouts/AppBody';
+
 import { JobCategoryDTO, JobCategoryClient } from '../../services/ApiClient';
 import { useTry } from '../../hooks';
 import { JobCategoryModal } from 'pages/JobCategory/JobCategoryModal';
@@ -57,7 +57,7 @@ export function JobCategoryPage(props) {
   }, []);
 
   return (
-    <AppBody title="Loại hình nhân sự">
+
       <PageProvider value={pageContext}>
         <Row gutter={[16, 16]}>
           <Col span={6}>
@@ -98,6 +98,6 @@ export function JobCategoryPage(props) {
         />
         <JobCategoryModal />
       </PageProvider>
-    </AppBody>
+
   );
 }

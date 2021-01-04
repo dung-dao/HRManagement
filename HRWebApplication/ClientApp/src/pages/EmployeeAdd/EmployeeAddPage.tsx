@@ -1,5 +1,5 @@
 import React from 'react';
-import AppBody from '../../components/Layouts/AppBody';
+
 import { message, Steps } from 'antd';
 import { PageProvider, usePage } from './PageProvider';
 import {
@@ -125,7 +125,7 @@ export function EmployeeAddPage(props) {
   };
 
   return (
-    <AppBody title="Thêm mới nhân viên">
+
       <PageProvider value={contextValue}>
         <Steps current={currentPage}>
           {steps.map((item) => (
@@ -134,6 +134,6 @@ export function EmployeeAddPage(props) {
         </Steps>
         <div>{steps[currentPage].content}</div>
       </PageProvider>
-    </AppBody>
+
   );
 }

@@ -1,12 +1,12 @@
-import React from 'react';
-import AppBody from '../../components/Layouts/AppBody';
-import { WorkTypeDTO, WorkTypeClient } from '../../services/ApiClient';
-import { useTry } from '../../hooks';
-import { WorkTypeModal } from './WorkTypeModal';
-import { ModalType, PageProvider } from './PageProvider';
-import { ActionRenderer } from './ActionRenderer';
-import { Table, Button, Col, Row, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { Button, Col, Input, Row, Table } from 'antd';
+import React from 'react';
+import { useTry } from '../../hooks';
+import { WorkTypeClient, WorkTypeDTO } from '../../services/ApiClient';
+import { ActionRenderer } from './ActionRenderer';
+import { ModalType, PageProvider } from './PageProvider';
+import { WorkTypeModal } from './WorkTypeModal';
+
 
 const columns = [
   {
@@ -55,7 +55,7 @@ export function WorkTypePage(props) {
   }, []);
 
   return (
-    <AppBody title="Loại công việc">
+    <main>
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Input.Search
@@ -96,6 +96,6 @@ export function WorkTypePage(props) {
         />
         <WorkTypeModal />
       </PageProvider>
-    </AppBody>
+    </main>
   );
 }
