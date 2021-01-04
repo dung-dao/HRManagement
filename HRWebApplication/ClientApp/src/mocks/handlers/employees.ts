@@ -3,7 +3,7 @@ import { baseUrl, delay } from "../common"
 import { employees } from "mocks/fixtures/employees";
 import { positions } from "mocks/fixtures/positions";
 import {EmployeeDTO, PositionDTO} from "../../services/ApiClient";
-import {randomBetween} from "../../common";
+import {randomBetween} from "../../utils";
 
 const handlers = [
   rest.get(baseUrl + "/api/Employees", (req, res, ctx) => {

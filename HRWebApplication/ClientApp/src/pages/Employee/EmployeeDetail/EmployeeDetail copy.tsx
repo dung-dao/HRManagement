@@ -13,7 +13,7 @@ import {
   Select,
   message,
 } from 'antd';
-import AppBody from 'components/Layouts/AppBody';
+
 import ImgCrop from 'antd-img-crop';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 import './EmployeeDetail.css';
@@ -33,7 +33,7 @@ import {
 import moment from 'moment';
 import { CheckOutlined, LeftOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { organizationUnits } from 'pages/OrganizationStructure/mock-data';
+import { organizationUnits } from 'pages/Employee/EmployeeOrganization/mock-data';
 import { Tabs } from 'antd';
 import { InfoTab } from './InfoTab/InfoTab';
 import { WorkTab } from './WorkTab/WorkTab';
@@ -205,7 +205,7 @@ function Index() {
   };
 
   return (
-    <AppBody title={mapPageTypeToTitle[detailPageType]}>
+    <main>
       <Tabs>
         <Tabs.TabPane tab="Thông tin" key={1}>
           <InfoTab />
@@ -231,7 +231,7 @@ function Index() {
           </Button>
         </Row>
       </Col>
-    </AppBody>
+    </main>
   );
 }
 

@@ -3,6 +3,7 @@ import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
 import moment from 'moment';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ROUTES } from 'routes';
 import { EmployeeDTO, EmployeeStatus } from 'services/ApiClient';
 import { mapSex, mapStatusToTagProps, BeautifyEmployeeStatus } from './utils';
 
@@ -76,7 +77,7 @@ export const columns = ({ onDeleteEmployee }) => [
             <CarryOutOutlined />
           </Button>
         </Tooltip>
-        <Link to={'employee/' + record?.id}>
+        <Link to={`${ROUTES.employee}/${record?.id}`}>
           <Tooltip title="Chỉnh sửa">
             <Button size="small" type="primary">
               <EditOutlined />

@@ -2,7 +2,7 @@ import React from 'react';
 import { FormInstance } from 'antd/lib/form';
 import { Button } from 'antd';
 import { useHistory } from 'react-router-dom';
-import { __DEV__ } from '../../constants';
+import { __DEV__ } from '../../const';
 import { autofill } from '../Employee';
 import { usePage } from './PageProvider';
 import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/Table/utils';

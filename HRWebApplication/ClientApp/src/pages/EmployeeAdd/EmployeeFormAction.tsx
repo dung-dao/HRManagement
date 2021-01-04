@@ -2,7 +2,7 @@ import React from 'react';
 import {FormInstance} from "antd/lib/form";
 import {usePage} from "./PageProvider";
 import {Button, message} from "antd";
-import {__DEV__} from "../../constants";
+import {__DEV__} from "../../const";
 import {autofill} from "../Employee";
 
 type FormActionProps = {

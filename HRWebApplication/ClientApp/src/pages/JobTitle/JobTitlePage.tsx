@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row, Table } from 'antd';
 import React from 'react';
 import { JobCategoryClient, JobCategoryDTO, JobTitleClient, JobTitleDTO } from 'services/ApiClient';
-import AppBody from '../../components/Layouts/AppBody';
+
 import { useTry } from '../../hooks';
 import { ActionRenderer } from './ActionRenderer';
 import { JobTitleModal } from './JobTitleModal';
@@ -77,7 +77,7 @@ export function JobTitlePage(props) {
   );
 
   return (
-    <AppBody title="Chức vụ công việc">
+    <main>
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Input.Search
@@ -116,6 +116,6 @@ export function JobTitlePage(props) {
         />
         <JobTitleModal />
       </PageProvider>
-    </AppBody>
+    </main>
   );
 }

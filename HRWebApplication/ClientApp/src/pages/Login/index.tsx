@@ -18,7 +18,7 @@ type SignUpForm = LoginDTO & {
 
 type TabName = 'signin' | 'signup';
 
-export default function () {
+export function LoginPage() {
   const history = useHistory();
   const [loginForm] = Form.useForm<LoginForm>();
   const [signUpForm] = Form.useForm<SignUpForm>();

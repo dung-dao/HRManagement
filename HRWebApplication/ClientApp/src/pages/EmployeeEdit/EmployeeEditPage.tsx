@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Form, Input, message, Row, Tabs } from 'antd';
-import AppBody from '../../components/Layouts/AppBody';
+
 import { EmployeeDTO, EmployeesClient, PositionDTO } from 'services/ApiClient';
 import { PageProvider, usePage } from './PageProvider';
 import { EmployeeInfoForm } from '../Employee/EmployeeInfoForm';
@@ -148,7 +148,7 @@ export function EmployeeEditPage(props) {
   }, []);
 
   return (
-    <AppBody title="Chỉnh sửa nhân viên">
+
       <PageProvider value={contextValue}>
         <Tabs>
           <Tabs.TabPane tab="Thông tin" key="1">
@@ -159,6 +159,6 @@ export function EmployeeEditPage(props) {
           </Tabs.TabPane>
         </Tabs>
       </PageProvider>
-    </AppBody>
+
   );
 }

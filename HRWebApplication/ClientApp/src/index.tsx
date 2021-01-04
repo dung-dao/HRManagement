@@ -6,7 +6,7 @@ import App from './App';
 
 // styles
 import 'antd/dist/antd.css';
-import { isNearHuscarl } from './constants';
+import { isNearHuscarl } from './const';
 import { AuthProvider } from 'context/AuthContext';
 
 if (isNearHuscarl) {

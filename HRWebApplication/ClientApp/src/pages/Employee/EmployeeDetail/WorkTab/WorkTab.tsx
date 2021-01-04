@@ -13,7 +13,7 @@ import {
   Select,
   message,
 } from 'antd';
-import AppBody from 'components/Layouts/AppBody';
+
 import ImgCrop from 'antd-img-crop';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 import {
@@ -32,7 +32,7 @@ import {
 import moment from 'moment';
 import { DoubleRightOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { organizationUnits } from 'pages/OrganizationStructure/mock-data';
+import { organizationUnits } from 'pages/Employee/EmployeeOrganization/mock-data';
 import { Tabs } from 'antd';
 import {
   formItemLayout,

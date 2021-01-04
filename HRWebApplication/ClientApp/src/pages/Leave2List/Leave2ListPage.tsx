@@ -1,5 +1,5 @@
 import React from 'react';
-import AppBody from '../../components/Layouts/AppBody';
+
 import { LeaveTypeClient, LeaveTypeDTO } from '../../services/ApiClient';
 import { useTry } from '../../hooks';
 import { Leave2ListModal } from './Leave2ListModal';
@@ -76,7 +76,7 @@ export function Leave2ListPage(props) {
   }, []);
 
   return (
-    <AppBody title="Danh sách nghỉ phép">
+
       <PageProvider value={pageContext}>
         <Row gutter={[16, 16]}>
           <Col span={6}>
@@ -113,6 +113,6 @@ export function Leave2ListPage(props) {
         />
         <Leave2ListModal />
       </PageProvider>
-    </AppBody>
+
   );
 }
