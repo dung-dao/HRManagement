@@ -5,7 +5,7 @@ import { EmployeeInfoFormType } from 'pages/Employee/EmployeeInfoFormType';
 import { EmployeeDTO } from 'services/ApiClient';
 import { useTry } from '../../hooks';
 import moment from 'moment';
-import { mapStatusToTagProps } from './EmployeeList/Table/utils';
+import { mapStatusToTagProps } from './EmployeeList/utils';
 
 type EmployeeFormProps = {
   action: any;

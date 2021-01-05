@@ -1,6 +1,6 @@
 import { DatePicker, Form, Input, message, Modal } from 'antd';
 import moment from 'moment';
-import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/Table/utils';
+import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/utils';
 import React from 'react';
 import { EmployeeDTO, PositionDTO } from 'services/ApiClient';
 import { usePage } from './PageProvider';

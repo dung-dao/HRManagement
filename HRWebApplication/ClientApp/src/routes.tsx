@@ -133,7 +133,7 @@ export const routes: RouteList = [
         },
         {
           path: ROUTES.accountList,
-          requireRole: { type: '>=', role: 'Manager' },
+          requireRole: { type: '>=', role: 'Admin' },
           router: {
             component: AccountList,
             layout: AdminLayout,

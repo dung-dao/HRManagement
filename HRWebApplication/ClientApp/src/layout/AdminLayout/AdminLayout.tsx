@@ -10,12 +10,11 @@ export const AdminLayout: React.FC<LayoutProps> = (props) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar />
-      <Layout>
+      <Layout style={{ height: '100%' }}>
         <Layout.Content style={{ margin: '0 8px', overflow: 'initial' }}>
           <Breadcrumb />
           <div style={{ padding: 16, background: '#fff' }}>{children}</div>
         </Layout.Content>
-        <Layout.Footer style={{ textAlign: 'center' }}>© 2020 HR Management</Layout.Footer>
       </Layout>
     </Layout>
   );

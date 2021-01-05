@@ -19,7 +19,7 @@ export function ChangePasswordModal(props: Props) {
 
   const onSubmit = async () => {
     try {
-      const { currentPassword, newPassword } = await form.validateFields();
+      const { currentPassword, newPassword } = form.getFieldsValue();
       await apiUsers.changePassword(currentPassword, newPassword);
       message.info('Đổi mật khẩu thành công');
       setVisible(false);
@@ -37,13 +37,20 @@ export function ChangePasswordModal(props: Props) {
       centered
       okButtonProps={{
         htmlType: 'submit',
+        form: 'change-password-form',
       }}
-      onOk={onSubmit}
       onCancel={() => setVisible(false)}
       width={600}
       destroyOnClose
     >
-      <Form {...formLayout} form={form} preserve={false} labelAlign="left">
+      <Form
+        {...formLayout}
+        id="change-password-form"
+        form={form}
+        preserve={false}
+        labelAlign="left"
+        onFinish={onSubmit}
+      >
         <Form.Item
           name="currentPassword"
           label="Mật khẩu hiện tại"
