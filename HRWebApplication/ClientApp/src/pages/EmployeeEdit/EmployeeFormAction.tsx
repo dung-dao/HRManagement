@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { __DEV__ } from '../../const';
 import { autofill } from '../Employee';
 import { usePage } from './PageProvider';
-import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/Table/utils';
+import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/utils';
 
 type FormActionProps = {
   form: FormInstance;

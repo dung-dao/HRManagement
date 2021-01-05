@@ -86,5 +86,5 @@ export function PageProvider(props: Props) {
 }
 
 export function usePage() {
-  return React.useContext(PageContext);
+  return React.useContext(PageContext) || {};
 }

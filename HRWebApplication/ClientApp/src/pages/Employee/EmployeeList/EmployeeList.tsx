@@ -1,21 +1,26 @@
+import { UserAddOutlined } from '@ant-design/icons';
+import { Button, Col, Input, message, Row, Table } from 'antd';
+import { useSearchKeywork } from 'hooks/useSearchKeyword';
 import React from 'react';
-import { Table, message } from 'antd';
+import { Link } from 'react-router-dom';
+import { ROUTES } from 'routes';
+import { EmployeeDTO } from 'services/ApiClient';
+import { apiEmployees } from 'services/ApiClient.singleton';
 import { columns } from './columns';
-import { EmployeesClient, EmployeeDTO } from 'services/ApiClient';
 
-export default function ({ searchKeyword }) {
+export const EmployeeList = React.memo(function () {
+  const { searchRegex, inputSearchProps } = useSearchKeywork();
   const [employees, setEmployees] = React.useState<EmployeeDTO[]>();
-  const api = React.useRef(new EmployeesClient());
 
   React.useEffect(() => {
-    api.current
+    apiEmployees
       .employees_GetAll()
       .then((data) => setEmployees(data))
       .catch((err: Error) => message.error(err.message));
   }, []);
 
   const onDeleteEmployee = React.useCallback((employeeId) => {
-    api.current
+    apiEmployees
       .deleteEmployeeById(employeeId)
       .then(() => {
         setEmployees((employees) => employees?.filter((it) => it.id != employeeId));
@@ -24,14 +29,31 @@ export default function ({ searchKeyword }) {
       .catch((err) => message.error('Xoá nhân viên không thành công'));
   }, []);
 
-  const searchRegex = new RegExp(searchKeyword, 'i');
   const finalEmployees = employees?.filter(
     (it) =>
       `${it.firstName} ${it.lastName}`.match(searchRegex) || JSON.stringify(it).match(searchRegex),
   );
 
   return (
-    <>
+    <div>
+      <Row gutter={[16, 16]}>
+        <Col span={6}>
+          <Input.Search
+            size="middle"
+            placeholder="Tìm kiếm nhân viên"
+            enterButton
+            allowClear
+            {...inputSearchProps}
+          />
+        </Col>
+        <Col style={{ marginLeft: 'auto' }}>
+          <Link to={ROUTES.employeeNew} style={{ marginLeft: 10 }}>
+            <Button type="primary" icon={<UserAddOutlined />} size="middle">
+              Thêm mới nhân viên
+            </Button>
+          </Link>
+        </Col>
+      </Row>
       <Table
         // @ts-ignore
         columns={columns({ onDeleteEmployee })}
@@ -42,6 +64,6 @@ export default function ({ searchKeyword }) {
         locale={{ emptyText: 'Không tìm thấy nhân viên nào' }}
         rowKey={(record) => String(record.id)}
       />
-    </>
+    </div>
   );
-}
+});

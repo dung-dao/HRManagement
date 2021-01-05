@@ -43,7 +43,7 @@ export default function App() {
         <Switch>
           <Redirect from="/" exact to={ROUTES.login} />
           {routesInRouter.map((routeProps) => (
-            <AuthRoute exact {...routeProps} />
+            <AuthRoute exact {...routeProps} key={routeProps.path} />
           ))}
           <Route exact path={'*'} component={NotFound} />
         </Switch>
