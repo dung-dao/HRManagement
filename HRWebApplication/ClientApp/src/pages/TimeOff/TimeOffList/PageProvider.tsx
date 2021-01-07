@@ -27,7 +27,7 @@ export function PageProvider(props: Props) {
   const [isModalNewVisible, setIsModalNewVisible] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const fetchEmployees = async () => {
+    const fetchAll = async () => {
       try {
         setListDataReady(false);
         const data = await apiEmployees.employees_GetAll();
@@ -40,7 +40,7 @@ export function PageProvider(props: Props) {
       }
     };
 
-    fetchEmployees();
+    fetchAll();
   }, []);
 
   const onDelete = React.useCallback(async (recordId: number) => {
