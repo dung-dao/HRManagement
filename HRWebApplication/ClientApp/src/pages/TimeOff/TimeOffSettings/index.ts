@@ -1,1 +1,1 @@
-export * from './TimeOffSettings';
+export * from './Page';
