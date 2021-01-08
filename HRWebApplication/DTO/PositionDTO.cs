@@ -14,8 +14,10 @@ namespace HRWebApplication.DTO
         public WorkTypeDTO WorkType { get; set; }
         public OrganizationUnitDTO Unit { get; set; }
 
+        #nullable enable
         public DateTime? LeaveDate { get; set; }
         public string? LeaveReason { get; set; }
+        #nullable disable
         //public virtual LeaveType LeaveType { get; set; }
     }
 }

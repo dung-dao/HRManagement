@@ -12,7 +12,7 @@ namespace HRService
         {
             services.AddScoped<IEmployeeRepostiory, EmployeeRepostiory>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
-            services.AddScoped<ITimeSheetRepository, TimeSheetRepository>();
+            services.AddScoped<ISalaryRepository, SalaryRepository>();
         }
     }
 }

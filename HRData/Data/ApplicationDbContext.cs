@@ -1,6 +1,7 @@
 ﻿using HRData.Models;
 using HRData.Models.JobModels;
 using HRData.Models.Organization;
+using HRData.Models.SalaryModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,22 +11,28 @@ namespace HRData.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
+        private const string SQL_DECIMAL = "decimal(18, 6)";
+        private const string SQL_DATE = "date";
+        private const string SQL_NOTE = "nvarchar(1000)";
+
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
 
         #region DbSet
         public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
-
         public DbSet<Employee> Employees { get; set; }
-
+        
+        //Position
         public DbSet<JobTitle> JobTitles { get; set; }
         public DbSet<JobCategory> JobCategories { get; set; }
         public DbSet<WorkType> WorkType { get; set; }
         public DbSet<Position> Positions { get; set; }
 
-        public DbSet<LeaveType> LeaveTypes { get; set; }
-        public DbSet<LeaveDetail> LeaveDetails { get; set; }
+        //Working & Leaving Log
+        public DbSet<WorkingLog> WorkingLogs { get; set; }
+        public DbSet<TimeOffType> TimeOffTypes { get; set; }
+        public DbSet<Holiday> Holidays { get; set; }
         #endregion
 
         private static void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
@@ -47,10 +54,12 @@ namespace HRData.Data
             RegisterEntity<Employee>(builder);
             RegisterEntity<Position>(builder);
 
-            RegisterEntity<LeaveType>(builder);
-            RegisterEntity<LeaveDetail>(builder);
-
+            RegisterEntity<SalaryPayment>(builder);
+            RegisterEntity<WorkingLog>(builder);
+            RegisterEntity<TimeOffType>(builder);
+            RegisterEntity<LeaveBalance>(builder);
             RegisterEntity<Holiday>(builder);
+
             #region Employee
             builder.Entity<Employee>(e =>
             {
@@ -67,6 +76,21 @@ namespace HRData.Data
                 po.Property(e => e.StartDate).HasColumnType("date");
                 po.Property(e => e.EndDate).HasColumnType("date");
                 po.Property(e => e.LeaveDate).HasColumnType("date");
+            });
+            #endregion
+
+            #region Salary
+            builder.Entity<SalaryPayment>(sp =>
+            {
+                sp.Property(e => e.Amount).HasColumnType(SQL_DECIMAL);
+                sp.Property(e => e.Period).HasColumnType(SQL_DATE);
+            });
+
+            builder.Entity<WorkingLog>(wl =>
+            {
+                wl.Property(e => e.Date).HasColumnType(SQL_DATE);
+                wl.Property(e => e.Note).HasColumnType(SQL_NOTE);
+                wl.Property(e => e.Type).HasConversion<string>();
             });
             #endregion
 
@@ -97,24 +121,39 @@ namespace HRData.Data
                 .OnDelete(DeleteBehavior.SetNull);
             #endregion
 
-            #region TimeSheet
-            builder.Entity<LeaveDetail>(ld =>
-            {
-                ld.HasOne(ld => ld.LeaveType)
-                .WithMany(lt => lt.LeaveDetails);
+            #region Salary
+            //Employee - WorkingLog
+            builder.Entity<Employee>()
+                .HasMany(e => e.WorkingLogs)
+                .WithOne(wl => wl.Employee);
 
-                ld.HasOne(ld => ld.Employee)
-                .WithMany(em => em.LeaveDetails)
-                .HasForeignKey(ld => ld.EmployeeId)
-                .OnDelete(DeleteBehavior.NoAction);
+            //WorkingLog - TimeOffType
+            builder.Entity<TimeOffType>()
+                .HasMany(e => e.WorkingLogs)
+                .WithOne(wl => wl.TimeOffType);
+            //TODO: Config relationship
 
-                ld.HasOne(ld => ld.Reviewer)
-                .WithMany(em => em.ApprovedDetails)
-                .HasForeignKey(ld => ld.ReviewerId)
-                .OnDelete(DeleteBehavior.NoAction);
-            });
+
+
+            //Employee has many salary payment
+            // builder.Entity<Employee>()
+            //     .HasMany(em => em.SalaryPayments)
+            //     .WithOne(sp => sp.Employee);
+
+            //SalaryPayment has many working log
+            // builder.Entity<SalaryPayment>()
+            //     .HasMany(sp => sp.WorkingLogs)
+            //     .WithOne(wl => wl.SalaryPayment);
+            
+
+            //Leave Balance
+            // builder.Entity<Employee>()
+            //     .HasMany(e => e.LeaveBalances)
+            //     .WithOne(lb => lb.Employee);
+            // builder.Entity<TimeOffType>()
+            //     .HasMany(tot => tot.LeaveBalances)
+            //     .WithOne(lb => lb.Type);
             #endregion
-
             #endregion
         }
     }

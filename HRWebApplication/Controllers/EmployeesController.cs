@@ -21,7 +21,11 @@ namespace HRWebApplication.Controllers
         private readonly DbSet<Employee> _employees;
         private readonly IEmployeeRepostiory _employeeRepo;
         #region Constructor
-        public EmployeesController(ApplicationDbContext context, IMapper mapper, IEmployeeRepostiory employeeRepostiory) : base(context, mapper)
+        public EmployeesController(
+            ApplicationDbContext context,
+            IMapper mapper,
+            IEmployeeRepostiory employeeRepostiory
+            ) : base(context, mapper)
         {
             this._employeeRepo = employeeRepostiory;
             this._employees = _context.Set<Employee>();

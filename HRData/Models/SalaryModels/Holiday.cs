@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HRData.Models
+namespace HRData.Models.SalaryModels
 {
     public class Holiday : EntityBase
     {
-        public int? Year { get; set; }
-        public int Month { get; set; }
-        public int Day { get; set; }
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
     }
 }

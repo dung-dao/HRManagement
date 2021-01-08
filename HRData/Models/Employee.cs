@@ -1,4 +1,5 @@
 ﻿using HRData.Models.JobModels;
+using HRData.Models.SalaryModels;
 using System;
 using System.Collections.Generic;
 
@@ -24,16 +25,12 @@ namespace HRData.Models
         public string CurrentAddress { get; set; }
 
         public string NationalId { get; set; }
-
-        //public EmployeeStatus Status { get; set; }
         public string UserId { get; set; }
 
-        #region Navigation
-        public virtual List<LeaveDetail> LeaveDetails { get; set; }
-        public virtual List<LeaveDetail> ApprovedDetails { get; set; }
         public virtual List<Position> Positions { get; set; }
         public virtual User User { get; set; }
-        //public virtual OrganizationUnit Unit { get; set; }
-        #endregion
+        public virtual List<WorkingLog> WorkingLogs { get; set; }
+        // public virtual List<SalaryPayment> SalaryPayments { get; set; }
+        // public virtual List<LeaveBalance> LeaveBalances{get;set;}
     }
 }

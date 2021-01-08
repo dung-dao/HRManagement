@@ -19,7 +19,10 @@ namespace HRData.Models.JobModels
 
         #region LeaveDetail
         public DateTime? LeaveDate { get; set; }
+        
+        #nullable enable
         public string? LeaveReason { get; set; }
+        #nullable disable
 
         //public virtual LeaveType LeaveType { get; set; }
         #endregion
