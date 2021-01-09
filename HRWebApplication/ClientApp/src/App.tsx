@@ -1,5 +1,6 @@
 import { LayoutProps } from 'antd/lib/layout';
 import { useAuth } from 'context/AuthContext';
+import { groupBy } from 'lodash';
 import { NotFound } from 'pages';
 import React from 'react';
 import { BrowserRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
@@ -23,18 +24,31 @@ function AuthRoute(routeProps: AuthRouteProps) {
       render={(props) => {
         if (!isRoleValid(requireRole, role)) return <Redirect to={returnRoute[role]} />;
 
-        if (Layout)
-          return (
-            <Layout>
-              <Component {...props} />
-            </Layout>
-          );
-
         return <Component {...props} />;
       }}
     />
   );
 }
+
+// How to make Navbar persist against routing: https://github.com/NearHuscarl/EShopClientFE/tree/master/src/routes
+// The answer: only render the <Layout /> once instead of each for per page
+const renderRoutes = () => {
+  return routesInRouter.map((route) => {
+    const Layout = route.layout || React.Fragment;
+
+    const NestedRoutes = () => (
+      <Switch>
+        <Layout>
+          {route.routes.map((routeProps) => (
+            <AuthRoute exact {...routeProps} key={routeProps.path} />
+          ))}
+        </Layout>
+      </Switch>
+    );
+
+    return <Route key={route.path} path={route.path} component={NestedRoutes} />;
+  });
+};
 
 export default function App() {
   return (
@@ -42,9 +56,7 @@ export default function App() {
       <ErrorBoundary>
         <Switch>
           <Redirect from="/" exact to={ROUTES.login} />
-          {routesInRouter.map((routeProps) => (
-            <AuthRoute exact {...routeProps} key={routeProps.path} />
-          ))}
+          {renderRoutes()}
           <Route exact path={'*'} component={NotFound} />
         </Switch>
       </ErrorBoundary>

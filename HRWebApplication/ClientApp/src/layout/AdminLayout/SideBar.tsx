@@ -3,7 +3,7 @@ import { Button, Layout, Menu, Tooltip } from 'antd';
 import { useAuth } from 'context/AuthContext';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { getSelectedMenuItemKey, RouteItem, ROUTES, routes } from 'routes';
+import { getRouteByPath, getSelectedMenuItemKey, RouteItem, ROUTES } from 'routes';
 import authService from 'services/AuthService';
 import { isRoleValid } from 'services/AuthService.util';
 import styled from 'styled-components';
@@ -65,6 +65,7 @@ const LayoutSider = styled(Layout.Sider)`
 export function Sidebar() {
   const { userRole, userProfile } = useAuth();
   const history = useHistory();
+  const appRoutes = getRouteByPath(ROUTES.app)!;
 
   return (
     <LayoutSider>
@@ -81,10 +82,10 @@ export function Sidebar() {
           <Menu
             theme="dark"
             mode="inline"
-            selectedKeys={[getSelectedMenuItemKey()]}
-            defaultOpenKeys={routes.map((it) => it.path)}
+            selectedKeys={[getSelectedMenuItemKey(ROUTES.app)]}
+            defaultOpenKeys={appRoutes.routes.map((it) => it.path)}
           >
-            {routes.map((routeItem) => {
+            {appRoutes.routes.map((routeItem) => {
               const renderMenuItem = ({ path, requireRole, menuItem }: RouteItem) => {
                 if (!menuItem || !isRoleValid(requireRole, userRole)) return null;
 
