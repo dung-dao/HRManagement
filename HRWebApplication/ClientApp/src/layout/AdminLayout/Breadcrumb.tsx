@@ -1,5 +1,6 @@
 import { Breadcrumb as AntdBreadCrumb, Typography } from 'antd';
 import React from 'react';
+import { ROUTES } from 'routes';
 import styled from 'styled-components';
 
 const extractBreadcrumb = {
@@ -25,7 +26,7 @@ const StyledAntdBreadcrumb = styled(AntdBreadCrumb)`
 export function Breadcrumb() {
   const loadBreadCrumbs = () => {
     return window.location.pathname
-      .replace(process.env.PUBLIC_URL, '')
+      .replace(process.env.PUBLIC_URL + ROUTES.app, '')
       .split('/')
       .filter((it) => it)
       .map((slug) => extractBreadcrumb[slug] || slug);
