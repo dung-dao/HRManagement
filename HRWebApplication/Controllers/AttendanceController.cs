@@ -44,7 +44,8 @@ namespace HRWebApplication.Controllers
                 Id = e.Id,
                 Date = e.Date,
                 Duration = e.Duration,
-                Note = e.Note
+                Note = e.Note,
+                LogStatus = e.LogStatus
             }).ToList();
         }
 
@@ -66,7 +67,8 @@ namespace HRWebApplication.Controllers
                     Id = attendance.Id,
                     Date = attendance.Date,
                     Duration = attendance.Duration,
-                    Note = attendance.Note
+                    Note = attendance.Note,
+                    LogStatus = attendance.LogStatus
                 };
             return NotFound();
         }
@@ -85,7 +87,7 @@ namespace HRWebApplication.Controllers
                 Date = data.Date,
                 Duration = data.Duration,
                 Note = data.Note,
-                RecordStatus = RecordStatus.Active,
+                RecordStatus = RecordStatus.Active
             };
 
             _salaryRepository.CreateAttendance(newAttendance, user.Employee);
@@ -131,7 +133,8 @@ namespace HRWebApplication.Controllers
                 Id = e.Id,
                 Date = e.Date,
                 Duration = e.Duration,
-                Note = e.Note
+                Note = e.Note,
+                LogStatus = e.LogStatus
             }).ToList();
         }
 
@@ -147,7 +150,8 @@ namespace HRWebApplication.Controllers
                     Id = attendance.Id,
                     Date = attendance.Date,
                     Duration = attendance.Duration,
-                    Note = attendance.Note
+                    Note = attendance.Note,
+                    LogStatus = attendance.LogStatus
                 };
             return NotFound();
         }
@@ -158,7 +162,7 @@ namespace HRWebApplication.Controllers
             var log = _salaryRepository.GetWorkingLogById(id);
             if (log is null)
                 return NotFound();
-            _salaryRepository.ApproveLog(log);
+            _salaryRepository.ApproveAttendance(log);
             _unitOfWork.Save();
             return NoContent();
         }
@@ -170,7 +174,7 @@ namespace HRWebApplication.Controllers
             if (log is null)
                 return NotFound();
 
-            _salaryRepository.RejectLog(log);
+            _salaryRepository.RejectAttendance(log);
             _unitOfWork.Save();
             return NoContent();
         }

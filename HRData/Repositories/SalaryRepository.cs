@@ -21,8 +21,11 @@ namespace HRData.Repositories
 
         WorkingLog GetAttendanceById(int id); //
 
-        void ApproveLog(WorkingLog wl); //
-        void RejectLog(WorkingLog wl); //
+        void ApproveAttendance(WorkingLog wl); //
+        void RejectAttendance(WorkingLog wl); //
+
+        void ApproveTimeOff(WorkingLog wl);
+        void RejectTimeOff(WorkingLog wl);
 
         //TimeOff
         IEnumerable<WorkingLog> GetTimeOffList();
@@ -58,7 +61,7 @@ namespace HRData.Repositories
             _employeeRepostiory = employeeRepostiory;
         }
 
-        public void ApproveLog(WorkingLog wl)
+        public void ApproveAttendance(WorkingLog wl)
         {
             wl.LogStatus = LogStatus.Approved;
         }
@@ -93,13 +96,14 @@ namespace HRData.Repositories
             .ToList();
         }
         public WorkingLog GetWorkingLogById(int id) => _context.WorkingLogs.Find(id);
-        public void RejectLog(WorkingLog wl)
+        public void RejectAttendance(WorkingLog wl)
         {
             wl.LogStatus = LogStatus.Rejected;
         }
 
         public void CreateAttendance(WorkingLog newAttendance, Employee employee)
         {
+            newAttendance.LogStatus = LogStatus.Pending;
             newAttendance.Employee = employee;
             _context.WorkingLogs.Add(newAttendance);
         }
@@ -306,6 +310,16 @@ namespace HRData.Repositories
             //Get last init balance date
             // if... frequency... base on date => check maximium carry over and add to new balance
 
+            throw new NotImplementedException();
+        }
+
+        public void ApproveTimeOff(WorkingLog wl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RejectTimeOff(WorkingLog wl)
+        {
             throw new NotImplementedException();
         }
     }
