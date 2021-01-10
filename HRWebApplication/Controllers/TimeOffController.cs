@@ -3,6 +3,7 @@ using Helper.Exceptions;
 using HRData.Models;
 using HRData.Models.SalaryModels;
 using HRData.Repositories;
+using HRWebApplication.DTO;
 using HRWebApplication.DTO.TimeSheet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,7 +51,8 @@ namespace HRWebApplication.Controllers
                 Duration = e.Duration,
                 Note = e.Note,
                 TimeOffType = _mapper.Map<TimeOffTypeDTO>(e.TimeOffType),
-                LogStatus = e.LogStatus
+                LogStatus = e.LogStatus,
+                Employee = _mapper.Map<EmployeeDTO>(e.Employee)
             }).ToList();
         }
 
@@ -73,7 +75,8 @@ namespace HRWebApplication.Controllers
                     Duration = log.Duration,
                     Note = log.Note,
                     TimeOffType = _mapper.Map<TimeOffTypeDTO>(log.TimeOffType),
-                    LogStatus = log.LogStatus
+                    LogStatus = log.LogStatus,
+                    Employee = _mapper.Map<EmployeeDTO>(log.Employee)
                 };
             return NotFound();
         }
@@ -160,7 +163,8 @@ namespace HRWebApplication.Controllers
                 Duration = e.Duration,
                 Note = e.Note,
                 TimeOffType = _mapper.Map<TimeOffTypeDTO>(e.TimeOffType),
-                LogStatus = e.LogStatus
+                LogStatus = e.LogStatus,
+                Employee = _mapper.Map<EmployeeDTO>(e.Employee)
             }).ToList();
         }
 
@@ -177,7 +181,8 @@ namespace HRWebApplication.Controllers
                     Duration = timeoff.Duration,
                     Note = timeoff.Note,
                     TimeOffType = _mapper.Map<TimeOffTypeDTO>(timeoff.TimeOffType),
-                    LogStatus = timeoff.LogStatus
+                    LogStatus = timeoff.LogStatus,
+                    Employee = _mapper.Map<EmployeeDTO>(timeoff.Employee)
                 };
             return NotFound();
         }

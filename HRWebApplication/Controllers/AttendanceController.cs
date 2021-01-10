@@ -98,7 +98,7 @@ namespace HRWebApplication.Controllers
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         [HttpPut("Me/{id}", Name = "UpdateMyAttendanceById")]
-        public IActionResult UpdateMyAttendanceById(int id, AttendanceDTO data)
+        public IActionResult UpdateMyAttendanceById(int id, [FromBody] AttendanceDTO data)
         {
             var user = GetAuthorizedUser();
             if (user is null)
@@ -116,6 +116,25 @@ namespace HRWebApplication.Controllers
             };
 
             _salaryRepository.UpdateAttendance(log, update);
+            _unitOfWork.Save();
+
+            return NoContent();
+        }
+
+
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
+        [HttpDelete("Me/{id}", Name = "DeleteMyAttendanceById")]
+        public IActionResult DeleteMyAttendanceById(int id)
+        {
+            var user = GetAuthorizedUser();
+            if (user is null)
+                return Unauthorized();
+
+            var log = _salaryRepository.GetWorkingLogById(id);
+            if (log.Employee.Id != user.Employee.Id)
+                return Unauthorized();
+
+            _salaryRepository.RemoveAttendance(log);
             _unitOfWork.Save();
 
             return NoContent();

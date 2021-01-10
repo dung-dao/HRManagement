@@ -1,6 +1,9 @@
 using HRData.Repositories;
+using HRWebApplication.DTO.TimeSheet;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace HRWebApplication.Controllers
 {
@@ -10,9 +13,10 @@ namespace HRWebApplication.Controllers
         {
         }
 
-        //public IActionResult AddLeaveEntitlement()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        [HttpGet]
+        public ActionResult<IEnumerable<LeaveEntitlementDTO>> Get()
+        {
+            return NoContent();
+        }
     }
 }

@@ -48,6 +48,7 @@ namespace HRData.Repositories
 
         //Helper
         WorkingLog GetWorkingLogById(int id);
+        void RemoveAttendance(WorkingLog log);
     }
     public class SalaryRepository : Repository, ISalaryRepository
     {
@@ -320,6 +321,11 @@ namespace HRData.Repositories
         public void RejectTimeOff(WorkingLog wl)
         {
             throw new NotImplementedException();
+        }
+
+        public void RemoveAttendance(WorkingLog log)
+        {
+            log.RecordStatus = RecordStatus.InActive;
         }
     }
 }
