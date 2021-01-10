@@ -17,12 +17,11 @@ namespace HRData.Models.SalaryModels
         public bool IsPaidTimeOff { get; set; }
         public AccrualFrequency Frequency { get; set; }
         public double MaximumCarryOver { get; set; }
+        public double InitialValue { get; set; }
 
+        //nav
         public virtual List<WorkingLog> WorkingLogs { get; set; }
         public virtual List<LeaveEntitlement> LeaveEntitlements { get; set; }
-
-
-
         public virtual List<Employee> Employees { get; set; }
     }
 }

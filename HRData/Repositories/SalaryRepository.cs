@@ -261,7 +261,7 @@ namespace HRData.Repositories
                               le.RecordStatus == RecordStatus.Active &&
                               le.Employee.Id == employee.Id &&
                               le.TimeOffType.Id == type.Id
-                          orderby le.LastUpdate descending
+                          //   orderby le.LastUpdate descending
                           select le;
             if (history is null)
                 return null;

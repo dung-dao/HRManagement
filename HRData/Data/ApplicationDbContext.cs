@@ -34,8 +34,8 @@ namespace HRData.Data
         public DbSet<TimeOffType> TimeOffTypes { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
 
-        public DbSet<SalaryPayment> SalaryPayments { get; set; }
         public DbSet<LeaveEntitlement> LeaveEntitlements { get; set; }
+        public DbSet<SalaryPayment> SalaryPayments { get; set; }
         #endregion
 
         private static void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
@@ -136,16 +136,6 @@ namespace HRData.Data
                 .HasMany(e => e.WorkingLogs)
                 .WithOne(wl => wl.TimeOffType);
 
-
-
-            // builder.Entity<Employee>()
-            //     .HasMany(e => e.LeaveEntitlements)
-            //     .WithOne(le => le.Employee);
-
-            // builder.Entity<TimeOffType>()
-            //     .HasMany(tof => tof.LeaveEntitlements)
-            //     .WithOne(le => le.TimeOffType);
-
             builder.Entity<Employee>()
                 .HasMany(e => e.TimeOffTypes)
                 .WithMany(t => t.Employees)
@@ -154,7 +144,6 @@ namespace HRData.Data
                     le => le.HasOne(le => le.Employee).WithMany(e => e.LeaveEntitlements)
                 );
             
-
             builder.Entity<Employee>()
                 .HasMany(e => e.SalaryPayments)
                 .WithOne(sp => sp.Employee);

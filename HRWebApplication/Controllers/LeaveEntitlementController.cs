@@ -1,5 +1,6 @@
 using HRData.Repositories;
 using HRWebApplication.DTO.TimeSheet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -13,9 +14,11 @@ namespace HRWebApplication.Controllers
         {
         }
 
+        [Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<LeaveEntitlementDTO>> Get()
         {
+            var user = GetAuthorizedUser();
             return NoContent();
         }
     }
