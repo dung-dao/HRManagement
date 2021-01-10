@@ -3,8 +3,8 @@ import { useRerender } from 'hooks/useRerender';
 import { pick } from 'lodash';
 import moment from 'moment';
 import React from 'react';
-import { LeaveTypeDTO } from 'services/ApiClient';
-import { apiLeaveType } from 'services/ApiClient.singleton';
+import { TimeOffDTO } from 'services/ApiClient';
+import { apiTimeOff } from 'services/ApiClient.singleton';
 import { momentToDate, required } from 'utils';
 import { usePage } from './PageProvider';
 
@@ -17,7 +17,7 @@ export function ModalNew() {
   const { isModalNewVisible, setIsModalNewVisible } = usePage();
   const forceRerender = useRerender();
   const [form] = Form.useForm();
-  const [leaveTypes, setLeaveTypes] = React.useState<LeaveTypeDTO[]>([]);
+  const [leaveTypes, setLeaveTypes] = React.useState<TimeOffDTO[]>([]);
   const [leaveTypesReady, setLeaveTypesReady] = React.useState<boolean>(false);
 
   const onSubmit = async (values) => {
@@ -61,7 +61,7 @@ export function ModalNew() {
     const fetctLeaveTypes = async () => {
       try {
         setLeaveTypesReady(false);
-        const data = await apiLeaveType.leaveType_GetAll();
+        const data = await apiTimeOff.timeOffAll();
         setLeaveTypes(data);
       } catch (err) {
         console.error(err);
@@ -129,7 +129,7 @@ export function ModalNew() {
           <Select placeholder="Chọn">
             {leaveTypes.map((it) => (
               <Select.Option value={String(it.id)} key={it.id}>
-                {it.name}
+                {it.note}
               </Select.Option>
             ))}
           </Select>

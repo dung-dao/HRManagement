@@ -1,4 +1,4 @@
-import {LeaveTypeDTO} from "../../services/ApiClient";
+import {TimeOffDTO} from "../../services/ApiClient";
 
 export const leaveTypes = [
   {
@@ -16,4 +16,4 @@ export const leaveTypes = [
     name: 'Kill in action',
     description: 'RIP',
   },
-] as LeaveTypeDTO[]
+] as TimeOffDTO[]

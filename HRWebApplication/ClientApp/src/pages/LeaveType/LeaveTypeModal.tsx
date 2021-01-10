@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, message, Modal } from 'antd';
-import { LeaveTypeDTO } from 'services/ApiClient';
+import { TimeOffDTO } from 'services/ApiClient';
 import { usePage } from './PageProvider';
 
 const formLayout = {
@@ -14,13 +14,13 @@ const title = {
 };
 
 export function LeaveTypeModal() {
-  const [form] = Form.useForm<LeaveTypeDTO>();
+  const [form] = Form.useForm<TimeOffDTO>();
   const { modalVisible, setModalVisible, modalType, record, api, data, setData } = usePage();
   const initialValues = modalType === 'edit' ? record : undefined;
   const [loading, setLoading] = React.useState(false);
   const onSubmit = async () => {
     try {
-      const values = (await form.validateFields()) as LeaveTypeDTO;
+      const values = (await form.validateFields()) as TimeOffDTO;
       setLoading(true);
 
       if (modalType === 'add') {

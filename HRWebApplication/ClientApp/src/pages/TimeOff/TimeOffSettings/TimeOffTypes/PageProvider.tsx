@@ -1,10 +1,10 @@
 import { message } from 'antd';
 import React from 'react';
-import { LeaveTypeDTO } from 'services/ApiClient';
-import { apiLeaveType } from 'services/ApiClient.singleton';
+import { TimeOffDTO } from 'services/ApiClient';
+import { apiTimeOff } from 'services/ApiClient.singleton';
 import { CreateUpdateModal } from './CreateUpdateModal';
 
-type RecordType = LeaveTypeDTO;
+type RecordType = TimeOffDTO;
 type ModalType = 'create' | 'update' | 'hidden';
 
 type PageContextData = {
@@ -18,7 +18,7 @@ type PageContextData = {
   modalVisibleType: ModalType;
   setModalVisibleType: React.Dispatch<React.SetStateAction<ModalType>>;
 
-  selectedRecord: RecordType | undefined; // selected record when on modal updating
+  selectedRecord: RecordType | undefined; // selected record when on modal UPDATING
   setSelectedRecord: React.Dispatch<React.SetStateAction<RecordType | undefined>>;
 };
 
@@ -30,7 +30,7 @@ export function PageProvider(props: Props) {
   const { children } = props;
 
   // data related states
-  const [listData, setListData] = React.useState<LeaveTypeDTO[]>([]);
+  const [listData, setListData] = React.useState<TimeOffDTO[]>([]);
   const [listDataReady, setListDataReady] = React.useState<boolean>(false);
 
   //  modal controlling related states
@@ -40,7 +40,7 @@ export function PageProvider(props: Props) {
   const fetchAll = React.useCallback(async () => {
     try {
       setListDataReady(false);
-      const data = await apiLeaveType.leaveType_GetAll();
+      const data = await apiTimeOff.timeOffAll();
       setListData(data);
     } catch (err) {
       console.error(err);
@@ -57,7 +57,7 @@ export function PageProvider(props: Props) {
   const onCreate = React.useCallback(
     async (record: RecordType) => {
       try {
-        await apiLeaveType.leaveType_Create(record);
+        await apiTimeOff.(record);
         setListData([...listData, record]);
         message.info('Tạo mới thành công');
       } catch (err) {
@@ -70,7 +70,7 @@ export function PageProvider(props: Props) {
 
   const onUpdate = React.useCallback(async (record: RecordType) => {
     try {
-      await apiLeaveType.leaveType_Update(record.id!, record);
+      await apiTimeOff.leaveType_Update(record.id!, record);
       setListData((data) =>
         data?.map((it) => (it.id === record.id! ? ({ ...it, ...record } as RecordType) : it)),
       );
@@ -83,7 +83,7 @@ export function PageProvider(props: Props) {
 
   const onDelete = React.useCallback(async (recordId: number) => {
     try {
-      await apiLeaveType.leaveType_Delete(recordId);
+      await apiTimeOff.leaveType_Delete(recordId);
       setListData((data) => data?.filter((it) => it.id !== recordId));
       message.info('Xoá thành công');
     } catch (err) {

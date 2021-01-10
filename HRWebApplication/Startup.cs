@@ -20,6 +20,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace HRWebApplication
 {
@@ -68,6 +69,10 @@ namespace HRWebApplication
 
             services.AddUserService("Some_kind_of_secret");
             services.AddHRServices();
+            services.AddMvc(option => option.EnableEndpointRouting = false).AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -103,11 +108,11 @@ namespace HRWebApplication
                 endpoints.MapRazorPages();
             });
 
-            //app.UseSpa(spa =>
-            //{
-            //    spa.Options.SourcePath = "ClientApp";
-            //    spa.UseReactDevelopmentServer(npmScript: "start");
-            //});
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+                spa.UseReactDevelopmentServer(npmScript: "start");
+            });
         }
     }
 }

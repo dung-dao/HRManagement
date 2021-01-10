@@ -12,7 +12,7 @@ namespace HRWebApplication.Controllers
     [ApiController]
     public class ApiControllerBase : ControllerBase
     {
-        private const string userIdKey = "userid";
+        private const string userIdKey = "UserId";
         protected readonly IUserRepository _userRepository;
 
         public ApiControllerBase(IUserRepository userRepository)

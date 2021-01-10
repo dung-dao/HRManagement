@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { LeaveTypeClient, LeaveTypeDTO } from '../../services/ApiClient';
+import { TimeOffClient, TimeOffDTO } from '../../services/ApiClient';
 import { useTry } from '../../hooks';
 import { LeaveTypeModal } from './LeaveTypeModal';
 import { ModalType, PageProvider } from './PageProvider';
@@ -30,13 +30,13 @@ const columns = [
 ];
 
 export function LeaveTypePage(props) {
-  const api = React.useRef(new LeaveTypeClient());
+  const api = React.useRef(new TimeOffClient());
   const { isPending, $try: tryGetAll, data, setData } = useTry(() =>
     api.current.leaveType_GetAll(),
   );
   const [modalVisible, setModalVisible] = React.useState(false);
   const [modalType, setModalType] = React.useState<ModalType>('add');
-  const [record, setRecord] = React.useState<LeaveTypeDTO>();
+  const [record, setRecord] = React.useState<TimeOffDTO>();
   const searchInputRef = React.useRef<any>();
   const [searchKeyword, setSearchKeyword] = React.useState('');
 

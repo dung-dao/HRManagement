@@ -9,7 +9,7 @@ export function ActionRenderer(text, record) {
   return (
     <Space size="small">
       <Button
-        title="Chỉnh sửa trực tiếp"
+        title="Chỉnh sửa"
         size="small"
         type="primary"
         onClick={() => {
@@ -21,7 +21,7 @@ export function ActionRenderer(text, record) {
       </Button>
       <Popconfirm
         placement="right"
-        title={'Bạn có chắc muốn xoá loại nghỉ phép này?'}
+        title={'Bạn có chắc muốn xoá?'}
         onConfirm={() => onDelete(record.id)}
         okText="Đồng ý"
         cancelText="Không"

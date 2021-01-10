@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { LeaveTypeDTO, LeaveTypeClient } from '../../services/ApiClient';
+import { TimeOffDTO, TimeOffClient } from '../../services/ApiClient';
 
 export type ModalType = 'add' | 'edit';
 type PageContextData = {
@@ -7,11 +7,11 @@ type PageContextData = {
   modalVisible: boolean;
   setModalType: (visible: ModalType) => void;
   modalType: ModalType;
-  setRecord: (visible: LeaveTypeDTO) => void;
-  record?: LeaveTypeDTO;
-  data: LeaveTypeDTO[];
-  setData: (data: LeaveTypeDTO[]) => void;
-  api: LeaveTypeClient;
+  setRecord: (visible: TimeOffDTO) => void;
+  record?: TimeOffDTO;
+  data: TimeOffDTO[];
+  setData: (data: TimeOffDTO[]) => void;
+  api: TimeOffClient;
 };
 
 export const PageContext = React.createContext<PageContextData>(undefined as any);
