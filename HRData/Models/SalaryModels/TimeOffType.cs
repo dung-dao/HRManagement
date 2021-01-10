@@ -13,8 +13,8 @@ namespace HRData.Models.SalaryModels
     }
     public class TimeOffType : EntityBase
     {
+        public string Name { get; set; }
         public bool IsPaidTimeOff { get; set; }
-        public int MyProperty { get; set; }
         public AccrualFrequency Frequency { get; set; }
         public double MaximumCarryOver { get; set; }
 

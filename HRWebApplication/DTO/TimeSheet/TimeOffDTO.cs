@@ -11,6 +11,7 @@ namespace HRWebApplication.DTO.TimeSheet
         public DateTime Date { get; set; }
         public double Duration { get; set; }
         public string Note { get; set; }
-        public TimeOffType TimeOffType { get; set; }
+        public LogStatus LogStatus { get; set; }
+        public TimeOffTypeDTO TimeOffType { get; set; }
     }
 }

@@ -140,6 +140,7 @@ namespace HRData.Repositories
 
         public void CreateTimeOff(WorkingLog newTimeOff, Employee employee)
         {
+            newTimeOff.LogStatus = LogStatus.Pending;
             double balance;
             LeaveEntitlement le = GetLeaveEntitlement(employee, newTimeOff.TimeOffType);
             if (le is null)
@@ -158,8 +159,6 @@ namespace HRData.Repositories
 
         public void UpdateMyTimeOff(WorkingLog log, WorkingLog update)
         {
-            if (log.LogStatus != LogStatus.Pending)
-                throw new Exception("Update approved data");
             log.Date = update.Date;
             log.Duration = update.Duration;
             log.Note = update.Note;

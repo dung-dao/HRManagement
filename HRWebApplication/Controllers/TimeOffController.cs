@@ -1,4 +1,5 @@
-﻿using Helper.Exceptions;
+﻿using AutoMapper;
+using Helper.Exceptions;
 using HRData.Models;
 using HRData.Models.SalaryModels;
 using HRData.Repositories;
@@ -18,15 +19,18 @@ namespace HRWebApplication.Controllers
     {
         private readonly ISalaryRepository _salaryRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public TimeOffController(
             IUserRepository userRepository,
             ISalaryRepository salaryRepository,
-            IUnitOfWork unitOfWork
+            IUnitOfWork unitOfWork,
+            IMapper mapper
         ) : base(userRepository)
         {
             _salaryRepository = salaryRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         #region MyTimeOff
@@ -45,7 +49,8 @@ namespace HRWebApplication.Controllers
                 Date = e.Date,
                 Duration = e.Duration,
                 Note = e.Note,
-                TimeOffType = e.TimeOffType
+                TimeOffType = _mapper.Map<TimeOffTypeDTO>(e.TimeOffType),
+                LogStatus = e.LogStatus
             }).ToList();
         }
 
@@ -67,7 +72,8 @@ namespace HRWebApplication.Controllers
                     Date = log.Date,
                     Duration = log.Duration,
                     Note = log.Note,
-                    TimeOffType = log.TimeOffType
+                    TimeOffType = _mapper.Map<TimeOffTypeDTO>(log.TimeOffType),
+                    LogStatus = log.LogStatus
                 };
             return NotFound();
         }
@@ -90,7 +96,7 @@ namespace HRWebApplication.Controllers
                 Duration = data.Duration,
                 Note = data.Note,
                 RecordStatus = RecordStatus.Active,
-                TimeOffType = data.TimeOffType
+                TimeOffType = timeOffType
             };
 
             try
@@ -114,6 +120,10 @@ namespace HRWebApplication.Controllers
             if (user is null)
                 return Unauthorized();
 
+            TimeOffType timeOffType = _salaryRepository.GetTimeOffTypeById(data.TimeOffType.Id);
+            if (timeOffType is null)
+                return NotFound();
+
             var updateTimeOff = new WorkingLog()
             {
                 Type = WorkingLogType.TimeOff,
@@ -121,12 +131,16 @@ namespace HRWebApplication.Controllers
                 Duration = data.Duration,
                 Note = data.Note,
                 RecordStatus = RecordStatus.Active,
-                TimeOffType = data.TimeOffType
+                TimeOffType = timeOffType
             };
 
             var log = _salaryRepository.GetWorkingLogById(id);
             if (log.Employee.Id != user.Employee.Id)
                 return Unauthorized();
+
+            if (log.LogStatus != LogStatus.Pending)
+                return Forbid();
+
             _salaryRepository.UpdateMyTimeOff(log, updateTimeOff);
             _unitOfWork.Save();
 
@@ -145,7 +159,8 @@ namespace HRWebApplication.Controllers
                 Date = e.Date,
                 Duration = e.Duration,
                 Note = e.Note,
-                TimeOffType = e.TimeOffType
+                TimeOffType = _mapper.Map<TimeOffTypeDTO>(e.TimeOffType),
+                LogStatus = e.LogStatus
             }).ToList();
         }
 
@@ -161,26 +176,23 @@ namespace HRWebApplication.Controllers
                     Date = timeoff.Date,
                     Duration = timeoff.Duration,
                     Note = timeoff.Note,
-                    TimeOffType = timeoff.TimeOffType
+                    TimeOffType = _mapper.Map<TimeOffTypeDTO>(timeoff.TimeOffType),
+                    LogStatus = timeoff.LogStatus
                 };
             return NotFound();
         }
 
-        // [HttpPost("{id}/approve")]
-        // public IActionResult Approve(int id)
-        // {
-        //     _salaryRepository.ApproveLog(id);
-        //     _unitOfWork.Save();
-        //     return NoContent();
-        // }
+        [HttpPost("{id}/approve")]
+        public IActionResult Approve(int id)
+        {
+            return NoContent();
+        }
 
-        // [HttpPost("{id}/reject")]
-        // public IActionResult Reject(int id)
-        // {
-        //     _salaryRepository.RejectLog(id);
-        //     _unitOfWork.Save();
-        //     return NoContent();
-        // }
+        [HttpPost("{id}/reject")]
+        public IActionResult Reject(int id)
+        {
+            return NoContent();
+        }
         #endregion
     }
 }
