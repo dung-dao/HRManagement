@@ -20,7 +20,7 @@ namespace HRWebApplication.Controllers
 
         public AttendanceController(
             IUserRepository userRepository,
-            ISalaryRepository salaryRepository, 
+            ISalaryRepository salaryRepository,
             IUnitOfWork unitOfWork
             ) : base(userRepository)
         {
@@ -29,14 +29,15 @@ namespace HRWebApplication.Controllers
         }
 
         #region MyAttendance
-        [HttpGet("Me")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        [HttpGet("Me", Name = "GetMyAttendance")]
         public ActionResult<IEnumerable<AttendanceDTO>> GetMyAttendance()
         {
             var user = GetAuthorizedUser();
             if (user is null)
                 return Unauthorized();
 
-            var logs = _salaryRepository.GetAttendanceList(user.Employee);
+            var logs = _salaryRepository.GetEmployeeAttendanceList(user.Employee);
 
             return logs.Select(e => new AttendanceDTO()
             {
@@ -47,14 +48,17 @@ namespace HRWebApplication.Controllers
             }).ToList();
         }
 
-        [HttpGet("Me/{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        [HttpGet("Me/{id}", Name = "GetMyAttendanceById")]
         public ActionResult<AttendanceDTO> GetMyAttendanceById(int id)
         {
             var user = GetAuthorizedUser();
             if (user is null)
                 return Unauthorized();
 
-            WorkingLog attendance = _salaryRepository.GetAttendanceById(user.Employee, id);
+            WorkingLog attendance = _salaryRepository.GetAttendanceById(id);
+            if (attendance.Employee.Id != user.Employee.Id)
+                return Unauthorized();
 
             if (attendance is not null)
                 return new AttendanceDTO()
@@ -67,7 +71,8 @@ namespace HRWebApplication.Controllers
             return NotFound();
         }
 
-        [HttpPost("Me")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
+        [HttpPost("Me", Name = "PostMyAttendance")]
         public ActionResult<AttendanceDTO> PostMyAttendance([FromBody] AttendanceDTO data)
         {
             var user = GetAuthorizedUser();
@@ -81,33 +86,34 @@ namespace HRWebApplication.Controllers
                 Duration = data.Duration,
                 Note = data.Note,
                 RecordStatus = RecordStatus.Active,
-                Employee = user.Employee
             };
 
-            _salaryRepository.CreateAttendance(newAttendance);
+            _salaryRepository.CreateAttendance(newAttendance, user.Employee);
             _unitOfWork.Save();
 
             return CreatedAtAction("GetAttendanceById", new { id = data.Id }, newAttendance);
         }
 
-        [HttpPut("Me/{id}")]
-        public IActionResult UpdateAttendanceById(int id, AttendanceDTO data)
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
+        [HttpPut("Me/{id}", Name = "UpdateMyAttendanceById")]
+        public IActionResult UpdateMyAttendanceById(int id, AttendanceDTO data)
         {
             var user = GetAuthorizedUser();
             if (user is null)
                 return Unauthorized();
 
-            var updateAttendance = new WorkingLog()
+            var log = _salaryRepository.GetWorkingLogById(data.Id);
+            if (log.Employee.Id != user.Employee.Id)
+                return Unauthorized();
+
+            var update = new WorkingLog()
             {
-                Type = WorkingLogType.Attendance,
                 Date = data.Date,
                 Duration = data.Duration,
                 Note = data.Note,
-                RecordStatus = RecordStatus.Active,
-                Employee = user.Employee
             };
 
-            _salaryRepository.UpdateMyAttendance(user.Employee, updateAttendance);
+            _salaryRepository.UpdateAttendance(log, update);
             _unitOfWork.Save();
 
             return NoContent();
@@ -115,7 +121,8 @@ namespace HRWebApplication.Controllers
         #endregion
 
         #region EmployeeAttendance
-        [HttpGet]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        [HttpGet(Name = "GetAttendance")]
         public ActionResult<IEnumerable<AttendanceDTO>> GetAttendance()
         {
             IEnumerable<WorkingLog> logs = _salaryRepository.GetAttendanceList();
@@ -128,7 +135,8 @@ namespace HRWebApplication.Controllers
             }).ToList();
         }
 
-        [HttpGet("{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        [HttpGet("{id}", Name = "GetAttendanceById")]
         public ActionResult<AttendanceDTO> GetAttendanceById(int id)
         {
             WorkingLog attendance = _salaryRepository.GetAttendanceById(id);
@@ -144,18 +152,25 @@ namespace HRWebApplication.Controllers
             return NotFound();
         }
 
-        [HttpPost("{id}/approve")]
-        public IActionResult Approve(int id)
+        [HttpPost("{id}/approve", Name = "ApproveAttendance")]
+        public IActionResult ApproveAttendance(int id)
         {
-            _salaryRepository.ApproveLog(id);
+            var log = _salaryRepository.GetWorkingLogById(id);
+            if (log is null)
+                return NotFound();
+            _salaryRepository.ApproveLog(log);
             _unitOfWork.Save();
             return NoContent();
         }
 
-        [HttpPost("{id}/reject")]
-        public IActionResult Reject(int id)
+        [HttpPost("{id}/reject", Name = "RejectAttendance")]
+        public IActionResult RejectAttendance(int id)
         {
-            _salaryRepository.RejectLog(id);
+            var log = _salaryRepository.GetWorkingLogById(id);
+            if (log is null)
+                return NotFound();
+
+            _salaryRepository.RejectLog(log);
             _unitOfWork.Save();
             return NoContent();
         }

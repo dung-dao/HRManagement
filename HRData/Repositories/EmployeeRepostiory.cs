@@ -21,6 +21,8 @@ namespace HRData.Repositories
         void Delete(Employee employee);
         EmployeeStatus GetEmployeeStatus(Employee employee);
         int GetEmployeeNoByUnit(int unitId);
+
+        IEnumerable<Employee> GetWorkingEmployees();
         #endregion
 
         #region Position
@@ -101,7 +103,7 @@ namespace HRData.Repositories
             if (pos is null)
                 throw new Exception("Position not exists");
 
-            if (GetEmployeeStatus(employee)!= EmployeeStatus.Working)
+            if (GetEmployeeStatus(employee) != EmployeeStatus.Working)
             {
                 throw new Exception("No position to leave");
             }
@@ -150,6 +152,20 @@ namespace HRData.Repositories
                 .ToList() // NOTE: might hurt the performance
                 .Where(employee => GetEmployeeStatus(employee) == EmployeeStatus.Working)
                 .Count(employee => GetCurentPosition(employee).Unit.Id == unitId);
+        }
+
+        public IEnumerable<Employee> GetWorkingEmployees()
+        {
+            var now = DateTime.Now;
+
+            return from e in _context.Employees
+                   join pos in _context.Positions on e.Id equals pos.Employee.Id
+                   where
+                       e.RecordStatus == RecordStatus.Active &&
+                       pos.StartDate < DateTime.Now &&
+                       pos.EndDate >= DateTime.Now &&
+                       pos.LeaveDate == null
+                   select e;
         }
     }
 }

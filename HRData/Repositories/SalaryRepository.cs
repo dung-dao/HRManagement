@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Helper.Exceptions;
 using HRData.Data;
 using HRData.Models;
 using HRData.Models.SalaryModels;
@@ -12,97 +13,299 @@ namespace HRData.Repositories
     public interface ISalaryRepository
     {
         //Attendance
-        List<WorkingLog> GetAttendanceList(Employee employee);
-        void CreateAttendance(WorkingLog newAttendance);
-        void UpdateMyAttendance(Employee employee, WorkingLog updateAttendance);
-        IEnumerable<WorkingLog> GetAttendanceList();
-        WorkingLog GetAttendanceById(Employee employee, int id);
-        WorkingLog GetAttendanceById(int id);
+        IEnumerable<WorkingLog> GetAttendanceList(); //
+        List<WorkingLog> GetEmployeeAttendanceList(Employee employee); //
 
-        void ApproveLog(int id);
-        void RejectLog(int id);
+        void CreateAttendance(WorkingLog newAttendance, Employee employee); //
+        void UpdateAttendance(WorkingLog log, WorkingLog update); //
+
+        WorkingLog GetAttendanceById(int id); //
+
+        void ApproveLog(WorkingLog wl); //
+        void RejectLog(WorkingLog wl); //
 
         //TimeOff
-        IEnumerable<WorkingLog> GetTimeOffList(Employee employee);
-        WorkingLog GetTimeOffById(Employee employee, int id);
-        void CreateTimeOff(WorkingLog newTimeOff);
-        void UpdateMyTimeOff(Employee employee, WorkingLog updateTimeOff);
         IEnumerable<WorkingLog> GetTimeOffList();
+        IEnumerable<WorkingLog> GetTimeOffList(Employee employee);
+        LeaveEntitlement GetLeaveEntitlement(Employee employee, TimeOffType type);
+
+        void CreateTimeOff(WorkingLog newTimeOff, Employee employee);
+        void UpdateMyTimeOff(WorkingLog log, WorkingLog update);
         WorkingLog GetTimeOffById(int id);
+
+        //TimeOffType
+        TimeOffType GetTimeOffTypeById(int id);
+
+        void UpdateTimeOffBalance();
+
+        //Caculate Salary
+        SalaryPayment GenerateSalaryPayment(Employee employee, DateTime date);
+        SalaryPayment GetSalaryPaymentById(int id);
+        void ConfirmSalaryPayment(SalaryPayment salaryPayment);
+
+        //Helper
+        WorkingLog GetWorkingLogById(int id);
     }
     public class SalaryRepository : Repository, ISalaryRepository
     {
-        public SalaryRepository(ApplicationDbContext context) : base(context)
+        private readonly IEmployeeRepostiory _employeeRepostiory;
+
+        public SalaryRepository(
+            ApplicationDbContext context,
+            IEmployeeRepostiory employeeRepostiory
+            ) : base(context)
         {
+            _employeeRepostiory = employeeRepostiory;
         }
 
-        public void ApproveLog(int id)
+        public void ApproveLog(WorkingLog wl)
         {
-            throw new NotImplementedException();
-        }
-
-        public void CreateAttendance(WorkingLog newAttendance)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CreateTimeOff(WorkingLog newTimeOff)
-        {
-            throw new NotImplementedException();
-        }
-
-        public WorkingLog GetAttendanceById(Employee employee, int id)
-        {
-            throw new NotImplementedException();
+            wl.LogStatus = LogStatus.Approved;
         }
 
         public WorkingLog GetAttendanceById(int id)
         {
-            throw new NotImplementedException();
+            return _context.WorkingLogs.FirstOrDefault(
+                 e => e.Id == id &&
+                 e.Type == WorkingLogType.Attendance &&
+                 e.RecordStatus == RecordStatus.Active
+                 );
         }
 
-        public List<WorkingLog> GetAttendanceList(Employee employee)
+        public List<WorkingLog> GetEmployeeAttendanceList(Employee employee)
         {
-            throw new NotImplementedException();
+            return _context.WorkingLogs
+            .Where(e =>
+                e.Type == WorkingLogType.Attendance &&
+                e.RecordStatus == RecordStatus.Active &&
+                e.Employee.Id == employee.Id
+            ).OrderByDescending(wl => wl.Date)
+            .ToList();
         }
 
         public IEnumerable<WorkingLog> GetAttendanceList()
         {
-            throw new NotImplementedException();
+            return _context.WorkingLogs
+            .Where(e =>
+                e.RecordStatus == RecordStatus.Active &&
+                e.Type == WorkingLogType.Attendance
+            ).OrderByDescending(wl => wl.Date)
+            .ToList();
+        }
+        public WorkingLog GetWorkingLogById(int id) => _context.WorkingLogs.Find(id);
+        public void RejectLog(WorkingLog wl)
+        {
+            wl.LogStatus = LogStatus.Rejected;
         }
 
-        public WorkingLog GetTimeOffById(Employee employee, int id)
+        public void CreateAttendance(WorkingLog newAttendance, Employee employee)
         {
-            throw new NotImplementedException();
+            newAttendance.Employee = employee;
+            _context.WorkingLogs.Add(newAttendance);
         }
 
-        public WorkingLog GetTimeOffById(int id)
+        public void UpdateAttendance(WorkingLog log, WorkingLog update)
         {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<WorkingLog> GetTimeOffList(Employee employee)
-        {
-            throw new NotImplementedException();
+            if (log.LogStatus != LogStatus.Pending)
+                throw new Exception("Update approved data");
+            log.Date = update.Date;
+            log.Duration = update.Duration;
+            log.Note = update.Note;
         }
 
         public IEnumerable<WorkingLog> GetTimeOffList()
         {
-            throw new NotImplementedException();
+            return _context.WorkingLogs
+            .Where(e =>
+                e.RecordStatus == RecordStatus.Active &&
+                e.Type == WorkingLogType.TimeOff
+            ).OrderByDescending(wl => wl.Date)
+            .ToList();
         }
 
-        public void RejectLog(int id)
+        public IEnumerable<WorkingLog> GetTimeOffList(Employee employee)
         {
-            throw new NotImplementedException();
+            return _context.WorkingLogs
+            .Where(e =>
+                e.Type == WorkingLogType.TimeOff &&
+                e.RecordStatus == RecordStatus.Active &&
+                e.Employee.Id == employee.Id
+            ).OrderByDescending(wl => wl.Date)
+            .ToList();
         }
 
-        public void UpdateMyAttendance(Employee employee, WorkingLog updateAttendance)
+        public void CreateTimeOff(WorkingLog newTimeOff, Employee employee)
         {
-            throw new NotImplementedException();
+            double balance;
+            LeaveEntitlement le = GetLeaveEntitlement(employee, newTimeOff.TimeOffType);
+            if (le is null)
+                balance = 0;
+            else
+                balance = le.Balance;
+
+            if (balance < newTimeOff.Duration && newTimeOff.TimeOffType.IsPaidTimeOff)
+                throw new ClientException();
+
+            newTimeOff.Employee = employee;
+            _context.WorkingLogs.Add(newTimeOff);
+
+
         }
 
-        public void UpdateMyTimeOff(Employee employee, WorkingLog updateTimeOff)
+        public void UpdateMyTimeOff(WorkingLog log, WorkingLog update)
         {
+            if (log.LogStatus != LogStatus.Pending)
+                throw new Exception("Update approved data");
+            log.Date = update.Date;
+            log.Duration = update.Duration;
+            log.Note = update.Note;
+            log.TimeOffType = update.TimeOffType;
+        }
+
+        public WorkingLog GetTimeOffById(int id)
+        {
+            return _context.WorkingLogs.FirstOrDefault(
+                e => e.Id == id &&
+                e.Type == WorkingLogType.TimeOff &&
+                e.RecordStatus == RecordStatus.Active
+                );
+        }
+
+        public SalaryPayment GenerateSalaryPayment(Employee employee, DateTime date)
+        {
+            double salaryTime = 0.0;
+            var position = _employeeRepostiory.GetCurentPosition(employee);
+            double positionSalary = position != null ? decimal.ToDouble(position.Salary) : 0.0;
+
+            //Clean Temp
+            var temp = _context.SalaryPayments
+                            .Where(sp => sp.Employee.Id == employee.Id && sp.PaymentStatus == SalaryPaymentStatus.Temporary);
+            _context.SalaryPayments.RemoveRange(temp);
+
+            SalaryPayment lastPayment = _context.SalaryPayments
+                .Where(
+                    sp => sp.Employee.Id == employee.Id &&
+                    sp.PaymentStatus == SalaryPaymentStatus.Confirmed
+                ).OrderByDescending(sp => sp.Period)
+                .FirstOrDefault();
+
+            var attendanceTime = from wl in _context.WorkingLogs
+                                 where wl.RecordStatus == RecordStatus.Active &&
+                                 wl.Type == WorkingLogType.Attendance &&
+                                 wl.LogStatus == LogStatus.Approved &&
+                                 wl.Date > lastPayment.Period && wl.Date <= DateTime.Now
+                                 group wl by wl.Date into g
+                                 select new { Date = g.Key, Duration = g.Sum(e => e.Duration) };
+
+            var timeoff = from wl in _context.WorkingLogs
+                          where wl.RecordStatus == RecordStatus.Active &&
+                          wl.Type == WorkingLogType.TimeOff &&
+                          wl.LogStatus == LogStatus.Approved &&
+                          wl.Date > lastPayment.Period && wl.Date <= DateTime.Now &&
+                          wl.TimeOffType.IsPaidTimeOff
+                          select wl.Duration;
+
+            var holidayNum = (from hd in _context.Holidays
+                              where hd.From > lastPayment.Period &&
+                              hd.To <= DateTime.Now &&
+                              hd.RecordStatus == RecordStatus.Active
+                              select hd.Id).Count();
+
+            //Caculate
+            //Attendance
+            foreach (var e in attendanceTime)
+            {
+                if (e.Duration < 4) //Làm ít quá
+                    salaryTime += e.Duration * 0.7;
+                else if (e.Duration <= 8) //Bình thường
+                    salaryTime += e.Duration;
+                else if (e.Duration > 8) //OT
+                    salaryTime += 8 + (e.Duration - 8) * 1.2;
+            }
+
+            foreach (var e in timeoff)
+            {
+                salaryTime += e;
+            }
+
+            //Holiday
+            salaryTime += holidayNum * 8;
+
+            double TotalSalary = positionSalary / 23 * salaryTime;
+
+            SalaryPayment payment = new SalaryPayment()
+            {
+                PaymentStatus = SalaryPaymentStatus.Temporary,
+                Amount = Convert.ToDecimal(TotalSalary),
+                Period = DateTime.Today,
+                RecordStatus = RecordStatus.Active,
+                Employee = employee
+            };
+
+            _context.SalaryPayments.Add(payment);
+            return payment;
+
+            //Công thức:
+            //Nếu thời gian làm việc trong ngày lớn hơn 9h --> nhận 120% lương
+            //Nếu thời gian làm việc trong ngày lớn hơn nhỏ hơn 4 tiếng --> nhận 70% lương
+        }
+
+        public LeaveEntitlement GetLeaveEntitlement(Employee employee, TimeOffType type)
+        {
+            var history = from le in _context.LeaveEntitlements
+                          where
+                              le.RecordStatus == RecordStatus.Active &&
+                              le.Employee.Id == employee.Id &&
+                              le.TimeOffType.Id == type.Id
+                          orderby le.LastUpdate descending
+                          select le;
+            if (history is null)
+                return null;
+            return history.First();
+        }
+
+        public TimeOffType GetTimeOffTypeById(int id)
+        {
+            return _context.TimeOffTypes.Find(id);
+        }
+
+        public void ConfirmSalaryPayment(SalaryPayment salaryPayment)
+        {
+            salaryPayment.PaymentStatus = SalaryPaymentStatus.Confirmed;
+        }
+
+        public SalaryPayment GetSalaryPaymentById(int id)
+        {
+            return _context.SalaryPayments.Find(id);
+        }
+
+        public void UpdateTimeOffBalance()
+        {
+            var employees = _employeeRepostiory.GetWorkingEmployees();
+
+            foreach (var e in employees)
+            {
+                UpdateEmployeeTimeOffBalance(e);
+            }
+
+        }
+
+        private void UpdateEmployeeTimeOffBalance(Employee employee)
+        {
+            var timeOffTypes = employee.TimeOffTypes;
+            List<LeaveEntitlement> entitlements = new List<LeaveEntitlement>();
+
+            foreach (var t in timeOffTypes)
+            {
+                var le = GetLeaveEntitlement(employee, t);
+                entitlements.Add(le);
+            }
+
+            //Với mỗi employee
+            //Get danh sách TimeOffType
+            //Get last init balance date
+            // if... frequency... base on date => check maximium carry over and add to new balance
+
             throw new NotImplementedException();
         }
     }

@@ -1,4 +1,5 @@
-﻿using HRData.Models;
+﻿using Helper.Exceptions;
+using HRData.Models;
 using HRData.Models.SalaryModels;
 using HRData.Repositories;
 using HRWebApplication.DTO.TimeSheet;
@@ -55,7 +56,9 @@ namespace HRWebApplication.Controllers
             if (user is null)
                 return Unauthorized();
 
-            WorkingLog log = _salaryRepository.GetTimeOffById(user.Employee, id);
+            WorkingLog log = _salaryRepository.GetTimeOffById(id);
+            if (log.Employee.Id != user.Employee.Id)
+                return Unauthorized();
 
             if (log is not null)
                 return new TimeOffDTO()
@@ -76,7 +79,9 @@ namespace HRWebApplication.Controllers
             if (user is null)
                 return Unauthorized();
 
-
+            TimeOffType timeOffType = _salaryRepository.GetTimeOffTypeById(data.TimeOffType.Id);
+            if (timeOffType is null)
+                return NotFound();
 
             var newTimeOff = new WorkingLog()
             {
@@ -85,11 +90,18 @@ namespace HRWebApplication.Controllers
                 Duration = data.Duration,
                 Note = data.Note,
                 RecordStatus = RecordStatus.Active,
-                Employee = user.Employee,
                 TimeOffType = data.TimeOffType
             };
 
-            _salaryRepository.CreateTimeOff(newTimeOff);
+            try
+            {
+                _salaryRepository.CreateTimeOff(newTimeOff, user.Employee);
+            }
+            catch (ClientException)
+            {
+                return BadRequest();
+                throw;
+            }
             _unitOfWork.Save();
 
             return CreatedAtAction("GetMyTimeOffById", new { id = data.Id }, newTimeOff);
@@ -109,11 +121,13 @@ namespace HRWebApplication.Controllers
                 Duration = data.Duration,
                 Note = data.Note,
                 RecordStatus = RecordStatus.Active,
-                Employee = user.Employee,
                 TimeOffType = data.TimeOffType
             };
 
-            _salaryRepository.UpdateMyTimeOff(user.Employee, updateTimeOff);
+            var log = _salaryRepository.GetWorkingLogById(id);
+            if (log.Employee.Id != user.Employee.Id)
+                return Unauthorized();
+            _salaryRepository.UpdateMyTimeOff(log, updateTimeOff);
             _unitOfWork.Save();
 
             return NoContent();
@@ -152,21 +166,21 @@ namespace HRWebApplication.Controllers
             return NotFound();
         }
 
-        [HttpPost("{id}/approve")]
-        public IActionResult Approve(int id)
-        {
-            _salaryRepository.ApproveLog(id);
-            _unitOfWork.Save();
-            return NoContent();
-        }
+        // [HttpPost("{id}/approve")]
+        // public IActionResult Approve(int id)
+        // {
+        //     _salaryRepository.ApproveLog(id);
+        //     _unitOfWork.Save();
+        //     return NoContent();
+        // }
 
-        [HttpPost("{id}/reject")]
-        public IActionResult Reject(int id)
-        {
-            _salaryRepository.RejectLog(id);
-            _unitOfWork.Save();
-            return NoContent();
-        }
+        // [HttpPost("{id}/reject")]
+        // public IActionResult Reject(int id)
+        // {
+        //     _salaryRepository.RejectLog(id);
+        //     _unitOfWork.Save();
+        //     return NoContent();
+        // }
         #endregion
     }
 }

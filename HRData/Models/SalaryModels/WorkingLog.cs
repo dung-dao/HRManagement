@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace HRData.Models.SalaryModels
 {
+    public enum LogStatus
+    {
+        Pending,
+        Approved,
+        Rejected
+    }
     public enum WorkingLogType
     {
         Attendance = 1,
@@ -18,6 +24,7 @@ namespace HRData.Models.SalaryModels
         public double Duration { get; set; }
         public string Note { get; set; }
 
+        public LogStatus LogStatus { get; set; }
         public virtual Employee Employee { get; set; }
         public virtual TimeOffType TimeOffType { get; set; }
     }

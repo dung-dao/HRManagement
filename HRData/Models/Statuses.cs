@@ -9,7 +9,6 @@ namespace HRData.Models
     public enum RecordStatus
     {
         Active = 1,
-        InActive = 2,
-        ReadOnly = 3
+        InActive = 2
     }
 }

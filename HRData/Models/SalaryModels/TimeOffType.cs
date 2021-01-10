@@ -19,6 +19,10 @@ namespace HRData.Models.SalaryModels
         public double MaximumCarryOver { get; set; }
 
         public virtual List<WorkingLog> WorkingLogs { get; set; }
-        public virtual List<LeaveBalance> LeaveBalances { get; set; }
+        public virtual List<LeaveEntitlement> LeaveEntitlements { get; set; }
+
+
+
+        public virtual List<Employee> Employees { get; set; }
     }
 }

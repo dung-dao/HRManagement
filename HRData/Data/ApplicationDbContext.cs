@@ -22,7 +22,7 @@ namespace HRData.Data
         #region DbSet
         public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
         public DbSet<Employee> Employees { get; set; }
-        
+
         //Position
         public DbSet<JobTitle> JobTitles { get; set; }
         public DbSet<JobCategory> JobCategories { get; set; }
@@ -33,6 +33,9 @@ namespace HRData.Data
         public DbSet<WorkingLog> WorkingLogs { get; set; }
         public DbSet<TimeOffType> TimeOffTypes { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
+
+        public DbSet<SalaryPayment> SalaryPayments { get; set; }
+        public DbSet<LeaveEntitlement> LeaveEntitlements { get; set; }
         #endregion
 
         private static void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
@@ -57,7 +60,7 @@ namespace HRData.Data
             RegisterEntity<SalaryPayment>(builder);
             RegisterEntity<WorkingLog>(builder);
             RegisterEntity<TimeOffType>(builder);
-            RegisterEntity<LeaveBalance>(builder);
+            RegisterEntity<LeaveEntitlement>(builder);
             RegisterEntity<Holiday>(builder);
 
             #region Employee
@@ -90,6 +93,7 @@ namespace HRData.Data
             {
                 wl.Property(e => e.Date).HasColumnType(SQL_DATE);
                 wl.Property(e => e.Note).HasColumnType(SQL_NOTE);
+                wl.Property(e => e.LogStatus).HasConversion<string>();
                 wl.Property(e => e.Type).HasConversion<string>();
             });
             #endregion
@@ -131,28 +135,29 @@ namespace HRData.Data
             builder.Entity<TimeOffType>()
                 .HasMany(e => e.WorkingLogs)
                 .WithOne(wl => wl.TimeOffType);
-            //TODO: Config relationship
 
 
 
-            //Employee has many salary payment
             // builder.Entity<Employee>()
-            //     .HasMany(em => em.SalaryPayments)
-            //     .WithOne(sp => sp.Employee);
+            //     .HasMany(e => e.LeaveEntitlements)
+            //     .WithOne(le => le.Employee);
 
-            //SalaryPayment has many working log
-            // builder.Entity<SalaryPayment>()
-            //     .HasMany(sp => sp.WorkingLogs)
-            //     .WithOne(wl => wl.SalaryPayment);
+            // builder.Entity<TimeOffType>()
+            //     .HasMany(tof => tof.LeaveEntitlements)
+            //     .WithOne(le => le.TimeOffType);
+
+            builder.Entity<Employee>()
+                .HasMany(e => e.TimeOffTypes)
+                .WithMany(t => t.Employees)
+                .UsingEntity<LeaveEntitlement>(
+                    le => le.HasOne(le => le.TimeOffType).WithMany(t => t.LeaveEntitlements),
+                    le => le.HasOne(le => le.Employee).WithMany(e => e.LeaveEntitlements)
+                );
             
 
-            //Leave Balance
-            // builder.Entity<Employee>()
-            //     .HasMany(e => e.LeaveBalances)
-            //     .WithOne(lb => lb.Employee);
-            // builder.Entity<TimeOffType>()
-            //     .HasMany(tot => tot.LeaveBalances)
-            //     .WithOne(lb => lb.Type);
+            builder.Entity<Employee>()
+                .HasMany(e => e.SalaryPayments)
+                .WithOne(sp => sp.Employee);
             #endregion
             #endregion
         }
