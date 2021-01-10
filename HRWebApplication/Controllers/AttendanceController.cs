@@ -1,6 +1,8 @@
-﻿using HRData.Models;
+﻿using AutoMapper;
+using HRData.Models;
 using HRData.Models.SalaryModels;
 using HRData.Repositories;
+using HRWebApplication.DTO;
 using HRWebApplication.DTO.TimeSheet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +19,18 @@ namespace HRWebApplication.Controllers
     {
         private readonly ISalaryRepository _salaryRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public AttendanceController(
             IUserRepository userRepository,
             ISalaryRepository salaryRepository,
+            IMapper mapper,
             IUnitOfWork unitOfWork
             ) : base(userRepository)
         {
             _salaryRepository = salaryRepository;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         #region MyAttendance
@@ -153,7 +158,8 @@ namespace HRWebApplication.Controllers
                 Date = e.Date,
                 Duration = e.Duration,
                 Note = e.Note,
-                LogStatus = e.LogStatus
+                LogStatus = e.LogStatus,
+                Employee = _mapper.Map<EmployeeDTO>(e.Employee)
             }).ToList();
         }
 
@@ -161,16 +167,17 @@ namespace HRWebApplication.Controllers
         [HttpGet("{id}", Name = "GetAttendanceById")]
         public ActionResult<AttendanceDTO> GetAttendanceById(int id)
         {
-            WorkingLog attendance = _salaryRepository.GetAttendanceById(id);
+            WorkingLog e = _salaryRepository.GetAttendanceById(id);
 
-            if (attendance is not null)
+            if (e is not null)
                 return new AttendanceDTO()
                 {
-                    Id = attendance.Id,
-                    Date = attendance.Date,
-                    Duration = attendance.Duration,
-                    Note = attendance.Note,
-                    LogStatus = attendance.LogStatus
+                    Id = e.Id,
+                    Date = e.Date,
+                    Duration = e.Duration,
+                    Note = e.Note,
+                    LogStatus = e.LogStatus,
+                    Employee = _mapper.Map<EmployeeDTO>(e.Employee)
                 };
             return NotFound();
         }

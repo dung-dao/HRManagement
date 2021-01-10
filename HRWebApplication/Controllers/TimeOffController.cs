@@ -51,8 +51,7 @@ namespace HRWebApplication.Controllers
                 Duration = e.Duration,
                 Note = e.Note,
                 TimeOffType = _mapper.Map<TimeOffTypeDTO>(e.TimeOffType),
-                LogStatus = e.LogStatus,
-                Employee = _mapper.Map<EmployeeDTO>(e.Employee)
+                LogStatus = e.LogStatus
             }).ToList();
         }
 
@@ -75,8 +74,7 @@ namespace HRWebApplication.Controllers
                     Duration = log.Duration,
                     Note = log.Note,
                     TimeOffType = _mapper.Map<TimeOffTypeDTO>(log.TimeOffType),
-                    LogStatus = log.LogStatus,
-                    Employee = _mapper.Map<EmployeeDTO>(log.Employee)
+                    LogStatus = log.LogStatus
                 };
             return NotFound();
         }

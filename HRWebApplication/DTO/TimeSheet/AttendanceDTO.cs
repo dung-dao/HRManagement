@@ -8,10 +8,10 @@ namespace HRWebApplication.DTO.TimeSheet
 {
     public class AttendanceDTO : DTOBase
     {
+        public EmployeeDTO Employee { get; set; }
         public DateTime Date { get; set; }
         public double Duration { get; set; }
         public string Note { get; set; }
         public LogStatus LogStatus { get; set; }
-
     }
 }
