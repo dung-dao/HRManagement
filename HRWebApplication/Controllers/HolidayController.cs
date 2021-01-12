@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HRWebApplication.Controllers
 {
-    [Authorize(Roles = "Admin,Manager")]
+    //[Authorize(Roles = "Admin,Manager")]
     public class HolidayController : GenericController<Holiday, HolidayDTO>
     {
         public HolidayController(ApplicationDbContext context, IMapper mapper) : base(context, mapper)

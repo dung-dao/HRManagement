@@ -96,6 +96,11 @@ namespace HRData.Data
                 wl.Property(e => e.LogStatus).HasConversion<string>();
                 wl.Property(e => e.Type).HasConversion<string>();
             });
+
+            builder.Entity<Holiday>(hd => {
+                hd.Property(e => e.From).HasColumnType(SQL_DATE);
+                hd.Property(e => e.To).HasColumnType(SQL_DATE);
+            });;
             #endregion
 
             #endregion
