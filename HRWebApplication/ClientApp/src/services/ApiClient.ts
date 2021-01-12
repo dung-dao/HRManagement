@@ -238,6 +238,60 @@ export class AttendanceClient extends ApiClientBase {
     /**
      * @return Success
      */
+    deleteMyAttendanceById(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/Attendance/Me/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processDeleteMyAttendanceById(_response);
+        });
+    }
+
+    protected processDeleteMyAttendanceById(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
+     * @return Success
+     */
     getAttendance(): Promise<AttendanceDTO[]> {
         let url_ = this.baseUrl + "/api/Attendance";
         url_ = url_.replace(/[?&]$/, "");
@@ -1859,6 +1913,61 @@ export class JobTitleClient extends ApiClientBase {
     }
 }
 
+export class LeaveEntitlementClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    leaveEntitlement(): Promise<LeaveEntitlementDTO[]> {
+        let url_ = this.baseUrl + "/api/LeaveEntitlement";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processLeaveEntitlement(_response);
+        });
+    }
+
+    protected processLeaveEntitlement(response: Response): Promise<LeaveEntitlementDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(LeaveEntitlementDTO.fromJS(item));
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<LeaveEntitlementDTO[]>(<any>null);
+    }
+}
+
 export class OrganizationUnitsClient extends ApiClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -2350,6 +2459,109 @@ export class RolesClient extends ApiClientBase {
     }
 }
 
+export class SalaryPaymentClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param employeeId (optional) 
+     * @param period (optional) 
+     * @return Success
+     */
+    generate(employeeId: number | undefined, period: Date | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/SalaryPayment/Generate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = new FormData();
+        if (employeeId === null || employeeId === undefined)
+            throw new Error("The parameter 'employeeId' cannot be null.");
+        else
+            content_.append("employeeId", employeeId.toString());
+        if (period === null || period === undefined)
+            throw new Error("The parameter 'period' cannot be null.");
+        else
+            content_.append("period", period.toJSON());
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processGenerate(_response);
+        });
+    }
+
+    protected processGenerate(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @param idQuery (optional) 
+     * @return Success
+     */
+    confirm(idQuery: number | undefined, idPath: string): Promise<void> {
+        let url_ = this.baseUrl + "/api/SalaryPayment/{id}/Confirm?";
+        if (idPath === undefined || idPath === null)
+            throw new Error("The parameter 'idPath' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + idPath));
+        if (idQuery === null)
+            throw new Error("The parameter 'idQuery' cannot be null.");
+        else if (idQuery !== undefined)
+            url_ += "id=" + encodeURIComponent("" + idQuery) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processConfirm(_response);
+        });
+    }
+
+    protected processConfirm(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+}
+
 export class StatisticClient extends ApiClientBase {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -2462,7 +2674,7 @@ export class TimeOffClient extends ApiClientBase {
     /**
      * @return Success
      */
-    meAll(): Promise<TimeOffDTO[]> {
+    getAllMine(): Promise<TimeOffDTO[]> {
         let url_ = this.baseUrl + "/api/TimeOff/Me";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2476,11 +2688,11 @@ export class TimeOffClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processMeAll(_response);
+            return this.processGetAllMine(_response);
         });
     }
 
-    protected processMeAll(response: Response): Promise<TimeOffDTO[]> {
+    protected processGetAllMine(response: Response): Promise<TimeOffDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -2506,7 +2718,7 @@ export class TimeOffClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    me(body: TimeOffDTO | undefined): Promise<TimeOffDTO> {
+    createForMe(body: TimeOffDTO | undefined): Promise<TimeOffDTO> {
         let url_ = this.baseUrl + "/api/TimeOff/Me";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2524,11 +2736,11 @@ export class TimeOffClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processMe(_response);
+            return this.processCreateForMe(_response);
         });
     }
 
-    protected processMe(response: Response): Promise<TimeOffDTO> {
+    protected processCreateForMe(response: Response): Promise<TimeOffDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -2549,7 +2761,7 @@ export class TimeOffClient extends ApiClientBase {
     /**
      * @return Success
      */
-    me2(id: number): Promise<TimeOffDTO> {
+    getMineById(id: number): Promise<TimeOffDTO> {
         let url_ = this.baseUrl + "/api/TimeOff/Me/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -2566,11 +2778,11 @@ export class TimeOffClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processMe2(_response);
+            return this.processGetMineById(_response);
         });
     }
 
-    protected processMe2(response: Response): Promise<TimeOffDTO> {
+    protected processGetMineById(response: Response): Promise<TimeOffDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -2592,7 +2804,7 @@ export class TimeOffClient extends ApiClientBase {
      * @param body (optional) 
      * @return Success
      */
-    me3(id: number, body: TimeOffDTO | undefined): Promise<void> {
+    editMineById(id: number, body: TimeOffDTO | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/TimeOff/Me/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -2612,11 +2824,11 @@ export class TimeOffClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processMe3(_response);
+            return this.processEditMineById(_response);
         });
     }
 
-    protected processMe3(response: Response): Promise<void> {
+    protected processEditMineById(response: Response): Promise<void> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -2634,7 +2846,7 @@ export class TimeOffClient extends ApiClientBase {
     /**
      * @return Success
      */
-    timeOffAll(): Promise<TimeOffDTO[]> {
+    getAll(): Promise<TimeOffDTO[]> {
         let url_ = this.baseUrl + "/api/TimeOff";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2648,11 +2860,11 @@ export class TimeOffClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processTimeOffAll(_response);
+            return this.processGetAll(_response);
         });
     }
 
-    protected processTimeOffAll(response: Response): Promise<TimeOffDTO[]> {
+    protected processGetAll(response: Response): Promise<TimeOffDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -2677,7 +2889,7 @@ export class TimeOffClient extends ApiClientBase {
     /**
      * @return Success
      */
-    timeOff(id: number): Promise<TimeOffDTO> {
+    getById(id: number): Promise<TimeOffDTO> {
         let url_ = this.baseUrl + "/api/TimeOff/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -2694,11 +2906,11 @@ export class TimeOffClient extends ApiClientBase {
         return this.transformOptions(options_).then(transformedOptions_ => {
             return this.http.fetch(url_, transformedOptions_);
         }).then((_response: Response) => {
-            return this.processTimeOff(_response);
+            return this.processGetById(_response);
         });
     }
 
-    protected processTimeOff(response: Response): Promise<TimeOffDTO> {
+    protected processGetById(response: Response): Promise<TimeOffDTO> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -2714,6 +2926,363 @@ export class TimeOffClient extends ApiClientBase {
             });
         }
         return Promise.resolve<TimeOffDTO>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    approveById(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/TimeOff/{id}/approve";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processApproveById(_response);
+        });
+    }
+
+    protected processApproveById(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    rejectById(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/TimeOff/{id}/reject";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "POST",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processRejectById(_response);
+        });
+    }
+
+    protected processRejectById(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+}
+
+export class TimeOffTypeClient extends ApiClientBase {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        super();
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    timeOffType_GetAll(): Promise<TimeOffTypeDTO[]> {
+        let url_ = this.baseUrl + "/api/TimeOffType";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processTimeOffType_GetAll(_response);
+        });
+    }
+
+    protected processTimeOffType_GetAll(response: Response): Promise<TimeOffTypeDTO[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TimeOffTypeDTO.fromJS(item));
+            }
+            return result200;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    timeOffType_Create(body: TimeOffTypeDTO | undefined): Promise<TimeOffTypeDTO> {
+        let url_ = this.baseUrl + "/api/TimeOffType";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processTimeOffType_Create(_response);
+        });
+    }
+
+    protected processTimeOffType_Create(response: Response): Promise<TimeOffTypeDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 201) {
+            return response.text().then((_responseText) => {
+            let result201: any = null;
+            let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result201 = TimeOffTypeDTO.fromJS(resultData201);
+            return result201;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
+     * @return Success
+     */
+    timeOffType_GetById(id: number): Promise<TimeOffTypeDTO> {
+        let url_ = this.baseUrl + "/api/TimeOffType/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processTimeOffType_GetById(_response);
+        });
+    }
+
+    protected processTimeOffType_GetById(response: Response): Promise<TimeOffTypeDTO> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TimeOffTypeDTO.fromJS(resultData200);
+            return result200;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    timeOffType_Update(id: number, body: TimeOffTypeDTO | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/TimeOffType/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processTimeOffType_Update(_response);
+        });
+    }
+
+    protected processTimeOffType_Update(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
+     * @return Success
+     */
+    timeOffType_Delete(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/TimeOffType/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processTimeOffType_Delete(_response);
+        });
+    }
+
+    protected processTimeOffType_Delete(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            });
+        } else if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
     }
 }
 
@@ -3552,64 +4121,6 @@ export interface IProblemDetails {
     instance?: string | undefined;
 }
 
-export enum LogStatus {
-    Pending = "Pending",
-    Approved = "Approved",
-    Rejected = "Rejected",
-}
-
-export class AttendanceDTO implements IAttendanceDTO {
-    id?: number;
-    date?: Date;
-    duration?: number;
-    note?: string | undefined;
-    logStatus?: LogStatus;
-
-    constructor(data?: IAttendanceDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
-            this.duration = _data["duration"];
-            this.note = _data["note"];
-            this.logStatus = _data["logStatus"];
-        }
-    }
-
-    static fromJS(data: any): AttendanceDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new AttendanceDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["duration"] = this.duration;
-        data["note"] = this.note;
-        data["logStatus"] = this.logStatus;
-        return data; 
-    }
-}
-
-export interface IAttendanceDTO {
-    id?: number;
-    date?: Date;
-    duration?: number;
-    note?: string | undefined;
-    logStatus?: LogStatus;
-}
-
 export enum EmployeeStatus {
     Pending = "Pending",
     Working = "Working",
@@ -3694,6 +4205,68 @@ export interface IEmployeeDTO {
     currentAddress?: string | undefined;
     nationalId?: string | undefined;
     status?: EmployeeStatus;
+}
+
+export enum LogStatus {
+    Pending = "Pending",
+    Approved = "Approved",
+    Rejected = "Rejected",
+}
+
+export class AttendanceDTO implements IAttendanceDTO {
+    id?: number;
+    employee?: EmployeeDTO;
+    date?: Date;
+    duration?: number;
+    note?: string | undefined;
+    logStatus?: LogStatus;
+
+    constructor(data?: IAttendanceDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.employee = _data["employee"] ? EmployeeDTO.fromJS(_data["employee"]) : <any>undefined;
+            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
+            this.duration = _data["duration"];
+            this.note = _data["note"];
+            this.logStatus = _data["logStatus"];
+        }
+    }
+
+    static fromJS(data: any): AttendanceDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new AttendanceDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["duration"] = this.duration;
+        data["note"] = this.note;
+        data["logStatus"] = this.logStatus;
+        return data; 
+    }
+}
+
+export interface IAttendanceDTO {
+    id?: number;
+    employee?: EmployeeDTO;
+    date?: Date;
+    duration?: number;
+    note?: string | undefined;
+    logStatus?: LogStatus;
 }
 
 export class JobTitleDTO implements IJobTitleDTO {
@@ -4004,6 +4577,107 @@ export interface IJobCategoryDTO {
     description?: string | undefined;
 }
 
+export enum AccrualFrequency {
+    Monthly = "Monthly",
+    Yearly = "Yearly",
+}
+
+export class TimeOffTypeDTO implements ITimeOffTypeDTO {
+    id?: number;
+    name?: string | undefined;
+    isPaidTimeOff?: boolean;
+    frequency?: AccrualFrequency;
+    maximumCarryOver?: number;
+
+    constructor(data?: ITimeOffTypeDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.isPaidTimeOff = _data["isPaidTimeOff"];
+            this.frequency = _data["frequency"];
+            this.maximumCarryOver = _data["maximumCarryOver"];
+        }
+    }
+
+    static fromJS(data: any): TimeOffTypeDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new TimeOffTypeDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["isPaidTimeOff"] = this.isPaidTimeOff;
+        data["frequency"] = this.frequency;
+        data["maximumCarryOver"] = this.maximumCarryOver;
+        return data; 
+    }
+}
+
+export interface ITimeOffTypeDTO {
+    id?: number;
+    name?: string | undefined;
+    isPaidTimeOff?: boolean;
+    frequency?: AccrualFrequency;
+    maximumCarryOver?: number;
+}
+
+export class LeaveEntitlementDTO implements ILeaveEntitlementDTO {
+    id?: number;
+    timeOffType?: TimeOffTypeDTO;
+    balance?: number;
+
+    constructor(data?: ILeaveEntitlementDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.timeOffType = _data["timeOffType"] ? TimeOffTypeDTO.fromJS(_data["timeOffType"]) : <any>undefined;
+            this.balance = _data["balance"];
+        }
+    }
+
+    static fromJS(data: any): LeaveEntitlementDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeaveEntitlementDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["timeOffType"] = this.timeOffType ? this.timeOffType.toJSON() : <any>undefined;
+        data["balance"] = this.balance;
+        return data; 
+    }
+}
+
+export interface ILeaveEntitlementDTO {
+    id?: number;
+    timeOffType?: TimeOffTypeDTO;
+    balance?: number;
+}
+
 export class IdentityRole implements IIdentityRole {
     id?: string | undefined;
     name?: string | undefined;
@@ -4128,876 +4802,14 @@ export interface IEmployeeStatisticItem {
     employeeNo?: number;
 }
 
-export enum RecordStatus {
-    Active = "Active",
-    InActive = "InActive",
-}
-
-export enum AccrualFrequency {
-    Monthly = "Monthly",
-    Yearly = "Yearly",
-}
-
-export enum WorkingLogType {
-    Attendance = "Attendance",
-    TimeOff = "TimeOff",
-}
-
-export class JobCategory implements IJobCategory {
-    id?: number;
-    recordStatus?: RecordStatus;
-    name?: string | undefined;
-    description?: string | undefined;
-    jobTitles?: JobTitle[] | undefined;
-
-    constructor(data?: IJobCategory) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-            if (Array.isArray(_data["jobTitles"])) {
-                this.jobTitles = [] as any;
-                for (let item of _data["jobTitles"])
-                    this.jobTitles!.push(JobTitle.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): JobCategory {
-        data = typeof data === 'object' ? data : {};
-        let result = new JobCategory();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        if (Array.isArray(this.jobTitles)) {
-            data["jobTitles"] = [];
-            for (let item of this.jobTitles)
-                data["jobTitles"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IJobCategory {
-    id?: number;
-    recordStatus?: RecordStatus;
-    name?: string | undefined;
-    description?: string | undefined;
-    jobTitles?: JobTitle[] | undefined;
-}
-
-export class JobTitle implements IJobTitle {
-    id?: number;
-    recordStatus?: RecordStatus;
-    name?: string | undefined;
-    description?: string | undefined;
-    jobCategoryId?: number;
-    jobCategory?: JobCategory;
-
-    constructor(data?: IJobTitle) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-            this.jobCategoryId = _data["jobCategoryId"];
-            this.jobCategory = _data["jobCategory"] ? JobCategory.fromJS(_data["jobCategory"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): JobTitle {
-        data = typeof data === 'object' ? data : {};
-        let result = new JobTitle();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        data["jobCategoryId"] = this.jobCategoryId;
-        data["jobCategory"] = this.jobCategory ? this.jobCategory.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IJobTitle {
-    id?: number;
-    recordStatus?: RecordStatus;
-    name?: string | undefined;
-    description?: string | undefined;
-    jobCategoryId?: number;
-    jobCategory?: JobCategory;
-}
-
-export class WorkType implements IWorkType {
-    id?: number;
-    recordStatus?: RecordStatus;
-    name?: string | undefined;
-    description?: string | undefined;
-    leaveEntitlement?: number;
-
-    constructor(data?: IWorkType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-            this.leaveEntitlement = _data["leaveEntitlement"];
-        }
-    }
-
-    static fromJS(data: any): WorkType {
-        data = typeof data === 'object' ? data : {};
-        let result = new WorkType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        data["leaveEntitlement"] = this.leaveEntitlement;
-        return data; 
-    }
-}
-
-export interface IWorkType {
-    id?: number;
-    recordStatus?: RecordStatus;
-    name?: string | undefined;
-    description?: string | undefined;
-    leaveEntitlement?: number;
-}
-
-export class OrganizationUnit implements IOrganizationUnit {
-    id?: number;
-    recordStatus?: RecordStatus;
-    name?: string | undefined;
-    description?: string | undefined;
-    parentId?: number | undefined;
-    parent?: OrganizationUnit;
-    children?: OrganizationUnit[] | undefined;
-    positions?: Position[] | undefined;
-
-    constructor(data?: IOrganizationUnit) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.name = _data["name"];
-            this.description = _data["description"];
-            this.parentId = _data["parentId"];
-            this.parent = _data["parent"] ? OrganizationUnit.fromJS(_data["parent"]) : <any>undefined;
-            if (Array.isArray(_data["children"])) {
-                this.children = [] as any;
-                for (let item of _data["children"])
-                    this.children!.push(OrganizationUnit.fromJS(item));
-            }
-            if (Array.isArray(_data["positions"])) {
-                this.positions = [] as any;
-                for (let item of _data["positions"])
-                    this.positions!.push(Position.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): OrganizationUnit {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrganizationUnit();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        data["parentId"] = this.parentId;
-        data["parent"] = this.parent ? this.parent.toJSON() : <any>undefined;
-        if (Array.isArray(this.children)) {
-            data["children"] = [];
-            for (let item of this.children)
-                data["children"].push(item.toJSON());
-        }
-        if (Array.isArray(this.positions)) {
-            data["positions"] = [];
-            for (let item of this.positions)
-                data["positions"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IOrganizationUnit {
-    id?: number;
-    recordStatus?: RecordStatus;
-    name?: string | undefined;
-    description?: string | undefined;
-    parentId?: number | undefined;
-    parent?: OrganizationUnit;
-    children?: OrganizationUnit[] | undefined;
-    positions?: Position[] | undefined;
-}
-
-export class Position implements IPosition {
-    id?: number;
-    recordStatus?: RecordStatus;
-    startDate?: Date;
-    endDate?: Date | undefined;
-    salary?: number;
-    employee?: Employee;
-    jobTitle?: JobTitle;
-    workType?: WorkType;
-    unit?: OrganizationUnit;
-    leaveDate?: Date | undefined;
-    leaveReason?: string | undefined;
-
-    constructor(data?: IPosition) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
-            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
-            this.salary = _data["salary"];
-            this.employee = _data["employee"] ? Employee.fromJS(_data["employee"]) : <any>undefined;
-            this.jobTitle = _data["jobTitle"] ? JobTitle.fromJS(_data["jobTitle"]) : <any>undefined;
-            this.workType = _data["workType"] ? WorkType.fromJS(_data["workType"]) : <any>undefined;
-            this.unit = _data["unit"] ? OrganizationUnit.fromJS(_data["unit"]) : <any>undefined;
-            this.leaveDate = _data["leaveDate"] ? new Date(_data["leaveDate"].toString()) : <any>undefined;
-            this.leaveReason = _data["leaveReason"];
-        }
-    }
-
-    static fromJS(data: any): Position {
-        data = typeof data === 'object' ? data : {};
-        let result = new Position();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["salary"] = this.salary;
-        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
-        data["jobTitle"] = this.jobTitle ? this.jobTitle.toJSON() : <any>undefined;
-        data["workType"] = this.workType ? this.workType.toJSON() : <any>undefined;
-        data["unit"] = this.unit ? this.unit.toJSON() : <any>undefined;
-        data["leaveDate"] = this.leaveDate ? this.leaveDate.toISOString() : <any>undefined;
-        data["leaveReason"] = this.leaveReason;
-        return data; 
-    }
-}
-
-export interface IPosition {
-    id?: number;
-    recordStatus?: RecordStatus;
-    startDate?: Date;
-    endDate?: Date | undefined;
-    salary?: number;
-    employee?: Employee;
-    jobTitle?: JobTitle;
-    workType?: WorkType;
-    unit?: OrganizationUnit;
-    leaveDate?: Date | undefined;
-    leaveReason?: string | undefined;
-}
-
-export class User implements IUser {
-    id?: string | undefined;
-    userName?: string | undefined;
-    normalizedUserName?: string | undefined;
-    email?: string | undefined;
-    normalizedEmail?: string | undefined;
-    emailConfirmed?: boolean;
-    passwordHash?: string | undefined;
-    securityStamp?: string | undefined;
-    concurrencyStamp?: string | undefined;
-    phoneNumber?: string | undefined;
-    phoneNumberConfirmed?: boolean;
-    twoFactorEnabled?: boolean;
-    lockoutEnd?: Date | undefined;
-    lockoutEnabled?: boolean;
-    accessFailedCount?: number;
-    employee?: Employee;
-
-    constructor(data?: IUser) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.userName = _data["userName"];
-            this.normalizedUserName = _data["normalizedUserName"];
-            this.email = _data["email"];
-            this.normalizedEmail = _data["normalizedEmail"];
-            this.emailConfirmed = _data["emailConfirmed"];
-            this.passwordHash = _data["passwordHash"];
-            this.securityStamp = _data["securityStamp"];
-            this.concurrencyStamp = _data["concurrencyStamp"];
-            this.phoneNumber = _data["phoneNumber"];
-            this.phoneNumberConfirmed = _data["phoneNumberConfirmed"];
-            this.twoFactorEnabled = _data["twoFactorEnabled"];
-            this.lockoutEnd = _data["lockoutEnd"] ? new Date(_data["lockoutEnd"].toString()) : <any>undefined;
-            this.lockoutEnabled = _data["lockoutEnabled"];
-            this.accessFailedCount = _data["accessFailedCount"];
-            this.employee = _data["employee"] ? Employee.fromJS(_data["employee"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): User {
-        data = typeof data === 'object' ? data : {};
-        let result = new User();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["userName"] = this.userName;
-        data["normalizedUserName"] = this.normalizedUserName;
-        data["email"] = this.email;
-        data["normalizedEmail"] = this.normalizedEmail;
-        data["emailConfirmed"] = this.emailConfirmed;
-        data["passwordHash"] = this.passwordHash;
-        data["securityStamp"] = this.securityStamp;
-        data["concurrencyStamp"] = this.concurrencyStamp;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneNumberConfirmed"] = this.phoneNumberConfirmed;
-        data["twoFactorEnabled"] = this.twoFactorEnabled;
-        data["lockoutEnd"] = this.lockoutEnd ? this.lockoutEnd.toISOString() : <any>undefined;
-        data["lockoutEnabled"] = this.lockoutEnabled;
-        data["accessFailedCount"] = this.accessFailedCount;
-        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IUser {
-    id?: string | undefined;
-    userName?: string | undefined;
-    normalizedUserName?: string | undefined;
-    email?: string | undefined;
-    normalizedEmail?: string | undefined;
-    emailConfirmed?: boolean;
-    passwordHash?: string | undefined;
-    securityStamp?: string | undefined;
-    concurrencyStamp?: string | undefined;
-    phoneNumber?: string | undefined;
-    phoneNumberConfirmed?: boolean;
-    twoFactorEnabled?: boolean;
-    lockoutEnd?: Date | undefined;
-    lockoutEnabled?: boolean;
-    accessFailedCount?: number;
-    employee?: Employee;
-}
-
-export class LeaveEntitlement implements ILeaveEntitlement {
-    id?: number;
-    recordStatus?: RecordStatus;
-    balance?: number;
-    lastUpdate?: Date;
-    lastInit?: Date;
-    employee?: Employee;
-    timeOffType?: TimeOffType;
-
-    constructor(data?: ILeaveEntitlement) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.balance = _data["balance"];
-            this.lastUpdate = _data["lastUpdate"] ? new Date(_data["lastUpdate"].toString()) : <any>undefined;
-            this.lastInit = _data["lastInit"] ? new Date(_data["lastInit"].toString()) : <any>undefined;
-            this.employee = _data["employee"] ? Employee.fromJS(_data["employee"]) : <any>undefined;
-            this.timeOffType = _data["timeOffType"] ? TimeOffType.fromJS(_data["timeOffType"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): LeaveEntitlement {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeaveEntitlement();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["balance"] = this.balance;
-        data["lastUpdate"] = this.lastUpdate ? this.lastUpdate.toISOString() : <any>undefined;
-        data["lastInit"] = this.lastInit ? this.lastInit.toISOString() : <any>undefined;
-        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
-        data["timeOffType"] = this.timeOffType ? this.timeOffType.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ILeaveEntitlement {
-    id?: number;
-    recordStatus?: RecordStatus;
-    balance?: number;
-    lastUpdate?: Date;
-    lastInit?: Date;
-    employee?: Employee;
-    timeOffType?: TimeOffType;
-}
-
-export enum SalaryPaymentStatus {
-    Temporary = "Temporary",
-    Confirmed = "Confirmed",
-}
-
-export class SalaryPayment implements ISalaryPayment {
-    id?: number;
-    recordStatus?: RecordStatus;
-    amount?: number;
-    period?: Date;
-    paymentStatus?: SalaryPaymentStatus;
-    employee?: Employee;
-
-    constructor(data?: ISalaryPayment) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.amount = _data["amount"];
-            this.period = _data["period"] ? new Date(_data["period"].toString()) : <any>undefined;
-            this.paymentStatus = _data["paymentStatus"];
-            this.employee = _data["employee"] ? Employee.fromJS(_data["employee"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): SalaryPayment {
-        data = typeof data === 'object' ? data : {};
-        let result = new SalaryPayment();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["amount"] = this.amount;
-        data["period"] = this.period ? this.period.toISOString() : <any>undefined;
-        data["paymentStatus"] = this.paymentStatus;
-        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISalaryPayment {
-    id?: number;
-    recordStatus?: RecordStatus;
-    amount?: number;
-    period?: Date;
-    paymentStatus?: SalaryPaymentStatus;
-    employee?: Employee;
-}
-
-export class Employee implements IEmployee {
-    id?: number;
-    recordStatus?: RecordStatus;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    personalEmail?: string | undefined;
-    workEmail?: string | undefined;
-    phone?: string | undefined;
-    dateOfBirth?: Date;
-    sex?: string | undefined;
-    address?: string | undefined;
-    currentAddress?: string | undefined;
-    nationalId?: string | undefined;
-    userId?: string | undefined;
-    positions?: Position[] | undefined;
-    user?: User;
-    workingLogs?: WorkingLog[] | undefined;
-    leaveEntitlements?: LeaveEntitlement[] | undefined;
-    salaryPayments?: SalaryPayment[] | undefined;
-    timeOffTypes?: TimeOffType[] | undefined;
-
-    constructor(data?: IEmployee) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.firstName = _data["firstName"];
-            this.lastName = _data["lastName"];
-            this.personalEmail = _data["personalEmail"];
-            this.workEmail = _data["workEmail"];
-            this.phone = _data["phone"];
-            this.dateOfBirth = _data["dateOfBirth"] ? new Date(_data["dateOfBirth"].toString()) : <any>undefined;
-            this.sex = _data["sex"];
-            this.address = _data["address"];
-            this.currentAddress = _data["currentAddress"];
-            this.nationalId = _data["nationalId"];
-            this.userId = _data["userId"];
-            if (Array.isArray(_data["positions"])) {
-                this.positions = [] as any;
-                for (let item of _data["positions"])
-                    this.positions!.push(Position.fromJS(item));
-            }
-            this.user = _data["user"] ? User.fromJS(_data["user"]) : <any>undefined;
-            if (Array.isArray(_data["workingLogs"])) {
-                this.workingLogs = [] as any;
-                for (let item of _data["workingLogs"])
-                    this.workingLogs!.push(WorkingLog.fromJS(item));
-            }
-            if (Array.isArray(_data["leaveEntitlements"])) {
-                this.leaveEntitlements = [] as any;
-                for (let item of _data["leaveEntitlements"])
-                    this.leaveEntitlements!.push(LeaveEntitlement.fromJS(item));
-            }
-            if (Array.isArray(_data["salaryPayments"])) {
-                this.salaryPayments = [] as any;
-                for (let item of _data["salaryPayments"])
-                    this.salaryPayments!.push(SalaryPayment.fromJS(item));
-            }
-            if (Array.isArray(_data["timeOffTypes"])) {
-                this.timeOffTypes = [] as any;
-                for (let item of _data["timeOffTypes"])
-                    this.timeOffTypes!.push(TimeOffType.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): Employee {
-        data = typeof data === 'object' ? data : {};
-        let result = new Employee();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["personalEmail"] = this.personalEmail;
-        data["workEmail"] = this.workEmail;
-        data["phone"] = this.phone;
-        data["dateOfBirth"] = this.dateOfBirth ? this.dateOfBirth.toISOString() : <any>undefined;
-        data["sex"] = this.sex;
-        data["address"] = this.address;
-        data["currentAddress"] = this.currentAddress;
-        data["nationalId"] = this.nationalId;
-        data["userId"] = this.userId;
-        if (Array.isArray(this.positions)) {
-            data["positions"] = [];
-            for (let item of this.positions)
-                data["positions"].push(item.toJSON());
-        }
-        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
-        if (Array.isArray(this.workingLogs)) {
-            data["workingLogs"] = [];
-            for (let item of this.workingLogs)
-                data["workingLogs"].push(item.toJSON());
-        }
-        if (Array.isArray(this.leaveEntitlements)) {
-            data["leaveEntitlements"] = [];
-            for (let item of this.leaveEntitlements)
-                data["leaveEntitlements"].push(item.toJSON());
-        }
-        if (Array.isArray(this.salaryPayments)) {
-            data["salaryPayments"] = [];
-            for (let item of this.salaryPayments)
-                data["salaryPayments"].push(item.toJSON());
-        }
-        if (Array.isArray(this.timeOffTypes)) {
-            data["timeOffTypes"] = [];
-            for (let item of this.timeOffTypes)
-                data["timeOffTypes"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IEmployee {
-    id?: number;
-    recordStatus?: RecordStatus;
-    firstName?: string | undefined;
-    lastName?: string | undefined;
-    personalEmail?: string | undefined;
-    workEmail?: string | undefined;
-    phone?: string | undefined;
-    dateOfBirth?: Date;
-    sex?: string | undefined;
-    address?: string | undefined;
-    currentAddress?: string | undefined;
-    nationalId?: string | undefined;
-    userId?: string | undefined;
-    positions?: Position[] | undefined;
-    user?: User;
-    workingLogs?: WorkingLog[] | undefined;
-    leaveEntitlements?: LeaveEntitlement[] | undefined;
-    salaryPayments?: SalaryPayment[] | undefined;
-    timeOffTypes?: TimeOffType[] | undefined;
-}
-
-export class WorkingLog implements IWorkingLog {
-    id?: number;
-    recordStatus?: RecordStatus;
-    type?: WorkingLogType;
-    date?: Date;
-    duration?: number;
-    note?: string | undefined;
-    logStatus?: LogStatus;
-    employee?: Employee;
-    timeOffType?: TimeOffType;
-
-    constructor(data?: IWorkingLog) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.type = _data["type"];
-            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
-            this.duration = _data["duration"];
-            this.note = _data["note"];
-            this.logStatus = _data["logStatus"];
-            this.employee = _data["employee"] ? Employee.fromJS(_data["employee"]) : <any>undefined;
-            this.timeOffType = _data["timeOffType"] ? TimeOffType.fromJS(_data["timeOffType"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): WorkingLog {
-        data = typeof data === 'object' ? data : {};
-        let result = new WorkingLog();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["type"] = this.type;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["duration"] = this.duration;
-        data["note"] = this.note;
-        data["logStatus"] = this.logStatus;
-        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
-        data["timeOffType"] = this.timeOffType ? this.timeOffType.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IWorkingLog {
-    id?: number;
-    recordStatus?: RecordStatus;
-    type?: WorkingLogType;
-    date?: Date;
-    duration?: number;
-    note?: string | undefined;
-    logStatus?: LogStatus;
-    employee?: Employee;
-    timeOffType?: TimeOffType;
-}
-
-export class TimeOffType implements ITimeOffType {
-    id?: number;
-    recordStatus?: RecordStatus;
-    isPaidTimeOff?: boolean;
-    myProperty?: number;
-    frequency?: AccrualFrequency;
-    maximumCarryOver?: number;
-    workingLogs?: WorkingLog[] | undefined;
-    leaveEntitlements?: LeaveEntitlement[] | undefined;
-    employees?: Employee[] | undefined;
-
-    constructor(data?: ITimeOffType) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.recordStatus = _data["recordStatus"];
-            this.isPaidTimeOff = _data["isPaidTimeOff"];
-            this.myProperty = _data["myProperty"];
-            this.frequency = _data["frequency"];
-            this.maximumCarryOver = _data["maximumCarryOver"];
-            if (Array.isArray(_data["workingLogs"])) {
-                this.workingLogs = [] as any;
-                for (let item of _data["workingLogs"])
-                    this.workingLogs!.push(WorkingLog.fromJS(item));
-            }
-            if (Array.isArray(_data["leaveEntitlements"])) {
-                this.leaveEntitlements = [] as any;
-                for (let item of _data["leaveEntitlements"])
-                    this.leaveEntitlements!.push(LeaveEntitlement.fromJS(item));
-            }
-            if (Array.isArray(_data["employees"])) {
-                this.employees = [] as any;
-                for (let item of _data["employees"])
-                    this.employees!.push(Employee.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): TimeOffType {
-        data = typeof data === 'object' ? data : {};
-        let result = new TimeOffType();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["recordStatus"] = this.recordStatus;
-        data["isPaidTimeOff"] = this.isPaidTimeOff;
-        data["myProperty"] = this.myProperty;
-        data["frequency"] = this.frequency;
-        data["maximumCarryOver"] = this.maximumCarryOver;
-        if (Array.isArray(this.workingLogs)) {
-            data["workingLogs"] = [];
-            for (let item of this.workingLogs)
-                data["workingLogs"].push(item.toJSON());
-        }
-        if (Array.isArray(this.leaveEntitlements)) {
-            data["leaveEntitlements"] = [];
-            for (let item of this.leaveEntitlements)
-                data["leaveEntitlements"].push(item.toJSON());
-        }
-        if (Array.isArray(this.employees)) {
-            data["employees"] = [];
-            for (let item of this.employees)
-                data["employees"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ITimeOffType {
-    id?: number;
-    recordStatus?: RecordStatus;
-    isPaidTimeOff?: boolean;
-    myProperty?: number;
-    frequency?: AccrualFrequency;
-    maximumCarryOver?: number;
-    workingLogs?: WorkingLog[] | undefined;
-    leaveEntitlements?: LeaveEntitlement[] | undefined;
-    employees?: Employee[] | undefined;
-}
-
 export class TimeOffDTO implements ITimeOffDTO {
     id?: number;
+    employee?: EmployeeDTO;
     date?: Date;
     duration?: number;
     note?: string | undefined;
-    timeOffType?: TimeOffType;
+    logStatus?: LogStatus;
+    timeOffType?: TimeOffTypeDTO;
 
     constructor(data?: ITimeOffDTO) {
         if (data) {
@@ -5011,10 +4823,12 @@ export class TimeOffDTO implements ITimeOffDTO {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.employee = _data["employee"] ? EmployeeDTO.fromJS(_data["employee"]) : <any>undefined;
             this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
             this.duration = _data["duration"];
             this.note = _data["note"];
-            this.timeOffType = _data["timeOffType"] ? TimeOffType.fromJS(_data["timeOffType"]) : <any>undefined;
+            this.logStatus = _data["logStatus"];
+            this.timeOffType = _data["timeOffType"] ? TimeOffTypeDTO.fromJS(_data["timeOffType"]) : <any>undefined;
         }
     }
 
@@ -5028,9 +4842,11 @@ export class TimeOffDTO implements ITimeOffDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["duration"] = this.duration;
         data["note"] = this.note;
+        data["logStatus"] = this.logStatus;
         data["timeOffType"] = this.timeOffType ? this.timeOffType.toJSON() : <any>undefined;
         return data; 
     }
@@ -5038,10 +4854,12 @@ export class TimeOffDTO implements ITimeOffDTO {
 
 export interface ITimeOffDTO {
     id?: number;
+    employee?: EmployeeDTO;
     date?: Date;
     duration?: number;
     note?: string | undefined;
-    timeOffType?: TimeOffType;
+    logStatus?: LogStatus;
+    timeOffType?: TimeOffTypeDTO;
 }
 
 export class UserDTO implements IUserDTO {

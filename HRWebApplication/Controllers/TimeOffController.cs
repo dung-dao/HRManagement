@@ -35,7 +35,7 @@ namespace HRWebApplication.Controllers
         }
 
         #region MyTimeOff
-        [HttpGet("Me")]
+        [HttpGet("Me", Name = "GetAllMine")]
         public ActionResult<IEnumerable<TimeOffDTO>> GetMyTimeOff()
         {
             var user = GetAuthorizedUser();
@@ -55,7 +55,7 @@ namespace HRWebApplication.Controllers
             }).ToList();
         }
 
-        [HttpGet("Me/{id}")]
+        [HttpGet("Me/{id}", Name = "GetMineById")]
         public ActionResult<TimeOffDTO> GetMyTimeOffById(int id)
         {
             var user = GetAuthorizedUser();
@@ -79,7 +79,7 @@ namespace HRWebApplication.Controllers
             return NotFound();
         }
 
-        [HttpPost("Me")]
+        [HttpPost("Me", Name = "CreateForMe")]
         public ActionResult<TimeOffDTO> PostMyTimeOff([FromBody] TimeOffDTO data)
         {
             var user = GetAuthorizedUser();
@@ -114,7 +114,7 @@ namespace HRWebApplication.Controllers
             return CreatedAtAction("GetMyTimeOffById", new { id = data.Id }, newTimeOff);
         }
 
-        [HttpPut("Me/{id}")]
+        [HttpPut("Me/{id}", Name = "EditMineById")]
         public IActionResult UpdateTimeOffById(int id, TimeOffDTO data)
         {
             var user = GetAuthorizedUser();
@@ -150,7 +150,7 @@ namespace HRWebApplication.Controllers
         #endregion
 
         #region EmployeeTimeOff
-        [HttpGet]
+        [HttpGet(Name = "GetAll")]
         public ActionResult<IEnumerable<TimeOffDTO>> GetTimeOff()
         {
             IEnumerable<WorkingLog> logs = _salaryRepository.GetTimeOffList();
@@ -166,7 +166,7 @@ namespace HRWebApplication.Controllers
             }).ToList();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetById")]
         public ActionResult<TimeOffDTO> GetTimeOffById(int id)
         {
             WorkingLog timeoff = _salaryRepository.GetTimeOffById(id);
@@ -185,13 +185,13 @@ namespace HRWebApplication.Controllers
             return NotFound();
         }
 
-        [HttpPost("{id}/approve")]
+        [HttpPost("{id}/approve", Name = "ApproveById")]
         public IActionResult Approve(int id)
         {
             return NoContent();
         }
 
-        [HttpPost("{id}/reject")]
+        [HttpPost("{id}/reject", Name = "RejectById")]
         public IActionResult Reject(int id)
         {
             return NoContent();

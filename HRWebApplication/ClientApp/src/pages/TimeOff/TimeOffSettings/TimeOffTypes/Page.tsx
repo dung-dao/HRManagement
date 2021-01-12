@@ -11,7 +11,7 @@ export const TimeOffTypes: React.FC<Props> = withPageProvider((props) => {
   const { searchRegex, inputSearchProps } = useSearchKeywork();
   const { listData, listDataReady, setModalVisibleType } = usePage();
 
-  const finalLeaveTypes = listData?.filter((it) => JSON.stringify(it).match(searchRegex));
+  const filterData = listData?.filter((it) => JSON.stringify(it).match(searchRegex));
 
   return (
     <div>
@@ -37,9 +37,8 @@ export const TimeOffTypes: React.FC<Props> = withPageProvider((props) => {
         </Col>
       </Row>
       <Table
-        // @ts-ignore
         columns={columns}
-        dataSource={finalLeaveTypes}
+        dataSource={filterData}
         loading={!listDataReady}
         // pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: [5, 10, 20] }}
         scroll={{ x: 'max-content' }}

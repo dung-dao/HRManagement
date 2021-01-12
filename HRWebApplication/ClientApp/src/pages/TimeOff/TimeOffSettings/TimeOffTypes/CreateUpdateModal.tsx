@@ -1,33 +1,33 @@
 import { Form, Input, Modal } from 'antd';
 import React from 'react';
 import { required } from 'utils';
-import { usePage } from './PageProvider';
+import { usePage, RecordType } from './PageProvider';
 
 const formLayout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
-};
+} as const;
 
-export const actionVietnamese = {
+const actionVietnamese = {
   create: 'Tạo',
   update: 'Chỉnh sửa',
-};
+} as const;
 
-const noun = 'loại nghỉ phép';
+const noun = 'loại nghỉ phép' as const;
 
-export function CreateUpdateModal() {
+export const CreateUpdateModal: React.FC<{}> = () => {
   const { modalVisibleType, setModalVisibleType, selectedRecord, onUpdate, onCreate } = usePage();
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<RecordType>();
 
   const VerbNoun = actionVietnamese[modalVisibleType] + ' ' + noun;
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values: RecordType) => {
     const record = {
       ...selectedRecord,
       ...values,
-    };
-    
+    } as RecordType;
+
     try {
       if (modalVisibleType === 'update') {
         await onUpdate(record);
@@ -40,16 +40,19 @@ export function CreateUpdateModal() {
     }
   };
 
-  const initialValues = modalVisibleType === 'update' ? selectedRecord : undefined;
+  const initialValues = React.useMemo(
+    () => (modalVisibleType === 'update' ? selectedRecord : undefined),
+    [modalVisibleType, selectedRecord],
+  );
 
   // Form.initialValues doesn't work really well so we need this useEffect
   React.useEffect(() => {
     if (modalVisibleType === 'update') {
-      form.setFieldsValue(initialValues);
+      form.setFieldsValue(initialValues!);
     } else {
       form.resetFields();
     }
-  }, [modalVisibleType]);
+  }, [modalVisibleType, initialValues, form]);
 
   return (
     <Modal
@@ -81,4 +84,4 @@ export function CreateUpdateModal() {
       </Form>
     </Modal>
   );
-}
+};
