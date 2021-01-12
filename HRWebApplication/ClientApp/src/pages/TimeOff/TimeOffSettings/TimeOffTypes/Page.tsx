@@ -3,7 +3,7 @@ import { Button, Col, Input, Row, Table } from 'antd';
 import { useSearchKeywork } from 'hooks/useSearchKeyword';
 import React from 'react';
 import { columns } from './columns';
-import { usePage, withPageProvider } from './PageProvider';
+import { usePage, withPageProvider, RecordType } from './PageProvider';
 
 type Props = {};
 
@@ -36,7 +36,7 @@ export const TimeOffTypes: React.FC<Props> = withPageProvider((props) => {
           </Button>
         </Col>
       </Row>
-      <Table
+      <Table<RecordType>
         columns={columns}
         dataSource={filterData}
         loading={!listDataReady}
