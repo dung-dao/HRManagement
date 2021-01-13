@@ -1,6 +1,7 @@
 import { TabsPage } from 'components/TabsPage';
 import React from 'react';
 import { TimeOffTypes } from './TimeOffTypes';
+import { Holidays } from './Holidays';
 
 const tabs = [
   {
@@ -11,7 +12,7 @@ const tabs = [
   {
     key: 'Holidays',
     label: 'Nghỉ lễ',
-    Component: TimeOffTypes,
+    Component: Holidays,
   },
 ];
 

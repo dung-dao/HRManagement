@@ -22,6 +22,7 @@ namespace HRWebApplication.DTO
                 .ForMember(u => u.Password, opt => opt.Ignore());
                 
             CreateMap<TimeOffType, TimeOffTypeDTO>().ReverseMap();
+            CreateMap<Holiday, HolidayDTO>().ReverseMap();
         }
     }
 }
