@@ -58,8 +58,8 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
   const onCreate = React.useCallback(
     async (record: RecordType) => {
       try {
-        await apiClient.timeOffType_Create(record);
-        setListData([...listData, record]);
+        const newRecord = await apiClient.timeOffType_Create(record);
+        setListData([...listData, newRecord]);
         message.info('Tạo mới thành công');
       } catch (err) {
         message.error('Tạo mới không thành công');
@@ -69,18 +69,22 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
     [listData],
   );
 
-  const onUpdate = React.useCallback(async (record: RecordType) => {
-    try {
-      await apiClient.timeOffType_Update(record.id!, record);
-      setListData((data) =>
-        data?.map((it) => (it.id === record.id! ? ({ ...it, ...record } as RecordType) : it)),
-      );
-      message.info('Cập nhật thành công');
-    } catch (err) {
-      message.error('Cập nhật không thành công');
-      throw err;
-    }
-  }, []);
+  const onUpdate = React.useCallback(
+    async (record: RecordType) => {
+      try {
+        const updatedRecord = { ...selectedRecord, ...record } as RecordType;
+        await apiClient.timeOffType_Update(updatedRecord.id!, updatedRecord);
+        setListData((data) =>
+          data?.map((it) => (it.id === updatedRecord.id! ? updatedRecord : it)),
+        );
+        message.info('Cập nhật thành công');
+      } catch (err) {
+        message.error('Cập nhật không thành công');
+        throw err;
+      }
+    },
+    [selectedRecord],
+  );
 
   const onDelete = React.useCallback(async (recordId: number) => {
     try {

@@ -3,8 +3,20 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, Space } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
+import { AccrualFrequency } from 'services/ApiClient';
 import { usePage } from './PageProvider';
 import { RecordType } from './PageProvider';
+
+export const mapProperties = {
+  isPaidTimeOff: {
+    true: 'Có',
+    false: 'Không',
+  },
+  frequency: {
+    [AccrualFrequency.Monthly]: 'Hàng tháng',
+    [AccrualFrequency.Yearly]: 'Hàng năm',
+  },
+} as const;
 
 export const columns: ColumnsType<RecordType> = [
   {
@@ -13,9 +25,21 @@ export const columns: ColumnsType<RecordType> = [
     dataIndex: 'name',
   },
   {
-    key: 'description',
-    title: 'Mô tả',
-    dataIndex: 'description',
+    key: 'isPaidTimeOff',
+    title: 'Có trả lương',
+    dataIndex: 'isPaidTimeOff',
+    render: (value: boolean) => mapProperties.isPaidTimeOff[String(value)],
+  },
+  {
+    key: 'frequency',
+    title: 'Chu kỳ',
+    dataIndex: 'frequency',
+    render: (value: string) => mapProperties.frequency[value],
+  },
+  {
+    key: 'maximumCarryOver',
+    title: 'Tích luỹ',
+    dataIndex: 'maximumCarryOver',
   },
   {
     title: 'Thao tác',

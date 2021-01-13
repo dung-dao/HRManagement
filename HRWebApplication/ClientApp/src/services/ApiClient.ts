@@ -4487,9 +4487,8 @@ export interface IPositionDTO {
 
 export class HolidayDTO implements IHolidayDTO {
     id?: number;
-    year?: number | undefined;
-    month?: number;
-    day?: number;
+    from?: Date;
+    to?: Date;
 
     constructor(data?: IHolidayDTO) {
         if (data) {
@@ -4503,9 +4502,8 @@ export class HolidayDTO implements IHolidayDTO {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.year = _data["year"];
-            this.month = _data["month"];
-            this.day = _data["day"];
+            this.from = _data["from"] ? new Date(_data["from"].toString()) : <any>undefined;
+            this.to = _data["to"] ? new Date(_data["to"].toString()) : <any>undefined;
         }
     }
 
@@ -4519,18 +4517,16 @@ export class HolidayDTO implements IHolidayDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["year"] = this.year;
-        data["month"] = this.month;
-        data["day"] = this.day;
+        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
+        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         return data; 
     }
 }
 
 export interface IHolidayDTO {
     id?: number;
-    year?: number | undefined;
-    month?: number;
-    day?: number;
+    from?: Date;
+    to?: Date;
 }
 
 export class JobCategoryDTO implements IJobCategoryDTO {
