@@ -5,7 +5,7 @@ import moment from 'moment';
 import React from 'react';
 import { TimeOffDTO } from 'services/ApiClient';
 import { apiTimeOff } from 'services/ApiClient.singleton';
-import { momentToDate, required } from 'utils';
+import { calculateBusinessDays, momentToDate, required } from 'utils';
 import { usePage } from './PageProvider';
 
 const formLayout = {
@@ -113,7 +113,7 @@ export function ModalNew() {
 
           if (changedValues.time && values.timeType === 'many-days') {
             const [from, to] = changedValues.time;
-            if (from && to) form.setFieldsValue({ duration: to.diff(from, 'days') + 1 });
+            if (from && to) form.setFieldsValue({ duration: calculateBusinessDays(from, to) });
           }
 
           forceRerender();
@@ -144,9 +144,17 @@ export function ModalNew() {
         </Form.Item>
         <Form.Item label="Thời gian" rules={[required('Thời gian')]} name={['time']}>
           {form.getFieldValue('timeType') === 'many-days' ? (
-            <DatePicker.RangePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+            <DatePicker.RangePicker
+              style={{ width: '100%' }}
+              format="DD/MM/YYYY"
+              disabledDate={(date) => date.day() === 0 || date.day() === 6}
+            />
           ) : (
-            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+            <DatePicker
+              style={{ width: '100%' }}
+              format="DD/MM/YYYY"
+              disabledDate={(date) => date.day() === 0 || date.day() === 6}
+            />
           )}
         </Form.Item>
 

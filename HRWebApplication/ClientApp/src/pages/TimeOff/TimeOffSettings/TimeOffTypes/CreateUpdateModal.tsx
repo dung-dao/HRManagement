@@ -1,7 +1,8 @@
-import { Form, Input, Modal } from 'antd';
+import { Checkbox, Form, Input, InputNumber, Modal, Select } from 'antd';
 import React from 'react';
 import { required } from 'utils';
 import { usePage, RecordType } from './PageProvider';
+import { mapProperties } from './columns';
 
 const formLayout = {
   labelCol: { span: 8 },
@@ -17,26 +18,25 @@ const noun = 'loại nghỉ phép' as const;
 
 export const CreateUpdateModal: React.FC<{}> = () => {
   const { modalVisibleType, setModalVisibleType, selectedRecord, onUpdate, onCreate } = usePage();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const [form] = Form.useForm<RecordType>();
 
   const VerbNoun = actionVietnamese[modalVisibleType] + ' ' + noun;
 
   const onSubmit = async (values: RecordType) => {
-    const record = {
-      ...selectedRecord,
-      ...values,
-    } as RecordType;
-
     try {
+      setIsSubmitting(true);
       if (modalVisibleType === 'update') {
-        await onUpdate(record);
+        await onUpdate(values);
       } else if (modalVisibleType === 'create') {
-        await onCreate(record);
+        await onCreate(values);
       }
       setModalVisibleType('hidden');
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -65,6 +65,7 @@ export const CreateUpdateModal: React.FC<{}> = () => {
       }}
       onCancel={() => setModalVisibleType('hidden')}
       width={600}
+      confirmLoading={isSubmitting}
     >
       <Form
         {...formLayout}
@@ -76,10 +77,27 @@ export const CreateUpdateModal: React.FC<{}> = () => {
         // initialValues={initialValues}
       >
         <Form.Item name="name" label="Tên loại nghỉ phép" rules={[required('Tên loại nghỉ phép')]}>
-          <Input />
+          <Input placeholder="vd: Nghỉ thai sản" />
         </Form.Item>
-        <Form.Item name="description" label="Mô tả">
-          <Input.TextArea />
+        <Form.Item name="isPaidTimeOff" label="Có trả lương" valuePropName="checked">
+          <Checkbox defaultChecked={false} />
+        </Form.Item>
+        <Form.Item name="frequency" label="Chu kỳ" rules={[required('Chu kỳ')]}>
+          <Select placeholder="Chọn">
+            {Object.entries(mapProperties.frequency).map(([k, v]) => (
+              <Select.Option key={k} value={k}>
+                {v}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          name="maximumCarryOver"
+          label="Tích luỹ"
+          rules={[required('Tích luỹ')]}
+          tooltip="Số ngày nghỉ được tính tích luỹ sang chu kỳ sau (nếu còn dư ở chu kỳ trước)"
+        >
+          <InputNumber style={{ width: '100%' }} min={0} placeholder="0" />
         </Form.Item>
       </Form>
     </Modal>
