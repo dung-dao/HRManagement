@@ -15,6 +15,7 @@ namespace HRData.Models.SalaryModels
     {
         public string Name { get; set; }
         public bool IsPaidTimeOff { get; set; }
+        public string Description { get; set; }
         // public AccrualFrequency Frequency { get; set; }
         // public double MaximumCarryOver { get; set; }
         // public double InitialValue { get; set; }
