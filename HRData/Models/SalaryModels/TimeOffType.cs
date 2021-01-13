@@ -21,7 +21,5 @@ namespace HRData.Models.SalaryModels
 
         //nav
         public virtual List<WorkingLog> WorkingLogs { get; set; }
-        public virtual List<LeaveEntitlement> LeaveEntitlements { get; set; }
-        public virtual List<Employee> Employees { get; set; }
     }
 }

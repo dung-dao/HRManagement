@@ -39,8 +39,6 @@ namespace HRData.Repositories
         //TimeOffType
         TimeOffType GetTimeOffTypeById(int id);
 
-        void UpdateTimeOffBalance();
-
         //Caculate Salary
         SalaryPayment GenerateSalaryPayment(Employee employee, DateTime date);
         SalaryPayment GetSalaryPaymentById(int id);
@@ -284,35 +282,6 @@ namespace HRData.Repositories
         public SalaryPayment GetSalaryPaymentById(int id)
         {
             return _context.SalaryPayments.Find(id);
-        }
-
-        public void UpdateTimeOffBalance()
-        {
-            var employees = _employeeRepostiory.GetWorkingEmployees();
-
-            foreach (var e in employees)
-            {
-                UpdateEmployeeTimeOffBalance(e);
-            }
-        }
-
-        private void UpdateEmployeeTimeOffBalance(Employee employee)
-        {
-            var timeOffTypes = employee.TimeOffTypes;
-            List<LeaveEntitlement> entitlements = new List<LeaveEntitlement>();
-
-            foreach (var t in timeOffTypes)
-            {
-                var le = GetLeaveEntitlement(employee, t);
-                entitlements.Add(le);
-            }
-
-            //Với mỗi employee
-            //Get danh sách TimeOffType
-            //Get last init balance date
-            // if... frequency... base on date => check maximium carry over and add to new balance
-
-            throw new NotImplementedException();
         }
 
         public void ApproveTimeOff(WorkingLog wl)
