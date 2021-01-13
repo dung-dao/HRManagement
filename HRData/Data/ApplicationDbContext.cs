@@ -34,7 +34,7 @@ namespace HRData.Data
         public DbSet<TimeOffType> TimeOffTypes { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
 
-        public DbSet<LeaveEntitlement> LeaveEntitlements { get; set; }
+        // public DbSet<LeaveEntitlement> LeaveEntitlements { get; set; }
         public DbSet<SalaryPayment> SalaryPayments { get; set; }
         #endregion
 

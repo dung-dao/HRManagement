@@ -27,7 +27,7 @@ namespace HRData.Repositories
         //TimeOff
         IEnumerable<WorkingLog> GetTimeOffList();
         IEnumerable<WorkingLog> GetTimeOffList(Employee employee);
-        LeaveEntitlement GetLeaveEntitlement(Employee employee, TimeOffType type);
+        // LeaveEntitlement GetLeaveEntitlement(Employee employee, TimeOffType type);
 
         void CreateTimeOff(WorkingLog newTimeOff, Employee employee);
         void UpdateMyTimeOff(WorkingLog log, WorkingLog update);
@@ -137,15 +137,15 @@ namespace HRData.Repositories
         public void CreateTimeOff(WorkingLog newTimeOff, Employee employee)
         {
             newTimeOff.LogStatus = LogStatus.Pending;
-            double balance;
-            LeaveEntitlement le = GetLeaveEntitlement(employee, newTimeOff.TimeOffType);
-            if (le is null)
-                balance = 0;
-            else
-                balance = le.Balance;
+            // double balance;
+            // LeaveEntitlement le = GetLeaveEntitlement(employee, newTimeOff.TimeOffType);
+            // if (le is null)
+            //     balance = 0;
+            // else
+            //     balance = le.Balance;
 
-            if (balance < newTimeOff.Duration && newTimeOff.TimeOffType.IsPaidTimeOff)
-                throw new ClientException();
+            // if (balance < newTimeOff.Duration && newTimeOff.TimeOffType.IsPaidTimeOff)
+            //     throw new ClientException();
 
             newTimeOff.Employee = employee;
             _context.WorkingLogs.Add(newTimeOff);
@@ -249,19 +249,19 @@ namespace HRData.Repositories
             return payment;
         }
 
-        public LeaveEntitlement GetLeaveEntitlement(Employee employee, TimeOffType type)
-        {
-            var history = from le in _context.LeaveEntitlements
-                          where
-                              le.RecordStatus == RecordStatus.Active &&
-                              le.Employee.Id == employee.Id &&
-                              le.TimeOffType.Id == type.Id
-                          //   orderby le.LastUpdate descending
-                          select le;
-            if (history is null)
-                return null;
-            return history.First();
-        }
+        // public LeaveEntitlement GetLeaveEntitlement(Employee employee, TimeOffType type)
+        // {
+        //     var history = from le in _context.LeaveEntitlements
+        //                   where
+        //                       le.RecordStatus == RecordStatus.Active &&
+        //                       le.Employee.Id == employee.Id &&
+        //                       le.TimeOffType.Id == type.Id
+        //                   //   orderby le.LastUpdate descending
+        //                   select le;
+        //     if (history is null)
+        //         return null;
+        //     return history.First();
+        // }
 
         public TimeOffType GetTimeOffTypeById(int id)
         {
