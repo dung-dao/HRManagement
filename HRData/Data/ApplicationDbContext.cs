@@ -60,7 +60,7 @@ namespace HRData.Data
             RegisterEntity<SalaryPayment>(builder);
             RegisterEntity<WorkingLog>(builder);
             RegisterEntity<TimeOffType>(builder);
-            RegisterEntity<LeaveEntitlement>(builder);
+            // RegisterEntity<LeaveEntitlement>(builder);
             RegisterEntity<Holiday>(builder);
 
             #region Employee
@@ -141,13 +141,13 @@ namespace HRData.Data
                 .HasMany(e => e.WorkingLogs)
                 .WithOne(wl => wl.TimeOffType);
 
-            builder.Entity<Employee>()
-                .HasMany(e => e.TimeOffTypes)
-                .WithMany(t => t.Employees)
-                .UsingEntity<LeaveEntitlement>(
-                    le => le.HasOne(le => le.TimeOffType).WithMany(t => t.LeaveEntitlements),
-                    le => le.HasOne(le => le.Employee).WithMany(e => e.LeaveEntitlements)
-                );
+            // builder.Entity<Employee>()
+            //     .HasMany(e => e.TimeOffTypes)
+            //     .WithMany(t => t.Employees)
+            //     .UsingEntity<LeaveEntitlement>(
+            //         le => le.HasOne(le => le.TimeOffType).WithMany(t => t.LeaveEntitlements),
+            //         le => le.HasOne(le => le.Employee).WithMany(e => e.LeaveEntitlements)
+            //     );
             
             builder.Entity<Employee>()
                 .HasMany(e => e.SalaryPayments)

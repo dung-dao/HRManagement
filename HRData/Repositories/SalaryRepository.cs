@@ -209,11 +209,11 @@ namespace HRData.Repositories
                           wl.TimeOffType.IsPaidTimeOff
                           select wl.Duration;
 
-            var holidayNum = (from hd in _context.Holidays
-                              where hd.From > lastPayment.Period &&
-                              hd.To <= DateTime.Now &&
-                              hd.RecordStatus == RecordStatus.Active
-                              select hd.Id).Count();
+            var holidays = from hd in _context.Holidays
+                           where hd.From > lastPayment.Period &&
+                           hd.To <= DateTime.Now &&
+                           hd.RecordStatus == RecordStatus.Active
+                           select hd;
 
             //Caculate
             //Attendance
@@ -233,7 +233,10 @@ namespace HRData.Repositories
             }
 
             //Holiday
-            salaryTime += holidayNum * 8;
+            foreach (var h in holidays)
+            {
+                salaryTime += (h.To - h.From).Days * 8;
+            }
 
             double TotalSalary = positionSalary / 23 * salaryTime;
 
@@ -291,7 +294,6 @@ namespace HRData.Repositories
             {
                 UpdateEmployeeTimeOffBalance(e);
             }
-
         }
 
         private void UpdateEmployeeTimeOffBalance(Employee employee)
