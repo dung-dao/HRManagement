@@ -1,8 +1,7 @@
-import { Checkbox, Form, Input, InputNumber, Modal, Select } from 'antd';
+import { Checkbox, Form, Input, Modal } from 'antd';
 import React from 'react';
 import { required } from 'utils';
-import { usePage, RecordType } from './PageProvider';
-import { mapProperties } from './columns';
+import { RecordType, usePage } from './PageProvider';
 
 const formLayout = {
   labelCol: { span: 8 },
@@ -67,7 +66,7 @@ export const CreateUpdateModal: React.FC<{}> = () => {
       width={600}
       confirmLoading={isSubmitting}
     >
-      <Form
+      <Form<RecordType>
         {...formLayout}
         id="create-update-form"
         form={form}
@@ -79,25 +78,17 @@ export const CreateUpdateModal: React.FC<{}> = () => {
         <Form.Item name="name" label="Tên loại nghỉ phép" rules={[required('Tên loại nghỉ phép')]}>
           <Input placeholder="vd: Nghỉ thai sản" />
         </Form.Item>
-        <Form.Item name="isPaidTimeOff" label="Có trả lương" valuePropName="checked">
-          <Checkbox defaultChecked={false} />
-        </Form.Item>
-        <Form.Item name="frequency" label="Chu kỳ" rules={[required('Chu kỳ')]}>
-          <Select placeholder="Chọn">
-            {Object.entries(mapProperties.frequency).map(([k, v]) => (
-              <Select.Option key={k} value={k}>
-                {v}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
         <Form.Item
-          name="maximumCarryOver"
-          label="Tích luỹ"
-          rules={[required('Tích luỹ')]}
-          tooltip="Số ngày nghỉ được tính tích luỹ sang chu kỳ sau (nếu còn dư ở chu kỳ trước)"
+          name="isPaidTimeOff"
+          label="Có trả lương"
+          rules={[required('Trường này')]}
+          valuePropName="checked"
+          initialValue={false}
         >
-          <InputNumber style={{ width: '100%' }} min={0} placeholder="0" />
+          <Checkbox />
+        </Form.Item>
+        <Form.Item name="description" label="Mô tả">
+          <Input.TextArea placeholder="Mô tả" />
         </Form.Item>
       </Form>
     </Modal>

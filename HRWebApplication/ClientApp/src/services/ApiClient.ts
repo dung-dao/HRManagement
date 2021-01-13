@@ -4487,6 +4487,7 @@ export interface IPositionDTO {
 
 export class HolidayDTO implements IHolidayDTO {
     id?: number;
+    name?: string | undefined;
     from?: Date;
     to?: Date;
 
@@ -4502,6 +4503,7 @@ export class HolidayDTO implements IHolidayDTO {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.name = _data["name"];
             this.from = _data["from"] ? new Date(_data["from"].toString()) : <any>undefined;
             this.to = _data["to"] ? new Date(_data["to"].toString()) : <any>undefined;
         }
@@ -4517,6 +4519,7 @@ export class HolidayDTO implements IHolidayDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["name"] = this.name;
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         return data; 
@@ -4525,6 +4528,7 @@ export class HolidayDTO implements IHolidayDTO {
 
 export interface IHolidayDTO {
     id?: number;
+    name?: string | undefined;
     from?: Date;
     to?: Date;
 }
@@ -4573,17 +4577,11 @@ export interface IJobCategoryDTO {
     description?: string | undefined;
 }
 
-export enum AccrualFrequency {
-    Monthly = "Monthly",
-    Yearly = "Yearly",
-}
-
 export class TimeOffTypeDTO implements ITimeOffTypeDTO {
     id?: number;
     name?: string | undefined;
+    description?: string | undefined;
     isPaidTimeOff?: boolean;
-    frequency?: AccrualFrequency;
-    maximumCarryOver?: number;
 
     constructor(data?: ITimeOffTypeDTO) {
         if (data) {
@@ -4598,9 +4596,8 @@ export class TimeOffTypeDTO implements ITimeOffTypeDTO {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
+            this.description = _data["description"];
             this.isPaidTimeOff = _data["isPaidTimeOff"];
-            this.frequency = _data["frequency"];
-            this.maximumCarryOver = _data["maximumCarryOver"];
         }
     }
 
@@ -4615,9 +4612,8 @@ export class TimeOffTypeDTO implements ITimeOffTypeDTO {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["description"] = this.description;
         data["isPaidTimeOff"] = this.isPaidTimeOff;
-        data["frequency"] = this.frequency;
-        data["maximumCarryOver"] = this.maximumCarryOver;
         return data; 
     }
 }
@@ -4625,9 +4621,8 @@ export class TimeOffTypeDTO implements ITimeOffTypeDTO {
 export interface ITimeOffTypeDTO {
     id?: number;
     name?: string | undefined;
+    description?: string | undefined;
     isPaidTimeOff?: boolean;
-    frequency?: AccrualFrequency;
-    maximumCarryOver?: number;
 }
 
 export class LeaveEntitlementDTO implements ILeaveEntitlementDTO {

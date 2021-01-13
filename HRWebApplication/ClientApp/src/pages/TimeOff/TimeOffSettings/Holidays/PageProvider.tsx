@@ -1,11 +1,12 @@
 import { message } from 'antd';
+import moment from 'moment';
 import React from 'react';
-import { TimeOffTypeDTO } from 'services/ApiClient';
-import { apiTimeOffType } from 'services/ApiClient.singleton';
+import { HolidayDTO } from 'services/ApiClient';
+import { apiHoliday } from 'services/ApiClient.singleton';
 import { CreateUpdateModal } from './CreateUpdateModal';
 
-export const apiClient = apiTimeOffType;
-export type RecordType = TimeOffTypeDTO;
+export const apiClient = apiHoliday;
+export type RecordType = HolidayDTO;
 export type ModalType = 'create' | 'update' | 'hidden';
 
 type PageContextData = {
@@ -21,6 +22,9 @@ type PageContextData = {
 
   selectedRecord: RecordType | undefined; // selected record when on modal UPDATING
   setSelectedRecord: React.Dispatch<React.SetStateAction<RecordType | undefined>>;
+
+  selectedYear: number;
+  setSelectedYear: React.Dispatch<React.SetStateAction<number>>;
 };
 
 export const PageContext = React.createContext<PageContextData>(undefined as any);
@@ -38,10 +42,13 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
   const [modalVisibleType, setModalVisibleType] = React.useState<ModalType>('hidden');
   const [selectedRecord, setSelectedRecord] = React.useState<RecordType>();
 
+  // custom data for this page:
+  const [selectedYear, setSelectedYear] = React.useState(moment().year());
+
   const fetchAll = React.useCallback(async () => {
     try {
       setListDataReady(false);
-      const data = await apiClient.timeOffType_GetAll();
+      const data = await apiClient.holiday_GetAll();
       setListData(data);
     } catch (err) {
       console.error(err);
@@ -58,7 +65,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
   const onCreate = React.useCallback(
     async (record: RecordType) => {
       try {
-        const newRecord = await apiClient.timeOffType_Create(record);
+        const newRecord = await apiClient.holiday_Create(record);
         setListData([...listData, newRecord]);
         message.info('Tạo mới thành công');
       } catch (err) {
@@ -73,7 +80,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
     async (record: RecordType) => {
       try {
         const updatedRecord = { ...selectedRecord, ...record } as RecordType;
-        await apiClient.timeOffType_Update(updatedRecord.id!, updatedRecord);
+        await apiClient.holiday_Update(updatedRecord.id!, updatedRecord);
         setListData((data) =>
           data?.map((it) => (it.id === updatedRecord.id! ? updatedRecord : it)),
         );
@@ -88,7 +95,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
 
   const onDelete = React.useCallback(async (recordId: number) => {
     try {
-      await apiClient.timeOffType_Delete(recordId);
+      await apiClient.holiday_Delete(recordId);
       setListData((data) => data?.filter((it) => it.id !== recordId));
       message.info('Xoá thành công');
     } catch (err) {
@@ -109,6 +116,8 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
         setModalVisibleType,
         selectedRecord,
         setSelectedRecord,
+        selectedYear,
+        setSelectedYear,
       }}
     >
       {children}

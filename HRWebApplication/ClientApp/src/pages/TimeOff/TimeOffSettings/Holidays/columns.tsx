@@ -1,50 +1,33 @@
 // import { ActionRenderer } from './ActionRenderer';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, Space, Tooltip } from 'antd';
+import { Button, Popconfirm, Space } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import moment from 'moment';
 import React from 'react';
 import { usePage } from './PageProvider';
 import { RecordType } from './PageProvider';
 
-export const mapProperties = {
-  isPaidTimeOff: {
-    true: 'Có',
-    false: 'Không',
-  },
-} as const;
+export const mapProperties = {} as const;
 
 export const columns: ColumnsType<RecordType> = [
   {
     key: 'name',
     title: 'Tên',
     dataIndex: 'name',
+  },
+  {
+    key: 'from',
+    title: 'Từ ngày',
+    dataIndex: 'from',
+    render: (value: Date) => moment(value).format('DD/MM'),
     width: '25%',
   },
   {
-    key: 'isPaidTimeOff',
-    title: 'Có trả lương',
-    dataIndex: 'isPaidTimeOff',
-    width: '15%',
-    render: (value: boolean) => mapProperties.isPaidTimeOff[String(value)],
-  },
-  {
-    key: 'description',
-    title: 'Mô tả',
-    dataIndex: 'description',
-    // Add ellipsis option to table cell antd: https://github.com/ant-design/ant-design/issues/5753#issuecomment-457319869
-    onCell: () => {
-      return {
-        style: {
-          whiteSpace: 'nowrap',
-          maxWidth: 150,
-        },
-      };
-    },
-    render: (text) => (
-      <Tooltip title={text}>
-        <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{text}</div>
-      </Tooltip>
-    ),
+    key: 'to',
+    title: 'Đến ngày',
+    dataIndex: 'to',
+    render: (value: Date) => moment(value).format('DD/MM'),
+    width: '25%',
   },
   {
     title: 'Thao tác',
