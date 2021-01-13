@@ -188,12 +188,24 @@ namespace HRWebApplication.Controllers
         [HttpPost("{id}/approve", Name = "ApproveById")]
         public IActionResult Approve(int id)
         {
+            var wl = _salaryRepository.GetWorkingLogById(id);
+            if (wl is null)
+                return NotFound();
+
+            _salaryRepository.ApproveLog(wl);
+            _unitOfWork.Save();
             return NoContent();
         }
 
         [HttpPost("{id}/reject", Name = "RejectById")]
         public IActionResult Reject(int id)
         {
+            var wl = _salaryRepository.GetWorkingLogById(id);
+            if (wl is null)
+                return NotFound();
+
+            _salaryRepository.RejectLog(wl);
+            _unitOfWork.Save();
             return NoContent();
         }
         #endregion

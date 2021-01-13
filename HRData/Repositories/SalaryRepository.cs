@@ -21,11 +21,8 @@ namespace HRData.Repositories
 
         WorkingLog GetAttendanceById(int id); //
 
-        void ApproveAttendance(WorkingLog wl); //
-        void RejectAttendance(WorkingLog wl); //
-
-        void ApproveTimeOff(WorkingLog wl);
-        void RejectTimeOff(WorkingLog wl);
+        void ApproveLog(WorkingLog wl); //
+        void RejectLog(WorkingLog wl); //
 
         //TimeOff
         IEnumerable<WorkingLog> GetTimeOffList();
@@ -60,7 +57,7 @@ namespace HRData.Repositories
             _employeeRepostiory = employeeRepostiory;
         }
 
-        public void ApproveAttendance(WorkingLog wl)
+        public void ApproveLog(WorkingLog wl)
         {
             wl.LogStatus = LogStatus.Approved;
         }
@@ -95,7 +92,7 @@ namespace HRData.Repositories
             .ToList();
         }
         public WorkingLog GetWorkingLogById(int id) => _context.WorkingLogs.Find(id);
-        public void RejectAttendance(WorkingLog wl)
+        public void RejectLog(WorkingLog wl)
         {
             wl.LogStatus = LogStatus.Rejected;
         }
@@ -213,8 +210,9 @@ namespace HRData.Repositories
                            hd.RecordStatus == RecordStatus.Active
                            select hd;
 
-            //Caculate
-            //Attendance
+            //Caculate Attendance            
+            //Nếu thời gian làm việc trong ngày lớn hơn 9h --> nhận 120% lương
+            //Nếu thời gian làm việc trong ngày lớn hơn nhỏ hơn 4 tiếng --> nhận 70% lương
             foreach (var e in attendanceTime)
             {
                 if (e.Duration < 4) //Làm ít quá
@@ -233,7 +231,7 @@ namespace HRData.Repositories
             //Holiday
             foreach (var h in holidays)
             {
-                salaryTime += (h.To - h.From).Days * 8;
+                salaryTime += ((h.To - h.From).Days + 1) * 8;
             }
 
             double TotalSalary = positionSalary / 23 * salaryTime;
@@ -249,10 +247,6 @@ namespace HRData.Repositories
 
             _context.SalaryPayments.Add(payment);
             return payment;
-
-            //Công thức:
-            //Nếu thời gian làm việc trong ngày lớn hơn 9h --> nhận 120% lương
-            //Nếu thời gian làm việc trong ngày lớn hơn nhỏ hơn 4 tiếng --> nhận 70% lương
         }
 
         public LeaveEntitlement GetLeaveEntitlement(Employee employee, TimeOffType type)
@@ -282,16 +276,6 @@ namespace HRData.Repositories
         public SalaryPayment GetSalaryPaymentById(int id)
         {
             return _context.SalaryPayments.Find(id);
-        }
-
-        public void ApproveTimeOff(WorkingLog wl)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RejectTimeOff(WorkingLog wl)
-        {
-            throw new NotImplementedException();
         }
 
         public void RemoveAttendance(WorkingLog log)
