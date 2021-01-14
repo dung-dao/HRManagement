@@ -97,7 +97,7 @@ namespace HRWebApplication.Controllers
             if (timeOffType is null)
                 return NotFound();
 
-            var newTimeOff = new WorkingLog()
+            var log = new WorkingLog()
             {
                 Type = WorkingLogType.TimeOff,
                 Date = data.Date,
@@ -107,10 +107,19 @@ namespace HRWebApplication.Controllers
                 TimeOffType = timeOffType
             };
 
-            _salaryRepository.CreateTimeOff(newTimeOff, user.Employee);
+            _salaryRepository.CreateTimeOff(log, user.Employee);
             _unitOfWork.Save();
+            var res = new TimeOffDTO()
+            {
+                Id = log.Id,
+                Date = log.Date,
+                Duration = log.Duration,
+                Note = log.Note,
+                TimeOffType = _mapper.Map<TimeOffTypeDTO>(log.TimeOffType),
+                LogStatus = log.LogStatus
+            }; ;
 
-            return CreatedAtAction("GetMyTimeOffById", new { id = newTimeOff.Id }, newTimeOff);
+            return CreatedAtAction("GetMyTimeOffById", new { id = res.Id }, res);
         }
 
         [HttpPut("Me/{id}", Name = "EditMineById")]
