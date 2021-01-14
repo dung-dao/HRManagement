@@ -1,20 +1,18 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Input, Row, Table } from 'antd';
+import { Col, Input, Row, Table } from 'antd';
 import { useSearchKeywork } from 'hooks/useSearchKeyword';
 import React from 'react';
 import { columns } from './columns';
-import { usePage, withPageProvider } from './PageProvider';
+import { RecordType, usePage, withPageProvider } from './PageProvider';
 
 type Props = {};
 
 export const TimeOffList: React.FC<Props> = withPageProvider((props) => {
-  const { searchRegex, inputSearchProps } = useSearchKeywork();
-  const { listData, listDataReady, setIsModalNewVisible } = usePage();
+  const { listData, listDataReady, modalVisibleType } = usePage();
+  const { searchRegex, inputSearchProps } = useSearchKeywork({
+    when: () => modalVisibleType === 'hidden',
+  });
 
-  const finalEmployees = listData?.filter(
-    (it) =>
-      `${it.firstName} ${it.lastName}`.match(searchRegex) || JSON.stringify(it).match(searchRegex),
-  );
+  const filterData = listData?.filter((it) => JSON.stringify(it).match(searchRegex));
 
   return (
     <div>
@@ -28,21 +26,10 @@ export const TimeOffList: React.FC<Props> = withPageProvider((props) => {
             {...inputSearchProps}
           />
         </Col>
-        <Col style={{ marginLeft: 'auto' }}>
-          <Button
-            type="primary"
-            size="middle"
-            icon={<PlusOutlined />}
-            onClick={() => setIsModalNewVisible(true)}
-          >
-            Thêm mới
-          </Button>
-        </Col>
       </Row>
-      <Table
-        // @ts-ignore
+      <Table<RecordType>
         columns={columns}
-        dataSource={finalEmployees}
+        dataSource={filterData}
         loading={!listDataReady}
         // pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: [5, 10, 20] }}
         scroll={{ x: 'max-content' }}

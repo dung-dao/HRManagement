@@ -1,55 +1,85 @@
 import { message } from 'antd';
 import React from 'react';
-import { EmployeeDTO } from 'services/ApiClient';
-import { apiEmployees } from 'services/ApiClient.singleton';
-import { ModalNew } from './ModalNew';
+import { LogStatus, TimeOffDTO } from 'services/ApiClient';
+import { apiTimeOff } from 'services/ApiClient.singleton';
+
+export const apiClient = apiTimeOff;
+export type RecordType = TimeOffDTO;
+export type ModalType = 'create' | 'update' | 'hidden';
 
 type PageContextData = {
-  listData: EmployeeDTO[] | undefined;
+  listData: RecordType[] | undefined;
   listDataReady: boolean;
-  onDelete: (recordId: number) => Promise<void>;
-  isModalNewVisible: boolean;
-  setIsModalNewVisible: React.Dispatch<React.SetStateAction<boolean>>;
+
+  onApprove: (recordId: number) => Promise<void>;
+  onReject: (recordId: number) => Promise<void>;
+
+  modalVisibleType: ModalType;
+  setModalVisibleType: React.Dispatch<React.SetStateAction<ModalType>>;
+
+  selectedRecord: RecordType | undefined; // selected record when on modal UPDATING
+  setSelectedRecord: React.Dispatch<React.SetStateAction<RecordType | undefined>>;
 };
 
 export const PageContext = React.createContext<PageContextData>(undefined as any);
 
 type Props = React.PropsWithChildren<{}>;
 
-export function PageProvider(props: Props) {
+export const PageProvider: React.FC<{}> = (props: Props) => {
   const { children } = props;
 
   // data related states
-  const [listData, setListData] = React.useState<EmployeeDTO[]>();
+  const [listData, setListData] = React.useState<RecordType[]>([]);
   const [listDataReady, setListDataReady] = React.useState<boolean>(false);
 
   //  modal controlling related states
-  const [isModalNewVisible, setIsModalNewVisible] = React.useState<boolean>(false);
+  const [modalVisibleType, setModalVisibleType] = React.useState<ModalType>('hidden');
+  const [selectedRecord, setSelectedRecord] = React.useState<RecordType>();
 
-  React.useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        setListDataReady(false);
-        const data = await apiEmployees.employees_GetAll();
-        setListData(data);
-      } catch (err) {
-        console.error(err);
-        message.error('Không thể tải dữ liệu');
-      } finally {
-        setListDataReady(true);
-      }
-    };
-
-    fetchAll();
+  const fetchAll = React.useCallback(async () => {
+    try {
+      setListDataReady(false);
+      const data = await apiClient.getAllMine();
+      setListData(data);
+    } catch (err) {
+      console.error(err);
+      message.error('Không thể tải dữ liệu');
+    } finally {
+      setListDataReady(true);
+    }
   }, []);
 
-  const onDelete = React.useCallback(async (recordId: number) => {
+  React.useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
+
+  const onApprove = React.useCallback(async (recordId: number) => {
     try {
-      await apiEmployees.deleteEmployeeById(recordId);
-      setListData((data) => data?.filter((it) => it.id !== recordId));
-      message.info('Xoá thành công');
+      await apiClient.approveById(recordId);
+      setListData((data) =>
+        data?.map((it) =>
+          it.id === recordId ? ({ ...it, logStatus: LogStatus.Approved } as RecordType) : it,
+        ),
+      );
+      message.info('Phê duyệt thành công');
     } catch (err) {
-      message.error('Xoá không thành công');
+      message.error('Phê duyệt không thành công');
+      throw err;
+    }
+  }, []);
+
+  const onReject = React.useCallback(async (recordId: number) => {
+    try {
+      await apiClient.rejectById(recordId);
+      setListData((data) =>
+        data?.map((it) =>
+          it.id === recordId ? ({ ...it, logStatus: LogStatus.Rejected } as RecordType) : it,
+        ),
+      );
+      message.info('Từ chối thành công');
+    } catch (err) {
+      message.error('Từ chối không thành công');
+      throw err;
     }
   }, []);
 
@@ -58,15 +88,18 @@ export function PageProvider(props: Props) {
       value={{
         listData,
         listDataReady,
-        onDelete,
-        isModalNewVisible,
-        setIsModalNewVisible,
+        onApprove,
+        onReject,
+        modalVisibleType,
+        setModalVisibleType,
+        selectedRecord,
+        setSelectedRecord,
       }}
     >
       {children}
     </PageContext.Provider>
   );
-}
+};
 
 export function usePage() {
   return React.useContext(PageContext);
@@ -76,7 +109,6 @@ export function withPageProvider<T>(Component: React.FC<T>) {
   return (props: T) => (
     <PageProvider>
       <Component {...props} />
-      <ModalNew />
     </PageProvider>
   );
 }

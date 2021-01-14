@@ -214,15 +214,15 @@ export const routes: RouteData = [
                 icon: <UserOutlined />,
               },
             },
-            {
-              path: ROUTES.timeOffTeam,
-              requireRole: { type: '>=', role: 'User' },
-              component: TimeOffTeam,
-              menuItem: {
-                label: 'Nghỉ phép của nhóm',
-                icon: <TeamOutlined />,
-              },
-            },
+            // {
+            //   path: ROUTES.timeOffTeam,
+            //   requireRole: { type: '>=', role: 'User' },
+            //   component: TimeOffTeam,
+            //   menuItem: {
+            //     label: 'Nghỉ phép của nhóm',
+            //     icon: <TeamOutlined />,
+            //   },
+            // },
             {
               path: ROUTES.timeOffList,
               requireRole: { type: '>=', role: 'Manager' },
@@ -260,15 +260,15 @@ export const routes: RouteData = [
                 icon: <UserOutlined />,
               },
             },
-            {
-              path: ROUTES.attendanceTeam,
-              requireRole: { type: '>=', role: 'User' },
-              component: AttendanceTeam,
-              menuItem: {
-                label: 'Chấm công của nhóm',
-                icon: <TeamOutlined />,
-              },
-            },
+            // {
+            //   path: ROUTES.attendanceTeam,
+            //   requireRole: { type: '>=', role: 'User' },
+            //   component: AttendanceTeam,
+            //   menuItem: {
+            //     label: 'Chấm công của nhóm',
+            //     icon: <TeamOutlined />,
+            //   },
+            // },
             {
               path: ROUTES.attendanceList,
               requireRole: { type: '>=', role: 'Manager' },

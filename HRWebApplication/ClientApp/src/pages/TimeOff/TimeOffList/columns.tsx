@@ -1,66 +1,152 @@
+// import { ActionRenderer } from './ActionRenderer';
 import {
-  CarryOutOutlined,
+  CheckCircleOutlined,
   CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  ExclamationOutlined,
+  MinusCircleOutlined,
+  MinusOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
+import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ROUTES } from 'routes';
-import { EmployeeDTO, EmployeeStatus } from 'services/ApiClient';
-import { mapSex, mapStatusToTagProps, BeautifyEmployeeStatus } from './utils';
-import { ActionRenderer } from './ActionRenderer';
+import { LogStatus, TimeOffTypeDTO } from 'services/ApiClient';
+import { RecordType, usePage } from './PageProvider';
 
-export const columns = [
+export const mapProperties = {
+  logStatus: {
+    [LogStatus.Approved]: {
+      color: 'success',
+      icon: <CheckCircleOutlined />,
+      children: 'Đã duyệt',
+    },
+    [LogStatus.Pending]: {
+      color: 'warning',
+      icon: <SyncOutlined spin />,
+      children: 'Đang chờ',
+    },
+    [LogStatus.Rejected]: {
+      color: 'default',
+      icon: <MinusCircleOutlined />,
+      children: 'Đã từ chối',
+    },
+  },
+} as const;
+
+export const columns: ColumnsType<RecordType> = [
   {
     title: 'Trạng thái',
     fixed: 'left',
-    key: 'status',
-    dataIndex: 'status',
-    render: (status: EmployeeStatus, _, index) => (
-      <Tag {...mapStatusToTagProps[status]} key={index} />
+    key: 'logStatus',
+    dataIndex: 'logStatus',
+    render: (value: LogStatus, record: RecordType, index: number) => (
+      <Tag {...mapProperties.logStatus[value]} key={index} />
     ),
-    filters: [
-      { text: 'Đang làm việc', value: BeautifyEmployeeStatus.Working },
-      { text: 'Chưa làm việc', value: BeautifyEmployeeStatus.Pending },
-      { text: 'Ngừng làm việc', value: BeautifyEmployeeStatus.Left },
-    ],
-    onFilter: (value: EmployeeStatus, record: EmployeeDTO) => record.status === value,
-    sorter: (a: EmployeeDTO, b: EmployeeDTO) => {
+    filters: Object.entries(mapProperties.logStatus).map(([k, v]) => ({
+      text: v.children,
+      value: k,
+    })),
+    // @ts-ignore
+    onFilter: (value: LogStatus, record: RecordType) => record.logStatus! === value,
+    sorter: (a: RecordType, b: RecordType) => {
       const mapPriority = {
         // the higher value should appear first
-        [BeautifyEmployeeStatus.Working]: 2,
-        [BeautifyEmployeeStatus.Pending]: 1,
-        [BeautifyEmployeeStatus.Left]: 0,
+        [LogStatus.Pending]: 2,
+        [LogStatus.Approved]: 1,
+        [LogStatus.Rejected]: 0,
       };
-      return mapPriority[a.status!] - mapPriority[b.status!];
+      return mapPriority[a.logStatus!] - mapPriority[b.logStatus!];
     },
-    sortDirections: ['descend'],
+    sortDirections: ['descend', 'ascend', 'descend'],
     defaultSortOrder: 'descend',
   },
-  { title: 'Họ', key: 'firstName', dataIndex: 'firstName' },
-  { title: 'Tên', key: 'lastName', dataIndex: 'lastName' },
-
-  { title: 'Email cá nhân', key: 'personalEmail', dataIndex: 'personalEmail' },
-  { title: 'Email công việc', key: 'workEmail', dataIndex: 'workEmail' },
-  { title: 'Sđt', key: 'phone', dataIndex: 'phone' },
   {
-    title: 'Ngày sinh',
-    key: 'dateOfBirth',
-    dataIndex: 'dateOfBirth',
-    render: (date) => moment(date).format('DD/MM/YYYY'),
+    key: 'date',
+    title: 'Ngày',
+    dataIndex: 'date',
+    render: (value: Date) => moment(value).format('DD/MM/YYYY'),
+    width: '20%',
   },
-  { title: 'Giới tính', key: 'sex', dataIndex: 'sex', render: (sex) => mapSex[sex] },
-  { title: 'Địa chỉ hiện tại', key: 'currentAddress', dataIndex: 'currentAddress' },
-  { title: 'Địa chỉ thường trú', key: 'address', dataIndex: 'address' },
+  {
+    key: 'duration',
+    title: 'Số công',
+    dataIndex: 'duration',
+    width: '15%',
+  },
+  {
+    key: 'timeOffType',
+    title: 'Loại',
+    dataIndex: 'timeOffType',
+    render: (value: TimeOffTypeDTO) => value.name,
+    width: '20%',
+  },
+  {
+    key: 'note',
+    title: 'Ghi chú',
+    dataIndex: 'note',
+    onCell: () => {
+      return {
+        style: {
+          whiteSpace: 'nowrap',
+          maxWidth: 150,
+        },
+      };
+    },
+    render: (text) => (
+      <Tooltip title={text}>
+        <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{text}</div>
+      </Tooltip>
+    ),
+  },
   {
     title: 'Thao tác',
     key: 'action',
     fixed: 'right',
+    align: 'center',
+    width: '20%',
     render: ActionRenderer,
   },
 ];
+
+function ActionRenderer(value: any, record: RecordType, index: number) {
+  const { onApprove, onReject } = usePage();
+
+  return (
+    <Space size="small">
+      <Popconfirm
+        placement="right"
+        title={'Phê duyệt'}
+        onConfirm={() => onApprove(record.id!)}
+        okText="Đồng ý"
+        cancelText="Không"
+        disabled={record.logStatus !== LogStatus.Pending}
+      >
+        <Button
+          title="Phê duyệt"
+          size="small"
+          type="primary"
+          disabled={record.logStatus !== LogStatus.Pending}
+        >
+          <CheckOutlined />
+        </Button>
+      </Popconfirm>
+      <Popconfirm
+        placement="right"
+        title={'Từ chối'}
+        onConfirm={() => onReject(record.id!)}
+        okText="Đồng ý"
+        cancelText="Không"
+        disabled={record.logStatus !== LogStatus.Pending}
+      >
+        <Button
+          title="Từ chối"
+          size="small"
+          disabled={record.logStatus !== LogStatus.Pending}
+          danger
+        >
+          <MinusOutlined />
+        </Button>
+      </Popconfirm>
+    </Space>
+  );
+}
