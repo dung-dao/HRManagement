@@ -2,8 +2,8 @@
 import {
   CheckCircleOutlined,
   CheckOutlined,
+  CloseOutlined,
   MinusCircleOutlined,
-  MinusOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
@@ -70,7 +70,7 @@ export const columns: ColumnsType<RecordType> = [
       const fullname = (value?.firstName || '') + ' ' + (value?.lastName || '');
       return (
         <Tooltip title={fullname}>
-          <Link to={ROUTES.employee + '/' + value.id}>{fullname}</Link>
+          <Link to={ROUTES.employeeEdit + '/' + value.id}>{fullname}</Link>
         </Tooltip>
       );
     },
@@ -158,7 +158,7 @@ function ActionRenderer(value: any, record: RecordType, index: number) {
           disabled={record.logStatus !== LogStatus.Pending}
           danger
         >
-          <MinusOutlined />
+          <CloseOutlined />
         </Button>
       </Popconfirm>
     </Space>

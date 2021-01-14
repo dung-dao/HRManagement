@@ -1,1 +1,1 @@
-export * from './EmployeeSettings'
+export * from './Page'

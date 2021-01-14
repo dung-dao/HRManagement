@@ -95,7 +95,7 @@ function ActionRenderer(value: any, record: RecordType, index: number) {
 
   return (
     <Space size="small">
-      <Link to={`${ROUTES.employee}/${record?.id}`}>
+      <Link to={`${ROUTES.employeeEdit}/${record?.id}`}>
         <Tooltip title="Chỉnh sửa">
           <Button size="small" type="primary">
             <EditOutlined />

@@ -16,7 +16,6 @@ import {
   AttendanceList,
   AttendancePersonal,
   AttendanceSettings,
-  AttendanceTeam,
   EmployeeEdit,
   EmployeeList,
   EmployeeNew,
@@ -27,7 +26,6 @@ import {
   TimeOffList,
   TimeOffPersonal,
   TimeOffSettings,
-  TimeOffTeam,
 } from 'pages';
 import React from 'react';
 import { RouteProps } from 'react-router-dom';
@@ -48,7 +46,8 @@ export const ROUTES = {
   employeeOrganization: '/app/employee/organization',
   employeeList: '/app/employee/list',
   employeeNew: '/app/employee/new',
-  employeeEdit: '/app/employee/:employeeId',
+  employeeEdit: '/app/employee/edit',
+  employeeEditParams: '/app/employee/edit/:employeeId',
 
   timeOff: '/app/time-off',
   timeOffSettings: '/app/time-off/settings',
@@ -86,7 +85,7 @@ export type RouteData = {
   routes: RouteItem[];
 }[];
 
-type RouteInRouter = Pick<RouteItem, 'path' | 'requireRole'> & {
+export type RouteInRouter = Pick<RouteItem, 'path' | 'requireRole'> & {
   component: NonNullable<RouteItem['component']>;
 };
 
@@ -182,7 +181,7 @@ export const routes: RouteData = [
               component: EmployeeNew,
             },
             {
-              path: ROUTES.employeeEdit,
+              path: ROUTES.employeeEditParams,
               requireRole: { type: '>=', role: 'Manager' },
               component: EmployeeEdit,
             },
