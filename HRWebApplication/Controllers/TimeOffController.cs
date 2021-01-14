@@ -5,6 +5,7 @@ using HRData.Models.SalaryModels;
 using HRData.Repositories;
 using HRWebApplication.DTO;
 using HRWebApplication.DTO.TimeSheet;
+using HRWebApplication.Helpers.ApiConventions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,9 +22,11 @@ namespace HRWebApplication.Controllers
         private readonly ISalaryRepository _salaryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IEmployeeRepostiory _employeeRepostiory;
 
         public TimeOffController(
             IUserRepository userRepository,
+            IEmployeeRepostiory employeeRepostiory,
             ISalaryRepository salaryRepository,
             IUnitOfWork unitOfWork,
             IMapper mapper
@@ -32,10 +35,12 @@ namespace HRWebApplication.Controllers
             _salaryRepository = salaryRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _employeeRepostiory = employeeRepostiory;
         }
 
         #region MyTimeOff
         [HttpGet("Me", Name = "GetAllMine")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<IEnumerable<TimeOffDTO>> GetMyTimeOff()
         {
             var user = GetAuthorizedUser();
@@ -56,6 +61,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpGet("Me/{id}", Name = "GetMineById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<TimeOffDTO> GetMyTimeOffById(int id)
         {
             var user = GetAuthorizedUser();
@@ -80,6 +86,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpPost("Me", Name = "CreateForMe")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult<TimeOffDTO> PostMyTimeOff([FromBody] TimeOffDTO data)
         {
             var user = GetAuthorizedUser();
@@ -100,21 +107,14 @@ namespace HRWebApplication.Controllers
                 TimeOffType = timeOffType
             };
 
-            try
-            {
-                _salaryRepository.CreateTimeOff(newTimeOff, user.Employee);
-            }
-            catch (ClientException)
-            {
-                return BadRequest();
-                throw;
-            }
+            _salaryRepository.CreateTimeOff(newTimeOff, user.Employee);
             _unitOfWork.Save();
 
-            return CreatedAtAction("GetMyTimeOffById", new { id = data.Id }, newTimeOff);
+            return CreatedAtAction("GetMyTimeOffById", new { id = newTimeOff.Id }, newTimeOff);
         }
 
         [HttpPut("Me/{id}", Name = "EditMineById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public IActionResult UpdateTimeOffById(int id, TimeOffDTO data)
         {
             var user = GetAuthorizedUser();
@@ -147,10 +147,27 @@ namespace HRWebApplication.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("Me/{id}", Name = "DeleteMyTimeOffById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
+        public IActionResult DeleteMyTimeOffById(int id)
+        {
+            var user = GetAuthorizedUser();
+            if (user is null)
+                return Unauthorized();
+
+            var log = _salaryRepository.GetWorkingLogById(id);
+            if (log.Employee.Id != user.Employee.Id)
+                return Unauthorized();
+
+            _salaryRepository.RemoveMyTimeOff(log);
+            return NoContent();
+        }
         #endregion
 
         #region EmployeeTimeOff
         [HttpGet(Name = "GetAll")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<IEnumerable<TimeOffDTO>> GetTimeOff()
         {
             IEnumerable<WorkingLog> logs = _salaryRepository.GetTimeOffList();
@@ -167,6 +184,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpGet("{id}", Name = "GetById")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         public ActionResult<TimeOffDTO> GetTimeOffById(int id)
         {
             WorkingLog timeoff = _salaryRepository.GetTimeOffById(id);
@@ -186,6 +204,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpPost("{id}/approve", Name = "ApproveById")]
+        [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Perform))]
         public IActionResult Approve(int id)
         {
             var wl = _salaryRepository.GetWorkingLogById(id);
@@ -198,6 +217,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpPost("{id}/reject", Name = "RejectById")]
+        [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Perform))]
         public IActionResult Reject(int id)
         {
             var wl = _salaryRepository.GetWorkingLogById(id);

@@ -11,6 +11,7 @@ namespace HRWebApplication.Helpers.ApiConventions
     {
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public static void Perform(int id)
         {
         }

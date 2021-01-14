@@ -4,6 +4,7 @@ using HRData.Models.SalaryModels;
 using HRData.Repositories;
 using HRWebApplication.DTO;
 using HRWebApplication.DTO.TimeSheet;
+using HRWebApplication.Helpers.ApiConventions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -181,8 +182,8 @@ namespace HRWebApplication.Controllers
                 };
             return NotFound();
         }
-
         [HttpPost("{id}/approve", Name = "ApproveAttendance")]
+        [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Perform))]
         public IActionResult ApproveAttendance(int id)
         {
             var log = _salaryRepository.GetWorkingLogById(id);
@@ -194,6 +195,7 @@ namespace HRWebApplication.Controllers
         }
 
         [HttpPost("{id}/reject", Name = "RejectAttendance")]
+        [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Perform))]
         public IActionResult RejectAttendance(int id)
         {
             var log = _salaryRepository.GetWorkingLogById(id);

@@ -44,6 +44,7 @@ namespace HRData.Repositories
         //Helper
         WorkingLog GetWorkingLogById(int id);
         void RemoveAttendance(WorkingLog log);
+        void RemoveMyTimeOff(WorkingLog log);
     }
     public class SalaryRepository : Repository, ISalaryRepository
     {
@@ -149,8 +150,6 @@ namespace HRData.Repositories
 
             newTimeOff.Employee = employee;
             _context.WorkingLogs.Add(newTimeOff);
-
-
         }
 
         public void UpdateMyTimeOff(WorkingLog log, WorkingLog update)
@@ -279,6 +278,11 @@ namespace HRData.Repositories
         }
 
         public void RemoveAttendance(WorkingLog log)
+        {
+            log.RecordStatus = RecordStatus.InActive;
+        }
+
+        public void RemoveMyTimeOff(WorkingLog log)
         {
             log.RecordStatus = RecordStatus.InActive;
         }
