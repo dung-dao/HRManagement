@@ -1,10 +1,10 @@
-import {randomBetween} from "utils";
-import moment from "moment";
-import {EmployeeInfoFormType} from "pages/Employee/EmployeeInfoFormType";
-import {FormInstance} from "antd/lib/form";
+import { FormInstance } from 'antd/lib/form';
+import moment from 'moment';
+import { EmployeeInfoFormType } from 'pages/Employee/EmployeeInfoFormType';
+import { randomBetween } from 'utils';
 
 export function autofill(form: FormInstance) {
-  const { name } = form.__INTERNAL__
+  const { name } = form.__INTERNAL__;
   if (name === 'info') {
     form.setFieldsValue({
       id: 0,
@@ -17,8 +17,8 @@ export function autofill(form: FormInstance) {
       workEmail: 'nguye.van.anh.at.work@gmail.com',
       address: '147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM',
       currentAddress: '147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM',
-      phone: '84123456789'
-    } as EmployeeInfoFormType)
+      phone: '84123456789',
+    } as EmployeeInfoFormType);
   } else if (name === 'work') {
     form.setFieldsValue({
       startDate: moment('Sun Nov 22 2020 16:37:31 GMT+0700'),
@@ -28,6 +28,6 @@ export function autofill(form: FormInstance) {
       workType: '2',
       jobCategory: '1',
       unit: '7',
-    })
+    });
   }
 }

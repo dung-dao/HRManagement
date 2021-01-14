@@ -17,7 +17,7 @@ const actionVietnamese = {
   update: 'Chỉnh sửa',
 } as const;
 
-const noun = 'ngày lễ' as const;
+const noun = 'nghỉ phép' as const;
 
 type FormType = {
   timeOffType: string;
