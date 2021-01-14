@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePage } from 'pages/WorkType/PageProvider';
+import { usePage } from 'pages/__WorkType/PageProvider';
 import { Button, message, Popconfirm, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 

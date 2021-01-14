@@ -1,21 +1,18 @@
-import { LayoutProps } from 'antd/lib/layout';
 import { useAuth } from 'context/AuthContext';
-import { groupBy } from 'lodash';
 import { NotFound } from 'pages';
 import React from 'react';
 import { BrowserRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
-import { ROUTES, routesInRouter } from 'routes';
+import { RouteInRouter, ROUTES, routesInRouter } from 'routes';
 import { isRoleValid, returnRoute, RoleRequired } from 'services/AuthService.util';
 import ErrorBoundary from './components/ErrorBoundary';
 
 type AuthRouteProps = RouteProps & {
   component: Exclude<RouteProps['component'], undefined>;
-  layout?: React.FC<LayoutProps>;
   requireRole: RoleRequired;
 };
 
 function AuthRoute(routeProps: AuthRouteProps) {
-  const { component: Component, layout: Layout, requireRole, ...rest } = routeProps;
+  const { component: Component, requireRole, ...rest } = routeProps;
   const role = useAuth().userRole || 'Unauthorized';
 
   return (
@@ -39,7 +36,7 @@ const renderRoutes = () => {
     const NestedRoutes = () => (
       <Switch>
         <Layout>
-          {route.routes.map((routeProps) => (
+          {route.routes.map((routeProps: RouteInRouter) => (
             <AuthRoute exact {...routeProps} key={routeProps.path} />
           ))}
         </Layout>
@@ -57,7 +54,7 @@ export default function App() {
         <Switch>
           <Redirect from="/" exact to={ROUTES.login} />
           {renderRoutes()}
-          <Route exact path={'*'} component={NotFound} />
+          <Route component={NotFound} />
         </Switch>
       </ErrorBoundary>
     </BrowserRouter>

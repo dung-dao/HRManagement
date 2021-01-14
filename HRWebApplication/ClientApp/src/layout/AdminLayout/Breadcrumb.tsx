@@ -15,6 +15,7 @@ const extractBreadcrumb = {
   list: 'Danh sách',
   organization: 'Cơ cấu tổ chức',
   new: 'Thêm mới',
+  edit: 'Chỉnh sửa',
 } as const;
 
 const StyledAntdBreadcrumb = styled(AntdBreadCrumb)`

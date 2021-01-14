@@ -8,7 +8,7 @@ import { EmployeeWorkForm } from '../Employee/EmployeeWorkForm';
 import { EmployeeFormAction } from './EmployeeFormAction';
 import { PositionHistory } from './PositionHistory';
 import { LeaveDetailModal } from './LeaveDetailModal';
-import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/utils';
+import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/__utils';
 import moment from 'moment';
 
 function FormInfo() {

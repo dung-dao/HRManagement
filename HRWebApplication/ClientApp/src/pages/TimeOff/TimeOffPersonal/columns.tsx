@@ -1,19 +1,17 @@
 // import { ActionRenderer } from './ActionRenderer';
 import {
   CheckCircleOutlined,
-  CheckOutlined,
-  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
   MinusCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import moment from 'moment';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ROUTES } from 'routes';
-import { EmployeeDTO, LogStatus, TimeOffTypeDTO } from 'services/ApiClient';
 import { RecordType, usePage } from './PageProvider';
+import { LogStatus, TimeOffTypeDTO } from 'services/ApiClient';
+import moment from 'moment';
 
 export const mapProperties = {
   logStatus: {
@@ -38,7 +36,7 @@ export const mapProperties = {
 export const columns: ColumnsType<RecordType> = [
   {
     title: 'Trạng thái',
-    // fixed: 'left',
+    fixed: 'left',
     key: 'logStatus',
     dataIndex: 'logStatus',
     render: (value: LogStatus, record: RecordType, index: number) => (
@@ -63,29 +61,17 @@ export const columns: ColumnsType<RecordType> = [
     defaultSortOrder: 'descend',
   },
   {
-    key: 'employee',
-    title: 'Nhân viên',
-    dataIndex: 'employee',
-    render: (value: EmployeeDTO) => {
-      const fullname = (value?.firstName || '') + ' ' + (value?.lastName || '');
-      return (
-        <Tooltip title={fullname}>
-          <Link to={ROUTES.employeeEdit + '/' + value.id}>{fullname}</Link>
-        </Tooltip>
-      );
-    },
-    width: '20%',
-  },
-  {
     key: 'date',
     title: 'Ngày',
     dataIndex: 'date',
     render: (value: Date) => moment(value).format('DD/MM/YYYY'),
+    width: '20%',
   },
   {
     key: 'duration',
     title: 'Số công',
     dataIndex: 'duration',
+    width: '15%',
   },
   {
     key: 'timeOffType',
@@ -123,42 +109,32 @@ export const columns: ColumnsType<RecordType> = [
 ];
 
 function ActionRenderer(value: any, record: RecordType, index: number) {
-  const { onApprove, onReject } = usePage();
+  const { onDelete, setSelectedRecord, setModalVisibleType } = usePage();
 
   return (
     <Space size="small">
+      <Button
+        title="Chỉnh sửa"
+        size="small"
+        type="primary"
+        onClick={() => {
+          setSelectedRecord(record);
+          setModalVisibleType('update');
+        }}
+        disabled={record.logStatus !== LogStatus.Pending}
+      >
+        <EditOutlined />
+      </Button>
       <Popconfirm
         placement="right"
-        title={'Phê duyệt'}
-        onConfirm={() => onApprove(record.id!)}
+        title={'Bạn có chắc muốn xoá?'}
+        onConfirm={() => onDelete(record.id!)}
         okText="Đồng ý"
         cancelText="Không"
         disabled={record.logStatus !== LogStatus.Pending}
       >
-        <Button
-          title="Phê duyệt"
-          size="small"
-          type="primary"
-          disabled={record.logStatus !== LogStatus.Pending}
-        >
-          <CheckOutlined />
-        </Button>
-      </Popconfirm>
-      <Popconfirm
-        placement="right"
-        title={'Từ chối'}
-        onConfirm={() => onReject(record.id!)}
-        okText="Đồng ý"
-        cancelText="Không"
-        disabled={record.logStatus !== LogStatus.Pending}
-      >
-        <Button
-          title="Từ chối"
-          size="small"
-          disabled={record.logStatus !== LogStatus.Pending}
-          danger
-        >
-          <CloseOutlined />
+        <Button title="Xoá" size="small" danger disabled={record.logStatus !== LogStatus.Pending}>
+          <DeleteOutlined />
         </Button>
       </Popconfirm>
     </Space>

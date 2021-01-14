@@ -1,18 +1,20 @@
 import { message } from 'antd';
 import React from 'react';
-import { LogStatus, TimeOffDTO } from 'services/ApiClient';
-import { apiTimeOff } from 'services/ApiClient.singleton';
+import { JobTitleDTO } from 'services/ApiClient';
+import { apiJobTitle } from 'services/ApiClient.singleton';
+import { CreateUpdateModal } from './CreateUpdateModal';
 
-export const apiClient = apiTimeOff;
-export type RecordType = TimeOffDTO;
+export const apiClient = apiJobTitle;
+export type RecordType = JobTitleDTO;
 export type ModalType = 'create' | 'update' | 'hidden';
 
 type PageContextData = {
   listData: RecordType[] | undefined;
   listDataReady: boolean;
 
-  onApprove: (recordId: number) => Promise<void>;
-  onReject: (recordId: number) => Promise<void>;
+  onCreate: (record: RecordType) => Promise<void>;
+  onUpdate: (record: RecordType) => Promise<void>;
+  onDelete: (recordId: number) => Promise<void>;
 
   modalVisibleType: ModalType;
   setModalVisibleType: React.Dispatch<React.SetStateAction<ModalType>>;
@@ -39,7 +41,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
   const fetchAll = React.useCallback(async () => {
     try {
       setListDataReady(false);
-      const data = await apiClient.getAll();
+      const data = await apiClient.jobTitle_GetAll();
       setListData(data);
     } catch (err) {
       console.error(err);
@@ -53,32 +55,44 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
     fetchAll();
   }, [fetchAll]);
 
-  const onApprove = React.useCallback(async (recordId: number) => {
-    try {
-      await apiClient.approveById(recordId);
-      setListData((data) =>
-        data?.map((it) =>
-          it.id === recordId ? ({ ...it, logStatus: LogStatus.Approved } as RecordType) : it,
-        ),
-      );
-      message.info('Phê duyệt thành công');
-    } catch (err) {
-      message.error('Phê duyệt không thành công');
-      throw err;
-    }
-  }, []);
+  const onCreate = React.useCallback(
+    async (record: RecordType) => {
+      try {
+        const newRecord = await apiClient.jobTitle_Create(record);
+        setListData([...listData, newRecord]);
+        message.info('Tạo mới thành công');
+      } catch (err) {
+        message.error('Tạo mới không thành công');
+        throw err;
+      }
+    },
+    [listData],
+  );
 
-  const onReject = React.useCallback(async (recordId: number) => {
+  const onUpdate = React.useCallback(
+    async (record: RecordType) => {
+      try {
+        const updatedRecord = { ...selectedRecord, ...record } as RecordType;
+        await apiClient.jobTitle_Update(updatedRecord.id!, updatedRecord);
+        setListData((data) =>
+          data?.map((it) => (it.id === updatedRecord.id! ? updatedRecord : it)),
+        );
+        message.info('Cập nhật thành công');
+      } catch (err) {
+        message.error('Cập nhật không thành công');
+        throw err;
+      }
+    },
+    [selectedRecord],
+  );
+
+  const onDelete = React.useCallback(async (recordId: number) => {
     try {
-      await apiClient.rejectById(recordId);
-      setListData((data) =>
-        data?.map((it) =>
-          it.id === recordId ? ({ ...it, logStatus: LogStatus.Rejected } as RecordType) : it,
-        ),
-      );
-      message.info('Từ chối thành công');
+      await apiClient.jobTitle_Delete(recordId);
+      setListData((data) => data?.filter((it) => it.id !== recordId));
+      message.info('Xoá thành công');
     } catch (err) {
-      message.error('Từ chối không thành công');
+      message.error('Xoá không thành công');
       throw err;
     }
   }, []);
@@ -88,8 +102,9 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
       value={{
         listData,
         listDataReady,
-        onApprove,
-        onReject,
+        onCreate,
+        onUpdate,
+        onDelete,
         modalVisibleType,
         setModalVisibleType,
         selectedRecord,
@@ -109,6 +124,7 @@ export function withPageProvider<T>(Component: React.FC<T>) {
   return (props: T) => (
     <PageProvider>
       <Component {...props} />
+      <CreateUpdateModal />
     </PageProvider>
   );
 }
