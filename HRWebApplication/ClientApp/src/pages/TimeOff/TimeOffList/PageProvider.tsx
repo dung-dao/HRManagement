@@ -39,7 +39,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
   const fetchAll = React.useCallback(async () => {
     try {
       setListDataReady(false);
-      const data = await apiClient.getAllMine();
+      const data = await apiClient.getAll();
       setListData(data);
     } catch (err) {
       console.error(err);

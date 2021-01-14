@@ -2,7 +2,7 @@ import React from 'react';
 
 import { JobCategoryDTO, JobCategoryClient } from '../../services/ApiClient';
 import { useTry } from '../../hooks';
-import { JobCategoryModal } from 'pages/JobCategory/JobCategoryModal';
+import { JobCategoryModal } from 'pages/__JobCategory/JobCategoryModal';
 import { ModalType, PageProvider } from './PageProvider';
 import { ActionRenderer } from './ActionRenderer';
 import { Table, Button, Col, Row, Input } from 'antd';

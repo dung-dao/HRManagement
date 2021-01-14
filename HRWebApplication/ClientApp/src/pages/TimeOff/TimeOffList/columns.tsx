@@ -10,7 +10,9 @@ import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import React from 'react';
-import { LogStatus, TimeOffTypeDTO } from 'services/ApiClient';
+import { Link } from 'react-router-dom';
+import { ROUTES } from 'routes';
+import { EmployeeDTO, LogStatus, TimeOffTypeDTO } from 'services/ApiClient';
 import { RecordType, usePage } from './PageProvider';
 
 export const mapProperties = {
@@ -36,7 +38,7 @@ export const mapProperties = {
 export const columns: ColumnsType<RecordType> = [
   {
     title: 'Trạng thái',
-    fixed: 'left',
+    // fixed: 'left',
     key: 'logStatus',
     dataIndex: 'logStatus',
     render: (value: LogStatus, record: RecordType, index: number) => (
@@ -61,17 +63,29 @@ export const columns: ColumnsType<RecordType> = [
     defaultSortOrder: 'descend',
   },
   {
+    key: 'employee',
+    title: 'Nhân viên',
+    dataIndex: 'employee',
+    render: (value: EmployeeDTO) => {
+      const fullname = (value?.firstName || '') + ' ' + (value?.lastName || '');
+      return (
+        <Tooltip title={fullname}>
+          <Link to={ROUTES.employee + '/' + value.id}>{fullname}</Link>
+        </Tooltip>
+      );
+    },
+    width: '20%',
+  },
+  {
     key: 'date',
     title: 'Ngày',
     dataIndex: 'date',
     render: (value: Date) => moment(value).format('DD/MM/YYYY'),
-    width: '20%',
   },
   {
     key: 'duration',
     title: 'Số công',
     dataIndex: 'duration',
-    width: '15%',
   },
   {
     key: 'timeOffType',

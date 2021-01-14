@@ -98,22 +98,16 @@ export const CreateUpdateModal: React.FC<{}> = () => {
   };
 
   const initialValues = React.useMemo(
-    () => (modalVisibleType === 'update' ? recordTypeToFormType(selectedRecord!) : undefined),
+    () =>
+      modalVisibleType === 'update'
+        ? recordTypeToFormType(selectedRecord!)
+        : ({ time: moment(), timeType: 'one-day', duration: 1 } as FormType),
     [modalVisibleType, selectedRecord],
-  );
-  console.log(
-    '>  ~ file: CreateUpdateModal.tsx ~ line 104 ~ initialValues',
-    initialValues,
-    form.getFieldValue('timeType'),
   );
 
   // Form.initialValues doesn't work really well so we need this useEffect
   React.useEffect(() => {
-    if (modalVisibleType === 'update') {
-      form.setFieldsValue(initialValues!);
-    } else {
-      form.resetFields();
-    }
+    form.setFieldsValue(initialValues);
   }, [modalVisibleType, initialValues, form]);
 
   return (
@@ -229,7 +223,7 @@ export const CreateUpdateModal: React.FC<{}> = () => {
           }
         </Form.Item>
 
-        <Form.Item label="Số công" name={['duration']}>
+        <Form.Item label="Số công" name={['duration']} dependencies={['timeType', 'time']}>
           <Input readOnly />
         </Form.Item>
         <Form.Item label="Ghi chú" name={['note']}>

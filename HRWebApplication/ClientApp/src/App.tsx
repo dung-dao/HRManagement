@@ -1,6 +1,5 @@
 import { LayoutProps } from 'antd/lib/layout';
 import { useAuth } from 'context/AuthContext';
-import { groupBy } from 'lodash';
 import { NotFound } from 'pages';
 import React from 'react';
 import { BrowserRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
@@ -57,7 +56,7 @@ export default function App() {
         <Switch>
           <Redirect from="/" exact to={ROUTES.login} />
           {renderRoutes()}
-          <Route exact path={'*'} component={NotFound} />
+          <Route component={NotFound} />
         </Switch>
       </ErrorBoundary>
     </BrowserRouter>
