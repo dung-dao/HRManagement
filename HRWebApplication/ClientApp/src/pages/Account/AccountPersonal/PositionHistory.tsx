@@ -2,7 +2,7 @@ import React from 'react';
 import {Button, Modal, Timeline, Typography} from "antd";
 import {PositionDTO} from "services/ApiClient";
 import moment from 'moment';
-import {EmployeeWorkForm} from "../Employee/EmployeeWorkForm";
+import {EmployeeWorkForm} from "../../Employee/EmployeeWorkForm";
 
 const { Title } = Typography;
 

@@ -46,6 +46,8 @@ namespace HRWebApplication.Controllers
             var user = GetAuthorizedUser();
             if (user is null)
                 return Unauthorized();
+            if (user.Employee is null)
+                return new List<TimeOffDTO>();
 
             IEnumerable<WorkingLog> logs = _salaryRepository.GetTimeOffList(user.Employee);
 

@@ -1,6 +1,6 @@
 import { Form, Input, Modal, message } from 'antd';
 import React from 'react';
-import { usePage } from './PageProvider';
+import { apiUsers } from 'services/ApiClient.singleton';
 
 type Props = {
   visible: boolean;
@@ -12,8 +12,7 @@ const formLayout = {
   wrapperCol: { span: 16 },
 };
 
-export function ChangePasswordModal(props: Props) {
-  const { apiUsers } = usePage();
+export const ChangeMyPasswordModal: React.FC<Props> = (props) => {
   const { visible, setVisible } = props;
   const [form] = Form.useForm();
 
@@ -101,4 +100,4 @@ export function ChangePasswordModal(props: Props) {
       </Form>
     </Modal>
   );
-}
+};

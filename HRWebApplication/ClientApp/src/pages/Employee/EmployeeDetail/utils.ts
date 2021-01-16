@@ -1,4 +1,4 @@
-import {FormLabelAlign} from "antd/es/form/interface";
+import { FormLabelAlign } from 'antd/es/form/interface';
 
 export const removeSlug = (url) => {
   return url.substring(0, /:|\/:/.exec(url)?.index);

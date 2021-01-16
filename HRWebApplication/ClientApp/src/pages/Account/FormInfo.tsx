@@ -2,19 +2,14 @@ import { Button, Col, DatePicker, Form, Input, message, Row, Select, Skeleton } 
 import { phoneRegex, required } from 'pages/Employee/EmployeeDetail/utils';
 import React from 'react';
 import { UserDTO } from 'services/ApiClient';
-import { ChangePasswordModal } from './ChangePasswordModal';
+import { ChangeMyPasswordModal } from 'components';
 import { usePage } from './PageProvider';
-
-const formItemLayout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
-  validateTrigger: 'onBlur',
-};
+import { formItemLayout } from 'utils';
 
 export function FormInfo() {
   const { apiUsers, user, userReady } = usePage();
   const [form] = Form.useForm<UserDTO>();
-  const [changePasswordModalVisible, setChangePasswordModalVisible] = React.useState(false);
+  const [passwordModalVisible, setPasswordModalVisible] = React.useState(false);
   const [profileSubmitting, setProfileSubmitting] = React.useState(false);
 
   if (!userReady) return <Skeleton />;
@@ -46,7 +41,7 @@ export function FormInfo() {
                 <Input placeholder="admin@company.com" readOnly />
               </Form.Item>
               <Form.Item {...formItemLayout} label="Mật khẩu" name="password">
-                <Button onClick={() => setChangePasswordModalVisible(true)}>Đổi mật khẩu</Button>
+                <Button onClick={() => setPasswordModalVisible(true)}>Đổi mật khẩu</Button>
               </Form.Item>
             </fieldset>
           </Col>
@@ -193,10 +188,7 @@ export function FormInfo() {
           </>
         ) : null}
       </Form>
-      <ChangePasswordModal
-        visible={changePasswordModalVisible}
-        setVisible={setChangePasswordModalVisible}
-      />
+      <ChangeMyPasswordModal visible={passwordModalVisible} setVisible={setPasswordModalVisible} />
     </div>
   );
 }
