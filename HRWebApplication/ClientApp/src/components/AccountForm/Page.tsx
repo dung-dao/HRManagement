@@ -1,8 +1,8 @@
-import { Button, Col, Form, Input, Row, Skeleton } from 'antd';
+import { Button, Col, Form, Input, Row, Select, Skeleton } from 'antd';
 import React from 'react';
 import { UserDTO } from 'services/ApiClient';
 import { ChangeMyPasswordModal } from './ChangeMyPasswordModal';
-import { formItemLayout } from 'utils';
+import { formItemLayout, required } from 'utils';
 import { StandardFormProps } from 'components';
 
 type FormDataType = UserDTO;
@@ -33,15 +33,75 @@ export const AccountForm: React.FC<Props> = (props) => {
           <Col span={12}>
             <fieldset>
               <legend>Thông tin tài khoản:</legend>
-              <Form.Item label="Tài khoản" name="userName">
-                <Input placeholder="admin" readOnly={type === 'read-only'} />
+
+              <Form.Item
+                label="Tài khoản"
+                name="userName"
+                rules={type === 'create' ? [required('Tài khoản')] : undefined}
+              >
+                <Input placeholder="user001" readOnly={type !== 'create'} />
               </Form.Item>
-              <Form.Item label="Email" name="email">
-                <Input placeholder="admin@company.com" readOnly={type === 'read-only'} />
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={
+                  type === 'create'
+                    ? [
+                        { required: true, message: 'Vui lòng nhập email' },
+                        { type: 'email', message: 'Email không đúng định dạng' },
+                      ]
+                    : undefined
+                }
+              >
+                <Input placeholder="Email" readOnly={type !== 'create'} />
               </Form.Item>
-              <Form.Item label="Mật khẩu" name="password">
-                <Button onClick={() => setPasswordModalVisible(true)}>Đổi mật khẩu</Button>
-              </Form.Item>
+              {type === 'create' ? (
+                <>
+                  <Form.Item
+                    label="Mật khẩu"
+                    name="password"
+                    rules={[
+                      { required: true, message: 'Mật khẩu hiện tại không được bỏ trống' },
+                      { min: 6, message: 'Mật khẩu phải dài ít nhất 6 ký tự' },
+                    ]}
+                  >
+                    <Input.Password placeholder="password" />
+                  </Form.Item>
+                  <Form.Item
+                    label="Nhập lại mật khẩu"
+                    name="confirmPassword"
+                    dependencies={['password']}
+                    rules={[
+                      { required: true, message: 'Mật khẩu hiện tại không được bỏ trống' },
+                      ({ getFieldValue }) => ({
+                        validator(rule, value) {
+                          if (!value || getFieldValue('password') === value) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject('Nhập lại mật khẩu không khớp');
+                        },
+                      }),
+                    ]}
+                  >
+                    <Input.Password placeholder="password" />
+                  </Form.Item>
+                  <Form.Item label="Quyền" name="role" rules={[required('Quyền')]}>
+                    <Select placeholder="Chọn quyền">
+                      <Select.Option value="Manager">Quản lý</Select.Option>
+                      <Select.Option value="User">Nhân viên</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </>
+              ) : (
+                <Form.Item label="Mật khẩu" name="password">
+                  <Button
+                    onClick={() => setPasswordModalVisible(true)}
+                    disabled={type === 'read-only'}
+                  >
+                    Đổi mật khẩu
+                  </Button>
+                </Form.Item>
+              )}
             </fieldset>
           </Col>
         </Row>

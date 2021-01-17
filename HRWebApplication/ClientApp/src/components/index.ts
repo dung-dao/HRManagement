@@ -1,6 +1,8 @@
 export * from './TabsPage';
 export * from './AccountForm';
 export * from './EmployeeInfo';
+export * from './EmployeeWork';
+export * from './LeaveForm';
 
 export type FormType = 'create' | 'update' | 'read-only';
 

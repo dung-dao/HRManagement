@@ -2,7 +2,7 @@ import { Col, DatePicker, Form, Input, Row, Skeleton } from 'antd';
 import { StandardFormProps } from 'components';
 import React from 'react';
 import { PositionDTO } from 'services/ApiClient';
-import { dateToMoment, formItemLayout, momentToDate } from 'utils';
+import { dateToMoment, formItemLayout, momentToDate, required } from 'utils';
 
 type FormDataType = PositionDTO;
 type Props = StandardFormProps<FormDataType>;
@@ -29,7 +29,11 @@ export const LeaveForm: React.FC<Props> = (props) => {
         <Col span={12}>
           <fieldset>
             <legend>Lý do nghỉ việc:</legend>
-            <Form.Item name="leaveDate" label="Ngày kết thúc">
+            <Form.Item
+              name="leaveDate"
+              label="Ngày kết thúc"
+              rules={type === 'create' ? [required('Ngày kết thúc')] : undefined}
+            >
               <DatePicker
                 format="DD/MM/YYYY"
                 style={{ width: '100%' }}

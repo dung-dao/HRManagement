@@ -1,25 +1,40 @@
-import { TabsPage } from 'components';
-import { EmployeeEditPage } from 'pages/__EmployeeEdit';
+import { Skeleton } from 'antd';
+import { AccountForm, EmployeeInfo, EmployeeWork, TabsPage } from 'components';
 import React from 'react';
-import { EmployeeInfo, AccountForm } from 'components';
 import { usePage, withPageProvider } from './PageProvider';
+
+const AccountFormWrapped: React.FC = () => {
+  const { user, userReady } = usePage();
+  return <AccountForm data={user} dataReady={userReady} type="update" />;
+};
 
 const EmployeeInfoWrapped: React.FC = () => {
   const { employee, employeeReady } = usePage();
   return <EmployeeInfo data={employee} dataReady={employeeReady} type="read-only" />;
 };
 
-const AccountPageWrapped: React.FC = () => {
-  const { user, userReady } = usePage();
-  return <AccountForm user={user} userReady={userReady} />;
+const EmployeeWorkWrapped: React.FC = () => {
+  const { curPosition, curPositionReady, positions, positionsReady } = usePage();
+  return (
+    <EmployeeWork
+      data={curPosition}
+      dataReady={curPositionReady}
+      positions={positions}
+      positionsReady={positionsReady}
+      type="read-only"
+    />
+  );
 };
 
-const tabs = [
+const accountTabs = [
   {
-    key: 'AccountPage',
+    key: 'AccountForm',
     label: 'Tài khoản',
-    Component: AccountPageWrapped,
+    Component: AccountFormWrapped,
   },
+];
+
+const employeeTabs = [
   {
     key: 'EmployeeInfo',
     label: 'Thông tin',
@@ -28,12 +43,18 @@ const tabs = [
   {
     key: 'FormWork',
     label: 'Công việc',
-    Component: EmployeeEditPage,
+    Component: EmployeeWorkWrapped,
   },
 ];
 
 type Props = {};
 
 export const AccountPersonal: React.FC<Props> = withPageProvider((props) => {
-  return <TabsPage tabs={tabs} />;
+  const { user, userReady } = usePage();
+  
+  if (!userReady) return <Skeleton />;
+
+  if (user?.employee) return <TabsPage tabs={[...accountTabs, ...employeeTabs]} />;
+
+  return <TabsPage tabs={accountTabs} />;
 });

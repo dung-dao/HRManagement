@@ -26,31 +26,50 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
       id="employee-info-form"
       {...formItemLayout}
     >
-      <Row gutter={40}>
-        <Col span={12}>
-          <Form.Item name="status">
-            <Tag
-              {...mapWorkingStatusToTag[data?.status!]}
-              style={{ fontSize: 15, margin: '10px 0 0 10px' }}
-              onClick={() => {}}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
+      {type !== 'create' ? (
+        <Row gutter={40}>
+          <Col span={12}>
+            <Form.Item name="status">
+              <Tag
+                {...mapWorkingStatusToTag[data?.status!]}
+                style={{ fontSize: 15, margin: '10px 0 0 10px' }}
+                onClick={() => {}}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      ) : undefined}
       <Row gutter={40}>
         <Col span={12}>
           <fieldset>
             <legend>Thông tin cá nhân:</legend>
-            <Form.Item label="ID" hidden name="id" rules={[required('Họ')]}>
+            <Form.Item
+              label="ID"
+              hidden
+              name="id"
+              rules={type === 'create' ? [required('Họ')] : undefined}
+            >
               <Input readOnly={type === 'read-only'} />
             </Form.Item>
-            <Form.Item label="Họ" name="firstName" rules={[required('Họ')]}>
+            <Form.Item
+              label="Họ"
+              name="firstName"
+              rules={type === 'create' ? [required('Họ')] : undefined}
+            >
               <Input readOnly={type === 'read-only'} placeholder="Nguyễn" />
             </Form.Item>
-            <Form.Item label="Tên" name="lastName" rules={[required('Tên')]}>
+            <Form.Item
+              label="Tên"
+              name="lastName"
+              rules={type === 'create' ? [required('Tên')] : undefined}
+            >
               <Input readOnly={type === 'read-only'} placeholder="Văn A" />
             </Form.Item>
-            <Form.Item label="Ngày sinh" name="dateOfBirth" rules={[required('Ngày sinh')]}>
+            <Form.Item
+              label="Ngày sinh"
+              name="dateOfBirth"
+              rules={type === 'create' ? [required('Ngày sinh')] : undefined}
+            >
               <DatePicker
                 format="DD/MM/YYYY"
                 style={{ width: '100%' }}
@@ -59,7 +78,11 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
                 inputReadOnly={type === 'read-only'}
               />
             </Form.Item>
-            <Form.Item label="Giới tính" name="sex" rules={[required('Giới tính')]}>
+            <Form.Item
+              label="Giới tính"
+              name="sex"
+              rules={type === 'create' ? [required('Giới tính')] : undefined}
+            >
               <Select placeholder="Chọn giới tính" open={type === 'read-only' ? false : undefined}>
                 <Select.Option value="Male">Nam</Select.Option>
                 <Select.Option value="Female">Nữ</Select.Option>
@@ -69,18 +92,24 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
             <Form.Item
               label="CMND"
               name="nationalId"
-              rules={[
-                required('CMND'),
-                {
-                  validator: (_, value: string) =>
-                    value === '' ||
-                    value === undefined || // "required" rule is already handled by above rule, so we will ignore this case to avoid 2 annoying messages
-                    (value && /^\d+$/.test(value) && (value.length === 9 || value.length === 12))
-                      ? Promise.resolve()
-                      : Promise.reject('CMND phải có 9 hoặc 12 chữ số'),
-                  validateTrigger: 'onBlur',
-                },
-              ]}
+              rules={
+                type === 'create'
+                  ? [
+                      required('CMND'),
+                      {
+                        validator: (_, value: string) =>
+                          value === '' ||
+                          value === undefined || // "required" rule is already handled by above rule, so we will ignore this case to avoid 2 annoying messages
+                          (value &&
+                            /^\d+$/.test(value) &&
+                            (value.length === 9 || value.length === 12))
+                            ? Promise.resolve()
+                            : Promise.reject('CMND phải có 9 hoặc 12 chữ số'),
+                        validateTrigger: 'onBlur',
+                      },
+                    ]
+                  : undefined
+              }
             >
               <Input readOnly={type === 'read-only'} placeholder="123456789" />
             </Form.Item>
@@ -92,10 +121,14 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
             <Form.Item
               label="Email cá nhân"
               name="personalEmail"
-              rules={[
-                required('Email cá nhân'),
-                { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
-              ]}
+              rules={
+                type === 'create'
+                  ? [
+                      required('Email cá nhân'),
+                      { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
+                    ]
+                  : undefined
+              }
             >
               <Input
                 readOnly={type === 'read-only'}
@@ -106,10 +139,14 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
             <Form.Item
               label="Email công việc"
               name="workEmail"
-              rules={[
-                required('Email công việc'),
-                { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
-              ]}
+              rules={
+                type === 'create'
+                  ? [
+                      required('Email công việc'),
+                      { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
+                    ]
+                  : undefined
+              }
             >
               <Input
                 readOnly={type === 'read-only'}
@@ -117,13 +154,21 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
                 type="email"
               />
             </Form.Item>
-            <Form.Item label="Địa chỉ hiện tại" name="currentAddress" rules={[required('Địa chỉ')]}>
+            <Form.Item
+              label="Địa chỉ hiện tại"
+              name="currentAddress"
+              rules={type === 'create' ? [required('Địa chỉ')] : undefined}
+            >
               <Input
                 readOnly={type === 'read-only'}
                 placeholder="147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM"
               />
             </Form.Item>
-            <Form.Item label="Địa chỉ thường trú" name="address" rules={[required('Địa chỉ')]}>
+            <Form.Item
+              label="Địa chỉ thường trú"
+              name="address"
+              rules={type === 'create' ? [required('Địa chỉ')] : undefined}
+            >
               <Input
                 readOnly={type === 'read-only'}
                 placeholder="147/40D Tân Lập 2, Hiệp Phú, Quận 9, TPHCM"
@@ -132,15 +177,19 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
             <Form.Item
               label="Số điện thoại"
               name="phone"
-              rules={[
-                required('Số điện thoại'),
-                {
-                  pattern: phoneRegex,
-                  min: 9,
-                  max: 12,
-                  message: 'Số điện thoại phải bắt dầu bằng (0|84|+84) và theo sau 9 chữ số`',
-                },
-              ]}
+              rules={
+                type === 'create'
+                  ? [
+                      required('Số điện thoại'),
+                      {
+                        pattern: phoneRegex,
+                        min: 9,
+                        max: 12,
+                        message: 'Số điện thoại phải bắt dầu bằng (0|84|+84) và theo sau 9 chữ số`',
+                      },
+                    ]
+                  : undefined
+              }
             >
               <Input readOnly={type === 'read-only'} placeholder="0123456789" />
             </Form.Item>
