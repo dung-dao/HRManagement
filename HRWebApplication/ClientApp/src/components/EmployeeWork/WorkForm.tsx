@@ -1,20 +1,17 @@
 import { Col, DatePicker, Form, Input, Select, Skeleton } from 'antd';
+import { StandardFormProps } from 'components';
 import React from 'react';
 import { JobTitleDTO, OrganizationUnitDTO, PositionDTO, WorkTypeDTO } from 'services/ApiClient';
 import { apiJobTitle, apiOrganization, apiWorkType } from 'services/ApiClient.singleton';
 import { dateToMoment, formatSalary, formItemLayoutWide, required, toNumber } from 'utils';
 
-type Props = {
-  position: PositionDTO | undefined;
-  positionReady: boolean;
-  onSubmitData: (data: PositionDTO) => Promise<void>;
-};
+type FormDataType = PositionDTO;
+type Props = StandardFormProps<FormDataType>;
 
 export const WorkForm: React.FC<Props> = (props) => {
-  const { position, positionReady, onSubmitData } = props;
+  const { data, dataReady, onSubmit, type, actionButtons } = props;
   const [, forceRender] = React.useReducer((x) => ++x, 0);
-
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FormDataType>();
   const workTypesRef = React.useRef<WorkTypeDTO[]>([]);
   const jobTitlesRef = React.useRef<JobTitleDTO[]>([]);
   const organizationsRef = React.useRef<OrganizationUnitDTO[]>([]);
@@ -38,18 +35,21 @@ export const WorkForm: React.FC<Props> = (props) => {
     })();
   }, [form]);
 
-  if (positionReady && !position) return <h2>Không có dữ liệu về nhân viên</h2>;
-  if (!positionReady) return <Skeleton />;
+  if (type !== 'create' && dataReady && !data) return <h2>Không có dữ liệu về nhân viên</h2>;
+  if (type !== 'create' && !dataReady) return <Skeleton />;
 
-  const initialValues = {
-    ...dateToMoment(position!),
-    salary: formatSalary(position?.salary || '0'),
-    workType: position?.workType?.id?.toString(),
-    jobTitle: position?.jobTitle?.id?.toString(),
-    unit: position?.unit?.id?.toString(),
-  };
+  const initialValues =
+    type === 'create'
+      ? undefined
+      : {
+          ...dateToMoment(data!),
+          salary: formatSalary(data?.salary || '0'),
+          workType: data?.workType?.id?.toString(),
+          jobTitle: data?.jobTitle?.id?.toString(),
+          unit: data?.unit?.id?.toString(),
+        };
 
-  const onSubmit = async (data) => {
+  const onFinish = async (data) => {
     const submitData = {
       ...data,
       workType: workTypesRef.current.find((i) => i.id === Number(data.workType)),
@@ -58,38 +58,29 @@ export const WorkForm: React.FC<Props> = (props) => {
       startDate: data.startDate?.toDate(),
       endDate: data.endDate?.toDate(),
       salary: toNumber(String(data.salary)),
-    } as PositionDTO;
-    onSubmitData(submitData);
+    } as FormDataType;
+    onSubmit?.(submitData);
   };
 
   return (
-    <Form<PositionDTO>
-      name="work"
+    <Form<FormDataType>
       form={form}
-      onFinish={onSubmit}
+      onFinish={onFinish}
       id="employee-work-form"
+      name="employee-work-form"
       initialValues={initialValues}
+      {...formItemLayoutWide}
     >
       <Col span={24}>
         <fieldset>
           <legend>Vị trí công việc</legend>
-          <Form.Item
-            {...formItemLayoutWide}
-            label="Ngày bắt đầu"
-            name="startDate"
-            rules={[required('Ngày bắt đầu')]}
-          >
+          <Form.Item label="Ngày bắt đầu" name="startDate" rules={[required('Ngày bắt đầu')]}>
             <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item {...formItemLayoutWide} label="Ngày kết thúc" name="endDate">
+          <Form.Item label="Ngày kết thúc" name="endDate">
             <DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item
-            {...formItemLayoutWide}
-            label="Lương"
-            name="salary"
-            rules={[required('Lương')]}
-          >
+          <Form.Item label="Lương" name="salary" rules={[required('Lương')]}>
             <Input
               placeholder="1,000,000"
               suffix="VNĐ"
@@ -101,7 +92,6 @@ export const WorkForm: React.FC<Props> = (props) => {
             />
           </Form.Item>
           <Form.Item
-            {...formItemLayoutWide}
             label="Vị trí công việc"
             name="jobTitle"
             rules={[required('Vị trí công việc')]}
@@ -116,7 +106,6 @@ export const WorkForm: React.FC<Props> = (props) => {
             </Select>
           </Form.Item>
           <Form.Item
-            {...formItemLayoutWide}
             label="Loại hình làm việc"
             name="workType"
             rules={[required('Loại hình làm việc')]}
@@ -131,7 +120,6 @@ export const WorkForm: React.FC<Props> = (props) => {
             </Select>
           </Form.Item>
           <Form.Item
-            {...formItemLayoutWide}
             label="Tổ chức"
             name="unit"
             rules={[required('Tổ chức')]}
@@ -147,6 +135,7 @@ export const WorkForm: React.FC<Props> = (props) => {
           </Form.Item>
         </fieldset>
       </Col>
+      {actionButtons}
     </Form>
   );
 };

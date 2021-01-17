@@ -6,7 +6,7 @@ import { PageProvider, usePage } from './PageProvider';
 import { EmployeeInfoForm } from '../Employee/EmployeeInfoForm';
 import { EmployeeWorkForm } from '../Employee/EmployeeWorkForm';
 import { EmployeeFormAction } from './EmployeeFormAction';
-import { PositionHistory } from '../Account/AccountPersonal/PositionHistory';
+import { PositionHistory } from '../../components/EmployeeWork/PositionHistory';
 import { LeaveDetailModal } from './LeaveDetailModal';
 import { BeautifyEmployeeStatus } from 'pages/Employee/EmployeeList/__utils';
 import moment from 'moment';

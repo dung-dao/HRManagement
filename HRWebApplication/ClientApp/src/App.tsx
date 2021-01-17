@@ -4,7 +4,7 @@ import React from 'react';
 import { BrowserRouter, Redirect, Route, RouteProps, Switch } from 'react-router-dom';
 import { RouteInRouter, ROUTES, routesInRouter } from 'routes';
 import { isRoleValid, returnRoute, RoleRequired } from 'services/AuthService.util';
-import ErrorBoundary from './components/ErrorBoundary';
+import ErrorBoundary from './components/__ErrorBoundary';
 
 type AuthRouteProps = RouteProps & {
   component: Exclude<RouteProps['component'], undefined>;

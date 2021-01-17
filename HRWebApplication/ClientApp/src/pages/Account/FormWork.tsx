@@ -1,7 +1,7 @@
 import { Col, Form, Input, Skeleton } from 'antd';
 import moment from 'moment';
 import { formItemLayoutWide } from 'pages/Employee/EmployeeDetail/utils';
-import { PositionHistory } from 'pages/Account/AccountPersonal/PositionHistory';
+import { PositionHistory } from 'components/EmployeeWork/PositionHistory';
 import React from 'react';
 import { EmployeesClient, PositionDTO } from 'services/ApiClient';
 import { ModifyProp, usePage } from './PageProvider';
