@@ -9,7 +9,7 @@ type FormDataType = PositionDTO;
 type Props = StandardFormProps<FormDataType>;
 
 export const WorkForm: React.FC<Props> = (props) => {
-  const { data, dataReady, onSubmit, type, actionButtons } = props;
+  const { data, dataReady, onSubmit, type, actionButtons, displayLegend, ...rest } = props;
   const [, forceRender] = React.useReducer((x) => ++x, 0);
   const [form] = Form.useForm<FormDataType>();
   const workTypesRef = React.useRef<WorkTypeDTO[]>([]);
@@ -39,7 +39,7 @@ export const WorkForm: React.FC<Props> = (props) => {
   if (type !== 'create' && !dataReady) return <Skeleton />;
 
   const initialValues =
-    type === 'create'
+    type !== 'read-only'
       ? undefined
       : {
           ...dateToMoment(data!),
@@ -70,14 +70,15 @@ export const WorkForm: React.FC<Props> = (props) => {
       name="employee-work-form"
       initialValues={initialValues}
       {...formItemLayoutWide}
+      {...rest}
     >
       <Col span={24}>
         <fieldset>
-          <legend>Vị trí công việc</legend>
+          {displayLegend ? <legend>Vị trí công việc</legend> : null}
           <Form.Item
             label="Ngày bắt đầu"
             name="startDate"
-            rules={type === 'create' ? [required('Ngày bắt đầu')] : undefined}
+            rules={type !== 'read-only' ? [required('Ngày bắt đầu')] : undefined}
           >
             <DatePicker
               format="DD/MM/YYYY"
@@ -99,7 +100,7 @@ export const WorkForm: React.FC<Props> = (props) => {
           <Form.Item
             label="Lương"
             name="salary"
-            rules={type === 'create' ? [required('Lương')] : undefined}
+            rules={type !== 'read-only' ? [required('Lương')] : undefined}
           >
             <Input
               placeholder="1,000,000"
@@ -115,7 +116,7 @@ export const WorkForm: React.FC<Props> = (props) => {
           <Form.Item
             label="Vị trí công việc"
             name="jobTitle"
-            rules={type === 'create' ? [required('Vị trí công việc')] : undefined}
+            rules={type !== 'read-only' ? [required('Vị trí công việc')] : undefined}
             hasFeedback={!jobTitlesRef.current}
           >
             <Select
@@ -133,7 +134,7 @@ export const WorkForm: React.FC<Props> = (props) => {
           <Form.Item
             label="Loại hình làm việc"
             name="workType"
-            rules={type === 'create' ? [required('Loại hình làm việc')] : undefined}
+            rules={type !== 'read-only' ? [required('Loại hình làm việc')] : undefined}
             hasFeedback={!workTypesRef.current}
           >
             <Select
@@ -151,7 +152,7 @@ export const WorkForm: React.FC<Props> = (props) => {
           <Form.Item
             label="Tổ chức"
             name="unit"
-            rules={type === 'create' ? [required('Tổ chức')] : undefined}
+            rules={type !== 'read-only' ? [required('Tổ chức')] : undefined}
             hasFeedback={!organizationsRef.current}
           >
             <Select

@@ -9,7 +9,7 @@ type FormDataType = EmployeeDTO;
 type Props = StandardFormProps<FormDataType>;
 
 export const EmployeeInfo: React.FC<Props> = (props) => {
-  const { data, dataReady, type, onSubmit, actionButtons } = props;
+  const { data, dataReady, type, onSubmit, actionButtons, displayLegend, ...rest } = props;
   const [form] = Form.useForm<FormDataType>();
 
   if (type !== 'create' && dataReady && !data) return <h2>Không có dữ liệu</h2>;
@@ -25,6 +25,7 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
       labelAlign="left"
       id="employee-info-form"
       {...formItemLayout}
+      {...rest}
     >
       {type !== 'create' ? (
         <Row gutter={40}>
@@ -42,33 +43,33 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
       <Row gutter={40}>
         <Col span={12}>
           <fieldset>
-            <legend>Thông tin cá nhân:</legend>
+            {displayLegend ? <legend>Thông tin cá nhân:</legend> : null}
             <Form.Item
               label="ID"
               hidden
               name="id"
-              rules={type === 'create' ? [required('Họ')] : undefined}
+              rules={type !== 'read-only' ? [required('Họ')] : undefined}
             >
               <Input readOnly={type === 'read-only'} />
             </Form.Item>
             <Form.Item
               label="Họ"
               name="firstName"
-              rules={type === 'create' ? [required('Họ')] : undefined}
+              rules={type !== 'read-only' ? [required('Họ')] : undefined}
             >
               <Input readOnly={type === 'read-only'} placeholder="Nguyễn" />
             </Form.Item>
             <Form.Item
               label="Tên"
               name="lastName"
-              rules={type === 'create' ? [required('Tên')] : undefined}
+              rules={type !== 'read-only' ? [required('Tên')] : undefined}
             >
               <Input readOnly={type === 'read-only'} placeholder="Văn A" />
             </Form.Item>
             <Form.Item
               label="Ngày sinh"
               name="dateOfBirth"
-              rules={type === 'create' ? [required('Ngày sinh')] : undefined}
+              rules={type !== 'read-only' ? [required('Ngày sinh')] : undefined}
             >
               <DatePicker
                 format="DD/MM/YYYY"
@@ -81,7 +82,7 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
             <Form.Item
               label="Giới tính"
               name="sex"
-              rules={type === 'create' ? [required('Giới tính')] : undefined}
+              rules={type !== 'read-only' ? [required('Giới tính')] : undefined}
             >
               <Select placeholder="Chọn giới tính" open={type === 'read-only' ? false : undefined}>
                 <Select.Option value="Male">Nam</Select.Option>
@@ -93,7 +94,7 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
               label="CMND"
               name="nationalId"
               rules={
-                type === 'create'
+                type !== 'read-only'
                   ? [
                       required('CMND'),
                       {
@@ -117,12 +118,12 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
         </Col>
         <Col span={12}>
           <fieldset>
-            <legend>Thông tin liên lạc:</legend>
+            {displayLegend ? <legend>Thông tin liên lạc:</legend> : null}
             <Form.Item
               label="Email cá nhân"
               name="personalEmail"
               rules={
-                type === 'create'
+                type !== 'read-only'
                   ? [
                       required('Email cá nhân'),
                       { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
@@ -140,7 +141,7 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
               label="Email công việc"
               name="workEmail"
               rules={
-                type === 'create'
+                type !== 'read-only'
                   ? [
                       required('Email công việc'),
                       { type: 'email', message: 'Địa chỉ email không đúng định dạng' },
@@ -157,7 +158,7 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
             <Form.Item
               label="Địa chỉ hiện tại"
               name="currentAddress"
-              rules={type === 'create' ? [required('Địa chỉ')] : undefined}
+              rules={type !== 'read-only' ? [required('Địa chỉ')] : undefined}
             >
               <Input
                 readOnly={type === 'read-only'}
@@ -167,7 +168,7 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
             <Form.Item
               label="Địa chỉ thường trú"
               name="address"
-              rules={type === 'create' ? [required('Địa chỉ')] : undefined}
+              rules={type !== 'read-only' ? [required('Địa chỉ')] : undefined}
             >
               <Input
                 readOnly={type === 'read-only'}
@@ -178,7 +179,7 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
               label="Số điện thoại"
               name="phone"
               rules={
-                type === 'create'
+                type !== 'read-only'
                   ? [
                       required('Số điện thoại'),
                       {
@@ -197,13 +198,6 @@ export const EmployeeInfo: React.FC<Props> = (props) => {
         </Col>
       </Row>
       {actionButtons}
-      {/*TODO:REWORK {readOnly ? null : (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', columnGap: 10 }}>
-          <Button type="primary" htmlType="submit" loading={isSubmitting}>
-            Cập nhật thông tin
-          </Button>
-        </div>
-      )} */}
     </Form>
   );
 };

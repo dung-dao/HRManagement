@@ -66,6 +66,10 @@ export function Sidebar() {
   const { userRole, userProfile } = useAuth();
   const history = useHistory();
   const appRoutes = getRouteByPath(ROUTES.app)!;
+  const selectedKeys = React.useRef<string[]>(['']);
+
+  const selectedMenuItemKey = getSelectedMenuItemKey(ROUTES.app); // a mechanism to memo last active keys if there're none being highlighting (none being highlighting would be very awkward)
+  if (selectedMenuItemKey) selectedKeys.current[0] = selectedMenuItemKey;
 
   return (
     <LayoutSider>
@@ -82,7 +86,7 @@ export function Sidebar() {
           <Menu
             theme="dark"
             mode="inline"
-            selectedKeys={[getSelectedMenuItemKey(ROUTES.app)]}
+            selectedKeys={selectedKeys.current}
             defaultOpenKeys={appRoutes.routes.map((it) => it.path)}
           >
             {appRoutes.routes.map((routeItem) => {

@@ -88,7 +88,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
 
   const onDelete = React.useCallback(async (recordId: number) => {
     try {
-      await apiClient.approveById(recordId);
+      await apiClient.deleteMyTimeOffById(recordId);
       setListData((data) => data?.filter((it) => it.id !== recordId));
       message.info('Xoá thành công');
     } catch (err) {

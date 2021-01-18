@@ -9,7 +9,7 @@ type FormDataType = UserDTO;
 type Props = StandardFormProps<FormDataType>;
 
 export const AccountForm: React.FC<Props> = (props) => {
-  const { data, dataReady, type, onSubmit, actionButtons } = props;
+  const { data, dataReady, type, onSubmit, actionButtons, displayLegend, ...rest } = props;
   const [form] = Form.useForm<FormDataType>();
   const [passwordModalVisible, setPasswordModalVisible] = React.useState(false);
 
@@ -28,16 +28,16 @@ export const AccountForm: React.FC<Props> = (props) => {
         id="account-form"
         onFinish={(formData) => onSubmit?.({ ...data, ...formData } as FormDataType)}
         {...formItemLayout}
+        {...rest}
       >
         <Row gutter={40}>
           <Col span={12}>
             <fieldset>
-              <legend>Thông tin tài khoản:</legend>
-
+              {displayLegend ? <legend>Thông tin tài khoản:</legend> : null}
               <Form.Item
                 label="Tài khoản"
                 name="userName"
-                rules={type === 'create' ? [required('Tài khoản')] : undefined}
+                rules={type !== 'read-only' ? [required('Tài khoản')] : undefined}
               >
                 <Input placeholder="user001" readOnly={type !== 'create'} />
               </Form.Item>
@@ -45,7 +45,7 @@ export const AccountForm: React.FC<Props> = (props) => {
                 label="Email"
                 name="email"
                 rules={
-                  type === 'create'
+                  type !== 'read-only'
                     ? [
                         { required: true, message: 'Vui lòng nhập email' },
                         { type: 'email', message: 'Email không đúng định dạng' },

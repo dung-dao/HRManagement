@@ -3,7 +3,7 @@ import { phoneRegex, required } from 'pages/Employee/EmployeeDetail/utils';
 import React from 'react';
 import { UserDTO } from 'services/ApiClient';
 import { ChangeMyPasswordModal } from 'components';
-import { usePage } from './PageProvider';
+import { usePage } from './__PageProvider';
 import { formItemLayout } from 'utils';
 
 export function FormInfo() {

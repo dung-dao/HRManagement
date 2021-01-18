@@ -8,7 +8,7 @@ type FormDataType = PositionDTO;
 type Props = StandardFormProps<FormDataType>;
 
 export const LeaveForm: React.FC<Props> = (props) => {
-  const { data, dataReady, type, onSubmit, actionButtons } = props;
+  const { data, dataReady, type, onSubmit, actionButtons, displayLegend, ...rest } = props;
   const [form] = Form.useForm<FormDataType>();
 
   if (type !== 'create' && dataReady && !data) return <h2>Không có dữ liệu</h2>;
@@ -24,15 +24,16 @@ export const LeaveForm: React.FC<Props> = (props) => {
       initialValues={initialValues}
       onFinish={(formData) => onSubmit?.(momentToDate({ ...data, ...formData }) as FormDataType)}
       {...formItemLayout}
+      {...rest}
     >
       <Row gutter={20}>
-        <Col span={12}>
+        <Col span={24}>
           <fieldset>
-            <legend>Lý do nghỉ việc:</legend>
+            {displayLegend ? <legend>Lý do nghỉ việc:</legend> : null}
             <Form.Item
               name="leaveDate"
               label="Ngày kết thúc"
-              rules={type === 'create' ? [required('Ngày kết thúc')] : undefined}
+              rules={type !== 'read-only' ? [required('Ngày kết thúc')] : undefined}
             >
               <DatePicker
                 format="DD/MM/YYYY"

@@ -4,7 +4,7 @@ import { formItemLayoutWide } from 'pages/Employee/EmployeeDetail/utils';
 import { PositionHistory } from 'components/EmployeeWork/PositionHistory';
 import React from 'react';
 import { EmployeesClient, PositionDTO } from 'services/ApiClient';
-import { ModifyProp, usePage } from './PageProvider';
+import { ModifyProp, usePage } from './__PageProvider';
 
 export function FormWork() {
   const { user } = usePage();
