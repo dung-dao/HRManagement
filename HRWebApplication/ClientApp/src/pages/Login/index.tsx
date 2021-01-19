@@ -96,7 +96,7 @@ export function LoginPage() {
                       </Form.Item>
                     </Form>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="Đăng ký" key="signup">
+                  {/* <Tabs.TabPane tab="Đăng ký" key="signup">
                     <Form form={signUpForm} onFinish={onSignUp}>
                       <Form.Item
                         name="userName"
@@ -149,7 +149,7 @@ export function LoginPage() {
                         ĐĂNG KÝ
                       </Button>
                     </Form>
-                  </Tabs.TabPane>
+                  </Tabs.TabPane> */}
                 </Tabs>
               }
             />
