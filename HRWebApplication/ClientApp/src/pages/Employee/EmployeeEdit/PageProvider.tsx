@@ -1,8 +1,9 @@
 import { message } from 'antd';
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { EmployeeDTO, PositionDTO } from 'services/ApiClient';
+import { EmployeeDTO, EmployeeStatus, PositionDTO } from 'services/ApiClient';
 import { apiEmployees } from 'services/ApiClient.singleton';
+import { TerminateContractModal } from './TerminateContractModal';
 
 type PageContextData = {
   employee: EmployeeDTO | undefined;
@@ -11,6 +12,9 @@ type PageContextData = {
   curPositionReady: boolean;
   positions: PositionDTO[] | undefined;
   positionsReady: boolean;
+  modalVisible: boolean;
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  onTerminateContract: (position: PositionDTO) => Promise<void>;
 };
 
 export const PageContext = React.createContext<PageContextData>(undefined as any);
@@ -28,6 +32,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
   const [curPositionReady, setCurPositionReady] = React.useState<boolean>(false);
   const [positions, setPositions] = React.useState<PositionDTO[]>();
   const [positionsReady, setPositionsReady] = React.useState<boolean>(false);
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false);
 
   const fetchAll = React.useCallback(async () => {
     try {
@@ -58,6 +63,21 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
     fetchAll();
   }, [fetchAll]);
 
+  const onTerminateContract = React.useCallback(
+    async (position: PositionDTO) => {
+      try {
+        await apiEmployees.employees_Leave(employee?.id!, position);
+        setEmployee({ ...employee, status: EmployeeStatus.Leaved } as EmployeeDTO);
+        message.info('Cập nhật thành công');
+      } catch (err) {
+        message.info('Cập nhật thất bại');
+        console.error(err);
+        throw err;
+      }
+    },
+    [employee],
+  );
+
   return (
     <PageContext.Provider
       value={{
@@ -67,6 +87,9 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
         curPositionReady,
         positions,
         positionsReady,
+        modalVisible,
+        setModalVisible,
+        onTerminateContract,
       }}
     >
       {children}
@@ -82,6 +105,7 @@ export function withPageProvider<T>(Component: React.FC<T>) {
   return (props: T) => (
     <PageProvider>
       <Component {...props} />
+      <TerminateContractModal />
     </PageProvider>
   );
 }
