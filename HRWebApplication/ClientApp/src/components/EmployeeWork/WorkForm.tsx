@@ -107,7 +107,8 @@ export const WorkForm: React.FC<Props> = (props) => {
               suffix="VNĐ"
               onChange={(e) => {
                 form.setFieldsValue({
-                  salary: +formatSalary(e.target.value),
+                  // @ts-ignore
+                  salary: formatSalary(e.target.value),
                 });
               }}
               readOnly={type === 'read-only'}

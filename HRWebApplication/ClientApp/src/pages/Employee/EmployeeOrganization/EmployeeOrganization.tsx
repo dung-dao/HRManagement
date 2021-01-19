@@ -307,6 +307,7 @@ export function EmployeeOrganization() {
           {...{
             labelCol: { span: 8 },
             wrapperCol: { span: 16 },
+            labelAlign: 'left',
           }}
           form={form}
           onFinish={(values) => console.log(values)}

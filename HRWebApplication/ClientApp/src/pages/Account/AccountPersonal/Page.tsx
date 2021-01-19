@@ -5,12 +5,12 @@ import { usePage, withPageProvider } from './PageProvider';
 
 const AccountFormWrapped: React.FC = () => {
   const { user, userReady } = usePage();
-  return <AccountForm data={user} dataReady={userReady} type="update" />;
+  return <AccountForm data={user} dataReady={userReady} type="update" displayLegend />;
 };
 
 const EmployeeInfoWrapped: React.FC = () => {
   const { employee, employeeReady } = usePage();
-  return <EmployeeInfo data={employee} dataReady={employeeReady} type="read-only" />;
+  return <EmployeeInfo data={employee} dataReady={employeeReady} type="read-only" displayLegend />;
 };
 
 const EmployeeWorkWrapped: React.FC = () => {
@@ -51,7 +51,7 @@ type Props = {};
 
 export const AccountPersonal: React.FC<Props> = withPageProvider((props) => {
   const { user, userReady } = usePage();
-  
+
   if (!userReady) return <Skeleton />;
 
   if (user?.employee) return <TabsPage tabs={[...accountTabs, ...employeeTabs]} />;

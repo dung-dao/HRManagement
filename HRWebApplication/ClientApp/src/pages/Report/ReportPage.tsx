@@ -1,8 +1,8 @@
-import { Col, Row } from 'antd';
-
+import { Col, Row, Spin } from 'antd';
 import React from 'react';
 import { ChartComponentProps, Pie } from 'react-chartjs-2';
-import { EmployeeStatisticItem, StatisticClient } from 'services/ApiClient';
+import { EmployeeStatisticItem } from 'services/ApiClient';
+import { apiStatistic } from 'services/ApiClient.singleton';
 import styled from 'styled-components';
 
 const backgroundColorArray = [
@@ -50,47 +50,52 @@ const Title = styled.h2`
 `;
 
 export function ReportPage(props) {
-  const apiReport = React.useRef(new StatisticClient());
   const [byUnit, setByUnit] = React.useState<EmployeeStatisticItem[]>([]);
+  const [byUnitReady, setByUnitReady] = React.useState(false);
   const [byWorkType, setByWorkType] = React.useState<EmployeeStatisticItem[]>([]);
+  const [byWorkTypeReady, setByWorkTypeReady] = React.useState(false);
 
   React.useEffect(() => {
-    async function fetchStatistic() {
-      const [byUnit, byWorkType] = await Promise.all([
-        apiReport.current.employeeNoByUnit(),
-        apiReport.current.employeeNoByWorkType(),
-      ]);
-      setByUnit(byUnit);
-      setByWorkType(byWorkType);
-    }
-
-    fetchStatistic();
+    apiStatistic
+      .employeeNoByUnit()
+      .then(setByUnit)
+      .finally(() => setByUnitReady(true));
+    apiStatistic
+      .employeeNoByWorkType()
+      .then(setByWorkType)
+      .finally(() => setByWorkTypeReady(true));
   }, []);
 
   return (
-
-      <Row gutter={100}>
-        <Col span={12}>
-          {byUnit.length ? (
-            <>
-              <Title>Thống kê theo đơn vị</Title>
-              <Pie {...dataToChartProps(byUnit)} />
-            </>
-          ) : (
-            <Title>Không có thống kê theo đơn vị</Title>
-          )}
-        </Col>
-        <Col span={12}>
-          {byWorkType.length ? (
-            <>
-              <Title>Thống kê theo loại hình làm việc</Title>
-              <Pie {...dataToChartProps(byWorkType)} />
-            </>
-          ) : (
-            <Title>Không có thống kê theo loại hình làm việc</Title>
-          )}
-        </Col>
-      </Row>
-
+    <Row gutter={100}>
+      <Col span={12}>
+        {!byUnitReady ? (
+          <div style={{ width: '100%', height: 500, display: 'grid', placeContent: 'center' }}>
+            <Spin />
+          </div>
+        ) : byUnit.length ? (
+          <Col>
+            <Title>Thống kê theo đơn vị</Title>
+            <Pie {...dataToChartProps(byUnit)} />
+          </Col>
+        ) : (
+          <Title>Không có thống kê theo đơn vị</Title>
+        )}
+      </Col>
+      <Col span={12}>
+        {!byWorkTypeReady ? (
+          <div style={{ width: '100%', height: 500, display: 'grid', placeContent: 'center' }}>
+            <Spin />
+          </div>
+        ) : byWorkType.length ? (
+          <Col>
+            <Title>Thống kê theo loại hình làm việc</Title>
+            <Pie {...dataToChartProps(byWorkType)} />
+          </Col>
+        ) : (
+          <Title>Không có thống kê theo loại hình làm việc</Title>
+        )}
+      </Col>
+    </Row>
   );
 }

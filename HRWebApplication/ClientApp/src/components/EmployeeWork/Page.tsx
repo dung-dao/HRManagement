@@ -18,31 +18,40 @@ export const EmployeeWork: React.FC<Props> = (props) => {
   if (type !== 'create' && dataReady && !data) return <h2>Không có dữ liệu</h2>;
   if ((type !== 'create' && !dataReady) || !positionsReady) return <Skeleton />;
 
-  return data?.employee?.status === EmployeeStatus.Leaved ? (
-    <LeaveForm data={data} dataReady type="read-only" />
-  ) : (
+  return (
     <div>
-      {type !== 'create' ? (
+      {data?.employee?.status ? (
+        <Form>
+          <Row gutter={40}>
+            <Col span={12}>
+              <Form.Item name="status">
+                <Tag
+                  {...mapWorkingStatusToTag[data?.employee?.status]}
+                  style={{ fontSize: 15, margin: '10px 0 0 10px' }}
+                  onClick={() => {}}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      ) : undefined}
+      {data?.employee?.status === EmployeeStatus.Leaved ? (
         <Row gutter={40}>
           <Col span={12}>
-            <Form.Item name="status">
-              <Tag
-                {...mapWorkingStatusToTag[data?.employee?.status!]}
-                style={{ fontSize: 15, margin: '10px 0 0 10px' }}
-                onClick={() => {}}
-              />
-            </Form.Item>
+            <LeaveForm data={data} dataReady type="read-only" displayLegend labelAlign="left" />
           </Col>
         </Row>
-      ) : undefined}
-      <WorkForm
-        data={data}
-        dataReady={dataReady}
-        type={type}
-        onSubmit={onSubmit}
-        actionButtons={actionButtons}
-      />
-      {positions ? <PositionHistory values={positions} /> : null}
+      ) : (
+        <WorkForm
+          data={data}
+          dataReady={dataReady}
+          type={type}
+          onSubmit={onSubmit}
+          actionButtons={actionButtons}
+          displayLegend
+        />
+      )}
+      {positions?.length ? <PositionHistory values={positions} /> : null}
     </div>
   );
 };

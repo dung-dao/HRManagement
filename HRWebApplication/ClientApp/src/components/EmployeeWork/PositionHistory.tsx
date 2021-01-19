@@ -41,11 +41,12 @@ export function PositionHistory(props: PositionHistoryProps) {
         visible={!!detail}
         centered
         onCancel={() => setDetail(undefined)}
+        onOk={() => setDetail(undefined)}
         width={1000}
         destroyOnClose
       >
         <div style={{ marginTop: 15 }}>
-          <WorkForm data={detail} dataReady={true} type="read-only" />
+          <WorkForm data={detail} dataReady={true} type="read-only" displayLegend />
         </div>
       </Modal>
     </div>

@@ -144,6 +144,8 @@ namespace HRWebApplication.Controllers
             if (employee is null)
                 return NotFound();
             var curPos = _employeeRepo.GetCurentPosition(employee);
+            if (curPos is null)
+                return null;
             var res = _mapper.Map<PositionDTO>(curPos);
             res.Employee.Status = _employeeRepo.GetEmployeeStatus(curPos.Employee);
             return res;

@@ -9,6 +9,7 @@ import {
   WorkTypeClient,
   UsersClient,
   OrganizationUnitsClient,
+  StatisticClient,
 } from './ApiClient';
 
 export const apiEmployees = new EmployeesClient();
@@ -21,3 +22,4 @@ export const apiJobTitle = new JobTitleClient();
 export const apiWorkType = new WorkTypeClient();
 export const apiUsers = new UsersClient();
 export const apiOrganization = new OrganizationUnitsClient();
+export const apiStatistic = new StatisticClient();
