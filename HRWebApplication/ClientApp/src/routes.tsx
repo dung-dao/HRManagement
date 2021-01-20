@@ -1,6 +1,7 @@
 import {
   ApartmentOutlined,
   CarryOutOutlined,
+  FileDoneOutlined,
   FundOutlined,
   ProfileOutlined,
   SettingOutlined,
@@ -15,11 +16,11 @@ import {
   AccountPersonal,
   AttendanceList,
   AttendancePersonal,
-  AttendanceSettings,
   EmployeeEdit,
   EmployeeList,
   EmployeeNew,
   EmployeeOrganization,
+  EmployeePaycheck,
   EmployeeSettings,
   LoginPage,
   ReportPage,
@@ -45,6 +46,7 @@ export const ROUTES = {
   employeeSettings: '/app/employee/settings',
   employeeOrganization: '/app/employee/organization',
   employeeList: '/app/employee/list',
+  employeePaycheck: '/app/employee/paycheck',
   employeeNew: '/app/employee/new',
   employeeEdit: '/app/employee/edit',
   employeeEditParams: '/app/employee/edit/:employeeId',
@@ -173,6 +175,15 @@ export const routes: RouteData = [
               menuItem: {
                 label: 'Danh sách nhân viên',
                 icon: <UsergroupAddOutlined />,
+              },
+            },
+            {
+              path: ROUTES.employeePaycheck,
+              requireRole: { type: '>=', role: 'Manager' },
+              component: EmployeePaycheck,
+              menuItem: {
+                label: 'Bảng tính lương',
+                icon: <FileDoneOutlined />,
               },
             },
             {
