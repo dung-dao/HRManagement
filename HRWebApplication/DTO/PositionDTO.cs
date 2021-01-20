@@ -8,7 +8,9 @@ namespace HRWebApplication.DTO
     {
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+
         public Decimal Salary { get; set; }
+
         public EmployeeDTO Employee { get; set; }
         public JobTitleDTO JobTitle { get; set; }
         public WorkTypeDTO WorkType { get; set; }

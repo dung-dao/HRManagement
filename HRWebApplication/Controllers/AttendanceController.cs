@@ -96,10 +96,19 @@ namespace HRWebApplication.Controllers
                 RecordStatus = RecordStatus.Active
             };
 
+            var res = new AttendanceDTO()
+            {
+                Id = newAttendance.Id,
+                Date = newAttendance.Date,
+                Duration = newAttendance.Duration,
+                Note = newAttendance.Note,
+                LogStatus = newAttendance.LogStatus
+            };
+
             _salaryRepository.CreateAttendance(newAttendance, user.Employee);
             _unitOfWork.Save();
 
-            return CreatedAtAction("GetAttendanceById", new { id = data.Id }, newAttendance);
+            return CreatedAtAction("GetAttendanceById", new { id = data.Id }, res);
         }
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]

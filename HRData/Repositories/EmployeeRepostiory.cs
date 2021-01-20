@@ -99,18 +99,9 @@ namespace HRData.Repositories
 
         public void EmployeeLeave(Employee employee, Position data)
         {
-            var pos = employee.Positions.Find(p => p.Id == data.Id);
-            if (pos is null)
-                throw new Exception("Position not exists");
-
-            if (GetEmployeeStatus(employee) != EmployeeStatus.Working)
-            {
-                throw new Exception("No position to leave");
-            }
-
+            var pos = employee.Positions.Find(p => p.Id == data.Id && p.RecordStatus == RecordStatus.Active);
             pos.LeaveDate = data.LeaveDate;
             pos.LeaveReason = data.LeaveReason;
-            //pos.LeaveType = _context.LeaveTypes.Find(data.LeaveType.Id);
         }
 
         public void DeletePosition(Employee employee, Position position)
@@ -136,7 +127,7 @@ namespace HRData.Repositories
                 return EmployeeStatus.Pending;
             var positions = employee.Positions.Where(
                 p => p.RecordStatus == RecordStatus.Active &&
-                p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now && (p.LeaveDate != null || p.LeaveDate >= DateTime.Now)
+                p.StartDate <= DateTime.Now && (p.LeaveDate == null || p.LeaveDate >= DateTime.Now)
                 );
             ////var pos = from p in employee.Positions
             ////          where (

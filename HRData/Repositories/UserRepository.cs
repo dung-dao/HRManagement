@@ -21,7 +21,8 @@ namespace HRData.Repositories
         Task<IdentityResult> Create(User user, string password);
         Task<string> GenerateLoginToken(string username, string password, string secret);
         Task<User> Delete(string id);
-        Task<string> AddToRole(string username, string role);
+        Task<string> ChangeRole(string username, string role);
+        Task<string> GetRole(User user);
     }
     public class UserRepository : Repository, IUserRepository
     {
@@ -38,13 +39,17 @@ namespace HRData.Repositories
             _roleManager = roleManager;
         }
 
-        public async Task<string> AddToRole(string username, string role)
+        public async Task<string> ChangeRole(string username, string role)
         {
             var user = await _userManager.FindByNameAsync(username);
             var dbRole = await _roleManager.FindByNameAsync(role);
 
             if (user is null || dbRole is null)
                 return null;
+
+            //Remove old roles
+            var oldRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, oldRoles);
 
             await _userManager.AddToRoleAsync(user, dbRole.Name);
             return role;
@@ -109,6 +114,14 @@ namespace HRData.Repositories
         public User GetById(string Id)
         {
             return _userManager.Users.FirstOrDefault(e => e.Id == Id);
+        }
+
+        public async Task<string> GetRole(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Count == 0)
+                return "";
+            return roles.First();
         }
 
         public void UpdateProfile(User user, Employee employee)

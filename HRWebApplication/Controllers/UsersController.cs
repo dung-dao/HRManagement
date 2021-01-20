@@ -52,29 +52,43 @@ namespace HRWebApplication.Controllers
         [Authorize(Roles = "Admin,Manager")]
         [HttpGet(Name = "GetListUsers")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public IEnumerable<UserDTO> Get()
+        public async Task<IEnumerable<UserDTO>> Get()
         {
             var users = _userRepository.GetAll();
-            return from u in users
-                   select new UserDTO
-                   {
-                       Id = u.Id,
-                       UserName = u.UserName,
-                       Password = null,
-                       Email = u.Email,
-                       Employee = _mapper.Map<EmployeeDTO>(u.Employee)
-                   };
+            List<UserDTO> dtos = new List<UserDTO>();
+            foreach (var u in users)
+            {
+                UserDTO resUser = new UserDTO()
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Password = null,
+                    Email = u.Email,
+                    Employee = _mapper.Map<EmployeeDTO>(u.Employee)
+                };
+                resUser.Role = await _userRepository.GetRole(u);
+                dtos.Add(resUser);
+            }
+            return dtos;
         }
 
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
         [HttpGet("{id}", Name = "GetUserInfoById")]
         [Authorize(Roles = "Admin,Manager")]
-        public ActionResult<UserDTO> Get(string id)
+        public async Task<ActionResult<UserDTO>> Get(string id)
         {
             var user = _userRepository.GetById(id);
             if (user is null)
                 return NotFound();
-            return new UserDTO() { Id = user.Id, UserName = user.UserName, Password = null, Email = user.Email, Employee = _mapper.Map<EmployeeDTO>(user.Employee) };
+            return new UserDTO()
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Password = null,
+                Email = user.Email,
+                Employee = _mapper.Map<EmployeeDTO>(user.Employee),
+                Role = await _userRepository.GetRole(user)
+            };
         }
 
         [HttpPost(Name = "SignUp")]
@@ -107,6 +121,18 @@ namespace HRWebApplication.Controllers
             return CreatedAtAction("Get", new { id = newUser.Id }, _mapper.Map<UserDTO>(newUser));
         }
 
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
+        [HttpPut("{id}/role")]
+        public async Task<IActionResult> ChangeRole(string id, [FromQuery] string role)
+        {
+            var user = _userRepository.GetById(id);
+            if (user is null)
+                return NotFound();
+
+            await _userRepository.ChangeRole(user.UserName, role);
+            return NoContent();
+        }
+
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Interact))]
         [HttpPost("Login", Name = "Login")]
         public async Task<ActionResult<TokenDTO>> Login(LoginDTO userDTO)
@@ -118,7 +144,7 @@ namespace HRWebApplication.Controllers
             return Ok(new TokenDTO() { AccessToken = token });
         }
 
-        [HttpPut("Password", Name="ChangePassword")]
+        [HttpPut("Password", Name = "ChangePassword")]
         [Authorize]
         public async Task<IActionResult> ChangePassword([FromQuery] string password, [FromQuery] string newpassword)
         {
@@ -135,15 +161,18 @@ namespace HRWebApplication.Controllers
         [HttpGet("Profile", Name = "Profile")]
         [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public ActionResult<UserDTO> GetProfile()
+        public async Task<ActionResult<UserDTO>> GetProfile()
         {
             var userId = GetUserId();
             if (userId is null)
                 return Unauthorized();
             var user = _userRepository.GetById(userId);
+
             var res = _mapper.Map<UserDTO>(user);
+            res.Role = await _userRepository.GetRole(user);
             if (user.Employee is not null)
                 res.Employee.Status = _employeeRepostiory.GetEmployeeStatus(user.Employee);
+
             return Ok(res);
         }
 
@@ -182,13 +211,13 @@ namespace HRWebApplication.Controllers
 
         [ApiConventionMethod(typeof(CustomApiConventions), nameof(CustomApiConventions.Interact))]
         [Authorize(Roles = "Admin,Manager")]
-        [HttpPost("Roles", Name="AddRoleForUser")]
+        [HttpPost("Roles", Name = "AddRoleForUser")]
         public async Task<IActionResult> AddToRole(string userName, string role)
         {
             if (!User.IsInRole("Admin") && role.Normalize() == "Admin".Normalize())
                 return Forbid();
 
-            var resRole = await _userRepository.AddToRole(userName, role);
+            var resRole = await _userRepository.ChangeRole(userName, role);
             if (resRole is null)
                 return NotFound();
 

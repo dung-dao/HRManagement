@@ -207,12 +207,19 @@ namespace HRWebApplication.Controllers
             if (employee is null)
                 return NotFound();
 
-            if (_employeeRepo.GetEmployeeStatus(employee) != EmployeeStatus.Working)
+            if (_employeeRepo.GetEmployeeStatus(employee) != EmployeeStatus.Working|| data.LeaveDate is null)
                 return BadRequest();
-            var position = _mapper.Map<Position>(data);
+
+            Position po = new Position()
+            {
+                Id = data.Id,
+                LeaveDate = data.LeaveDate,
+                LeaveReason = data.LeaveReason
+            };
+
             try
             {
-                _employeeRepo.EmployeeLeave(employee, position);
+                _employeeRepo.EmployeeLeave(employee, po);
                 Commit();
             }
             catch (Exception e)

@@ -172,7 +172,7 @@ namespace HRWebApplication.Controllers
                 return Unauthorized();
 
             _salaryRepository.RemoveMyTimeOff(log);
-            return NoContent();
+            return Ok();
         }
         #endregion
 
