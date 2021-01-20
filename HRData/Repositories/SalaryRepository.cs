@@ -209,17 +209,18 @@ namespace HRData.Repositories
                               select wl;
 
             var unPaidTimeOff = from wl in _context.WorkingLogs
-                              where wl.RecordStatus == RecordStatus.Active &&
-                              wl.Employee.Id == employee.Id &&
-                              wl.Type == WorkingLogType.TimeOff &&
-                              wl.LogStatus == LogStatus.Approved &&
-                              wl.Date >= startDate && wl.Date <= endDate &&
-                              wl.TimeOffType.IsPaidTimeOff == false
-                              select wl;
+                                where wl.RecordStatus == RecordStatus.Active &&
+                                wl.Employee.Id == employee.Id &&
+                                wl.Type == WorkingLogType.TimeOff &&
+                                wl.LogStatus == LogStatus.Approved &&
+                                wl.Date >= startDate && wl.Date <= endDate &&
+                                wl.TimeOffType.IsPaidTimeOff == false
+                                select wl;
 
             var holidays = from hd in _context.Holidays
-                           where hd.From >= startDate &&
-                           hd.RecordStatus == RecordStatus.Active
+                           where
+                                hd.RecordStatus == RecordStatus.Active &&
+                                !((hd.From < startDate && hd.To < startDate) || (hd.From > endDate && hd.To > endDate))
                            select hd;
 
             //Attendance
@@ -244,17 +245,12 @@ namespace HRData.Repositories
             //Holiday
             foreach (var h in holidays)
             {
-                if (h.To <= endDate)
-                {
-                    salaryDays += (h.To - h.From).Days + 1;
-                    payslip.HolidayTimeOff += (h.To - h.From).Days + 1;
-                }
-                else
-                {
-                    salaryDays += (endDate - h.From).Days + 1;
-                    payslip.HolidayTimeOff += (endDate - h.From).Days + 1;
-                }
+                DateTime start = (h.From > startDate) ? h.From : startDate;
+                DateTime end = (h.To < endDate) ? h.To : endDate;
+                double dur = (end - start).Days + 1;
 
+                salaryDays += dur;
+                payslip.HolidayTimeOff += dur;
             }
 
             double totalSalary = positionSalary / 23 * salaryDays;
