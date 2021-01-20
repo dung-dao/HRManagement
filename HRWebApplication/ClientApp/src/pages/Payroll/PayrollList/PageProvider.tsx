@@ -1,26 +1,22 @@
 import { message } from 'antd';
 import React from 'react';
-import { TimeOffDTO } from 'services/ApiClient';
-import { apiTimeOff } from 'services/ApiClient.singleton';
+import { PayRollDTO } from 'services/ApiClient';
+import { apiPayroll } from 'services/ApiClient.singleton';
 import { CreateUpdateModal } from './CreateUpdateModal';
 
-export const apiClient = apiTimeOff;
-export type RecordType = TimeOffDTO;
+export const apiClient = apiPayroll;
+export type RecordType = PayRollDTO;
 export type ModalType = 'create' | 'update' | 'hidden';
 
 type PageContextData = {
   listData: RecordType[] | undefined;
   listDataReady: boolean;
 
-  onCreate: (record: RecordType) => Promise<void>;
-  onUpdate: (record: RecordType) => Promise<void>;
+  onCreate: (dateStart: Date, dateEnd: Date) => Promise<void>;
   onDelete: (recordId: number) => Promise<void>;
 
   modalVisibleType: ModalType;
   setModalVisibleType: React.Dispatch<React.SetStateAction<ModalType>>;
-
-  selectedRecord: RecordType | undefined; // selected record when on modal UPDATING
-  setSelectedRecord: React.Dispatch<React.SetStateAction<RecordType | undefined>>;
 };
 
 export const PageContext = React.createContext<PageContextData>(undefined as any);
@@ -36,12 +32,11 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
 
   //  modal controlling related states
   const [modalVisibleType, setModalVisibleType] = React.useState<ModalType>('hidden');
-  const [selectedRecord, setSelectedRecord] = React.useState<RecordType>();
 
   const fetchAll = React.useCallback(async () => {
     try {
       setListDataReady(false);
-      const data = await apiClient.getAllMine();
+      const data = await apiClient.getAllPayrolls();
       setListData(data);
     } catch (err) {
       console.error(err);
@@ -56,9 +51,9 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
   }, [fetchAll]);
 
   const onCreate = React.useCallback(
-    async (record: RecordType) => {
+    async (startDate: Date, endDate: Date) => {
       try {
-        const newRecord = await apiClient.createForMe(record);
+        const newRecord = await apiClient.createPayroll(startDate, endDate);
         setListData([...listData, newRecord]);
         message.info('Tạo mới thành công');
       } catch (err) {
@@ -69,26 +64,9 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
     [listData],
   );
 
-  const onUpdate = React.useCallback(
-    async (record: RecordType) => {
-      try {
-        const updatedRecord = { ...selectedRecord, ...record } as RecordType;
-        await apiClient.editMineById(updatedRecord.id!, updatedRecord);
-        setListData((data) =>
-          data?.map((it) => (it.id === updatedRecord.id! ? updatedRecord : it)),
-        );
-        message.info('Cập nhật thành công');
-      } catch (err) {
-        message.error('Cập nhật không thành công');
-        throw err;
-      }
-    },
-    [selectedRecord],
-  );
-
   const onDelete = React.useCallback(async (recordId: number) => {
     try {
-      await apiClient.deleteMyTimeOffById(recordId);
+      await apiClient.deletePayroll(recordId);
       setListData((data) => data?.filter((it) => it.id !== recordId));
       message.info('Xoá thành công');
     } catch (err) {
@@ -103,12 +81,9 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
         listData,
         listDataReady,
         onCreate,
-        onUpdate,
         onDelete,
         modalVisibleType,
         setModalVisibleType,
-        selectedRecord,
-        setSelectedRecord,
       }}
     >
       {children}

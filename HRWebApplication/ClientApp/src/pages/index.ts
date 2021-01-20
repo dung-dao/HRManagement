@@ -4,4 +4,5 @@ export * from './Employee';
 export * from './Login';
 export * from './Report';
 export * from './TimeOff';
+export * from './Payroll';
 export * from './NotFound';

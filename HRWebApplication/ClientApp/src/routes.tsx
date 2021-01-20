@@ -1,6 +1,7 @@
 import {
   ApartmentOutlined,
   CarryOutOutlined,
+  DollarCircleOutlined,
   FileDoneOutlined,
   FundOutlined,
   ProfileOutlined,
@@ -20,13 +21,15 @@ import {
   EmployeeList,
   EmployeeNew,
   EmployeeOrganization,
-  EmployeePaycheck,
   EmployeeSettings,
   LoginPage,
   ReportPage,
   TimeOffList,
   TimeOffPersonal,
   TimeOffSettings,
+  PayrollList,
+  PayrollPersonal,
+  PayrollEdit,
 } from 'pages';
 import React from 'react';
 import { RouteProps } from 'react-router-dom';
@@ -46,7 +49,6 @@ export const ROUTES = {
   employeeSettings: '/app/employee/settings',
   employeeOrganization: '/app/employee/organization',
   employeeList: '/app/employee/list',
-  employeePaycheck: '/app/employee/paycheck',
   employeeNew: '/app/employee/new',
   employeeEdit: '/app/employee/edit',
   employeeEditParams: '/app/employee/edit/:employeeId',
@@ -62,6 +64,12 @@ export const ROUTES = {
   attendancePersonal: '/app/attendance/personal',
   attendanceTeam: '/app/attendance/team',
   attendanceList: '/app/attendance/list',
+
+  payroll: '/app/payroll',
+  payrollPersonal: '/app/payroll/personal',
+  payrollList: '/app/payroll/list',
+  payrollEdit: '/app/payroll/edit',
+  payrollEditParams: '/app/payroll/edit/:payrollId',
 } as const;
 
 type RouterPath = typeof ROUTES[keyof typeof ROUTES];
@@ -178,15 +186,6 @@ export const routes: RouteData = [
               },
             },
             {
-              path: ROUTES.employeePaycheck,
-              requireRole: { type: '>=', role: 'Manager' },
-              component: EmployeePaycheck,
-              menuItem: {
-                label: 'Bảng tính lương',
-                icon: <FileDoneOutlined />,
-              },
-            },
-            {
               path: ROUTES.employeeNew,
               requireRole: { type: '>=', role: 'Manager' },
               component: EmployeeNew,
@@ -287,6 +286,39 @@ export const routes: RouteData = [
                 label: 'Danh sách chấm công',
                 icon: <UsergroupAddOutlined />,
               },
+            },
+          ],
+        },
+      },
+      {
+        path: ROUTES.payroll,
+        requireRole: { type: '>=', role: 'User' },
+        menuItem: {
+          label: 'Tính lương',
+          icon: <DollarCircleOutlined />,
+          children: [
+            {
+              path: ROUTES.payrollPersonal,
+              requireRole: { type: '>=', role: 'User' },
+              component: PayrollPersonal,
+              menuItem: {
+                label: 'Phiếu lương của tôi',
+                icon: <FileDoneOutlined />,
+              },
+            },
+            {
+              path: ROUTES.payrollList,
+              requireRole: { type: '>=', role: 'Manager' },
+              component: PayrollList,
+              menuItem: {
+                label: 'Bảng tính lương',
+                icon: <TableOutlined />,
+              },
+            },
+            {
+              path: ROUTES.payrollEditParams,
+              requireRole: { type: '>=', role: 'Manager' },
+              component: PayrollEdit,
             },
           ],
         },
