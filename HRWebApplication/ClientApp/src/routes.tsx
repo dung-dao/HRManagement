@@ -241,15 +241,15 @@ export const routes: RouteData = [
           label: 'Chấm công',
           icon: <TableOutlined />,
           children: [
-            {
-              path: ROUTES.attendanceSettings,
-              requireRole: { type: '>=', role: 'Manager' },
-              component: AttendanceSettings,
-              menuItem: {
-                label: 'Cài đặt',
-                icon: <SettingOutlined />,
-              },
-            },
+            // {
+            //   path: ROUTES.attendanceSettings,
+            //   requireRole: { type: '>=', role: 'Manager' },
+            //   component: AttendanceSettings,
+            //   menuItem: {
+            //     label: 'Cài đặt',
+            //     icon: <SettingOutlined />,
+            //   },
+            // },
             {
               path: ROUTES.attendancePersonal,
               requireRole: { type: '>=', role: 'User' },
