@@ -24,7 +24,7 @@ namespace HRWebApplication.Controllers
             JobTitle jobTitle = _mapper.Map<JobTitle>(data);
             jobTitle.RecordStatus = HRData.Models.RecordStatus.Active;
 
-            var jobcategory = _context.JobCategories.Find(data.JobCategoryId);
+            var jobcategory = _context.JobCategories.Find(data.JobCategory.Id);
             if (jobcategory is null)
                 return BadRequest();
 

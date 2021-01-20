@@ -158,6 +158,21 @@ namespace HRWebApplication.Controllers
                 return BadRequest();
         }
 
+        [HttpPut("{id}/Password", Name = "ChangeOthersPassword")]
+        [Authorize]
+        public async Task<IActionResult> ChangeOthersPassword(string id, [FromQuery] string password, [FromQuery] string newpassword)
+        {
+            var user = _userRepository.GetById(id);
+            if (user is null)
+                return NotFound();
+            var res = await _userRepository.ChangePassword(user, password, newpassword);
+
+            if (res.Succeeded)
+                return NoContent();
+            else
+                return BadRequest();
+        }
+
         [HttpGet("Profile", Name = "Profile")]
         [Authorize]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
