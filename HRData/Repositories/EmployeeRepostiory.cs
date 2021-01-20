@@ -159,8 +159,8 @@ namespace HRData.Repositories
                    where
                        e.RecordStatus == RecordStatus.Active &&
                        pos.StartDate < DateTime.Now &&
-                       pos.EndDate >= DateTime.Now &&
-                       pos.LeaveDate == null
+
+                       (pos.LeaveDate == null || pos.LeaveDate > now)
                    select e;
         }
     }

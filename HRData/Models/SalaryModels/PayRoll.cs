@@ -17,7 +17,7 @@ namespace HRData.Models.SalaryModels
         public int EmployeeNo { get; set; }
         public decimal Amount { get; set; }
         public PayRollStatus Status { get; set; }
-        public Employee Author { get; set; }
+        public virtual Employee Author { get; set; }
         public virtual List<PaySlip> PaySlips { get; set; }
     }
 }

@@ -35,7 +35,9 @@ namespace HRData.Data
         public DbSet<Holiday> Holidays { get; set; }
 
         // public DbSet<LeaveEntitlement> LeaveEntitlements { get; set; }
-        public DbSet<PaySlip> SalaryPayments { get; set; }
+        public DbSet<PaySlip> PaySlips { get; set; }
+        public DbSet<PayRoll> PayRolls { get; set; }
+        
         #endregion
 
         private static void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
@@ -57,11 +59,13 @@ namespace HRData.Data
             RegisterEntity<Employee>(builder);
             RegisterEntity<Position>(builder);
 
-            RegisterEntity<PaySlip>(builder);
             RegisterEntity<WorkingLog>(builder);
             RegisterEntity<TimeOffType>(builder);
             // RegisterEntity<LeaveEntitlement>(builder);
             RegisterEntity<Holiday>(builder);
+
+            RegisterEntity<PaySlip>(builder);
+            RegisterEntity<PayRoll>(builder);
 
             #region Employee
             builder.Entity<Employee>(e =>

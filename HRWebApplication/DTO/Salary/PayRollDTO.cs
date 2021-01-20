@@ -13,6 +13,5 @@ namespace HRWebApplication.DTO.Salary
         public decimal Amount { get; set; }
         public HRData.Models.SalaryModels.PayRollStatus Status { get; set; }
         public EmployeeDTO Author { get; set; }
-        public List<PaySlipDTO> PaySlips { get; set; }
     }
 }

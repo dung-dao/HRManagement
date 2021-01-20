@@ -17,15 +17,18 @@ namespace HRWebApplication.Controllers
     {
         private readonly ISalaryRepository _salaryRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public PayRollController(
             ISalaryRepository salaryRepository,
             IUserRepository userRepository,
-            IMapper mapper
+            IMapper mapper,
+            IUnitOfWork unitOfWork
             ) : base(userRepository)
         {
             _salaryRepository = salaryRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         //Mine
@@ -69,16 +72,18 @@ namespace HRWebApplication.Controllers
             return _mapper.Map<List<PaySlipDTO>>(payslips);
         }
 
-        [HttpPost]
+        [HttpPost(Name = "CreatePayroll")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public ActionResult<PayRollDTO> CreatePayroll([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             var user = GetAuthorizedUser();
             var payroll = _salaryRepository.CreatePayroll(startDate, endDate, user.Employee);
+            _unitOfWork.Save();
+
             return CreatedAtAction("GetById", new { id = payroll.Id }, _mapper.Map<PayRollDTO>(payroll));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeletePayroll")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
         public IActionResult Delete(int id)
         {
@@ -86,7 +91,8 @@ namespace HRWebApplication.Controllers
             if (payroll is null)
                 return NotFound();
 
-            _salaryRepository.DeletePayroll(id);
+            _salaryRepository.DeletePayroll(payroll);
+            _unitOfWork.Save();
             return Ok();
         }
     }

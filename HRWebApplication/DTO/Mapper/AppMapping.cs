@@ -10,21 +10,24 @@ namespace HRWebApplication.DTO
 {
     public class AppMapping : Profile
     {
+        private void CreateIgnoreVirtualMap<Entity, DTO>() where Entity : EntityBase where DTO : DTOBase
+        {
+            CreateMap<Entity, DTO>();
+            CreateMap<DTO, Entity>().IgnoreAllVirtual();
+        }
         public AppMapping()
         {
             CreateMap<OrganizationUnit, OrganizationUnitDTO>().ReverseMap();
             CreateMap<Employee, EmployeeDTO>().ReverseMap();
-            CreateMap<WorkType, WorkTypeDTO>().ReverseMap();
-            CreateMap<JobCategory, JobCategoryDTO>().ReverseMap();
 
-            CreateMap<JobTitle, JobTitleDTO>();
-            CreateMap<JobCategoryDTO, JobTitle>().IgnoreAllVirtual();
+            CreateIgnoreVirtualMap<WorkType, WorkTypeDTO>();
+            CreateIgnoreVirtualMap<JobCategory, JobCategoryDTO>();
+            CreateIgnoreVirtualMap<JobTitle, JobTitleDTO>();
 
             CreateMap<Position, PositionDTO>().ReverseMap();
 
-            CreateMap<User, UserDTO>()
-                .ForMember(u => u.Password, opt => opt.Ignore());
-                
+            CreateMap<User, UserDTO>().ForMember(u => u.Password, opt => opt.Ignore());
+
             CreateMap<TimeOffType, TimeOffTypeDTO>().ReverseMap();
             CreateMap<Holiday, HolidayDTO>().ReverseMap();
         }
