@@ -5,10 +5,16 @@ import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from 'routes';
-import { EmployeeDTO, TimeOffTypeDTO } from 'services/ApiClient';
+import { EmployeeDTO } from 'services/ApiClient';
 import { RecordType, usePage } from './PageProvider';
 
-export const mapProperties = {} as const;
+export const mapProperties = {
+  role: {
+    Admin: 'Admin',
+    Manager: 'Quản lý',
+    User: 'Nhân viên',
+  },
+} as const;
 
 export const columns: ColumnsType<RecordType> = [
   {
@@ -38,10 +44,11 @@ export const columns: ColumnsType<RecordType> = [
     width: '20%',
   },
   {
-    key: 'roles',
+    key: 'role',
     title: 'Quyền',
-    dataIndex: 'roles',
+    dataIndex: 'role',
     width: '20%',
+    render: (value) => mapProperties.role[value] || value,
   },
   {
     title: 'Thao tác',
@@ -62,6 +69,7 @@ function ActionRenderer(value: any, record: RecordType, index: number) {
         title="Chỉnh sửa"
         size="small"
         type="primary"
+        disabled={record.role === 'Admin'}
         onClick={() => {
           setSelectedRecord(record);
           setModalVisibleType('update');
@@ -75,6 +83,7 @@ function ActionRenderer(value: any, record: RecordType, index: number) {
         onConfirm={() => onDelete(record.id!)}
         okText="Đồng ý"
         cancelText="Không"
+        disabled={record.role === 'Admin'}
       >
         <Button title="Xoá" size="small" danger>
           <DeleteOutlined />

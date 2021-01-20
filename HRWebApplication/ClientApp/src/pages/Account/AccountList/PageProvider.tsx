@@ -58,8 +58,9 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
   const onCreate = React.useCallback(
     async (record: RecordType) => {
       try {
-        const newRecord = await apiClient.signUp(record);
-        setListData([...listData, newRecord]);
+        await apiClient.signUp(record);
+        await apiClient.addRoleForUser(record.userName, record.role);
+        setListData([...listData, record]);
         message.info('Tạo mới thành công');
       } catch (err) {
         message.error('Tạo mới không thành công');
