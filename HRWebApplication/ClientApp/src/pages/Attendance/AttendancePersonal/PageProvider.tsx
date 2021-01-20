@@ -2,56 +2,98 @@ import { message } from 'antd';
 import React from 'react';
 import { AttendanceDTO } from 'services/ApiClient';
 import { apiAttendance } from 'services/ApiClient.singleton';
-import { ModalNew } from './ModalNew';
+import { CreateUpdateModal } from './CreateUpdateModal';
 
-type RecordType = AttendanceDTO;
+export const apiClient = apiAttendance;
+export type RecordType = AttendanceDTO;
+export type ModalType = 'create' | 'update' | 'hidden';
 
 type PageContextData = {
   listData: RecordType[] | undefined;
   listDataReady: boolean;
+
+  onCreate: (record: RecordType) => Promise<void>;
+  onUpdate: (record: RecordType) => Promise<void>;
   onDelete: (recordId: number) => Promise<void>;
-  isModalNewVisible: boolean;
-  setIsModalNewVisible: React.Dispatch<React.SetStateAction<boolean>>;
+
+  modalVisibleType: ModalType;
+  setModalVisibleType: React.Dispatch<React.SetStateAction<ModalType>>;
+
+  selectedRecord: RecordType | undefined; // selected record when on modal UPDATING
+  setSelectedRecord: React.Dispatch<React.SetStateAction<RecordType | undefined>>;
 };
 
 export const PageContext = React.createContext<PageContextData>(undefined as any);
 
 type Props = React.PropsWithChildren<{}>;
 
-export function PageProvider(props: Props) {
+export const PageProvider: React.FC<{}> = (props: Props) => {
   const { children } = props;
 
   // data related states
-  const [listData, setListData] = React.useState<RecordType[]>();
+  const [listData, setListData] = React.useState<RecordType[]>([]);
   const [listDataReady, setListDataReady] = React.useState<boolean>(false);
 
   //  modal controlling related states
-  const [isModalNewVisible, setIsModalNewVisible] = React.useState<boolean>(false);
+  const [modalVisibleType, setModalVisibleType] = React.useState<ModalType>('hidden');
+  const [selectedRecord, setSelectedRecord] = React.useState<RecordType>();
+
+  const fetchAll = React.useCallback(async () => {
+    try {
+      setListDataReady(false);
+      const data = await apiClient.getMyAttendance();
+      setListData(data);
+    } catch (err) {
+      console.error(err);
+      message.error('Không thể tải dữ liệu');
+    } finally {
+      setListDataReady(true);
+    }
+  }, []);
 
   React.useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        setListDataReady(false);
-        const data = await apiAttendance.getAttendance();
-        setListData(data);
-      } catch (err) {
-        console.error(err);
-        message.error('Không thể tải dữ liệu');
-      } finally {
-        setListDataReady(true);
-      }
-    };
-
     fetchAll();
-  }, []);
+  }, [fetchAll]);
+
+  const onCreate = React.useCallback(
+    async (record: RecordType) => {
+      try {
+        const newRecord = await apiClient.postMyAttendance(record);
+        setListData([...listData, newRecord]);
+        message.info('Tạo mới thành công');
+      } catch (err) {
+        message.error('Tạo mới không thành công');
+        throw err;
+      }
+    },
+    [listData],
+  );
+
+  const onUpdate = React.useCallback(
+    async (record: RecordType) => {
+      try {
+        const updatedRecord = { ...selectedRecord, ...record } as RecordType;
+        await apiClient.updateMyAttendanceById(updatedRecord.id!, updatedRecord);
+        setListData((data) =>
+          data?.map((it) => (it.id === updatedRecord.id! ? updatedRecord : it)),
+        );
+        message.info('Cập nhật thành công');
+      } catch (err) {
+        message.error('Cập nhật không thành công');
+        throw err;
+      }
+    },
+    [selectedRecord],
+  );
 
   const onDelete = React.useCallback(async (recordId: number) => {
     try {
-      // await apiAttendance.(recordId);
-      // setListData((data) => data?.filter((it) => it.id !== recordId));
+      await apiClient.deleteMyAttendanceById(recordId);
+      setListData((data) => data?.filter((it) => it.id !== recordId));
       message.info('Xoá thành công');
     } catch (err) {
       message.error('Xoá không thành công');
+      throw err;
     }
   }, []);
 
@@ -60,15 +102,19 @@ export function PageProvider(props: Props) {
       value={{
         listData,
         listDataReady,
+        onCreate,
+        onUpdate,
         onDelete,
-        isModalNewVisible,
-        setIsModalNewVisible,
+        modalVisibleType,
+        setModalVisibleType,
+        selectedRecord,
+        setSelectedRecord,
       }}
     >
       {children}
     </PageContext.Provider>
   );
-}
+};
 
 export function usePage() {
   return React.useContext(PageContext);
@@ -78,7 +124,7 @@ export function withPageProvider<T>(Component: React.FC<T>) {
   return (props: T) => (
     <PageProvider>
       <Component {...props} />
-      <ModalNew />
+      <CreateUpdateModal />
     </PageProvider>
   );
 }
