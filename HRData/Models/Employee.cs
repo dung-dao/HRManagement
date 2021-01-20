@@ -30,6 +30,6 @@ namespace HRData.Models
         public virtual List<Position> Positions { get; set; }
         public virtual User User { get; set; }
         public virtual List<WorkingLog> WorkingLogs { get; set; }
-        public virtual List<SalaryPayment> SalaryPayments { get; set; }
+        public virtual List<PaySlip> PaySlips { get; set; }
     }
 }

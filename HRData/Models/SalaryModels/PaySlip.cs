@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace HRData.Models.SalaryModels
 {
-    public enum SalaryPaymentStatus
+    public enum PaySlipStatus
     {
         Temporary,
         Confirmed
     }
-    public class SalaryPayment : EntityBase
+    public class PaySlip : EntityBase
     {
         public decimal Amount { get; set; }
-        public DateTime Period { get; set; }
-        public SalaryPaymentStatus PaymentStatus { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public PaySlipStatus Status { get; set; }
         public virtual Employee Employee { get; set; }
+
+        public virtual PayRoll PayRoll { get; set; }
     }
 }

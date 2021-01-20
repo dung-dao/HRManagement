@@ -35,7 +35,7 @@ namespace HRData.Data
         public DbSet<Holiday> Holidays { get; set; }
 
         // public DbSet<LeaveEntitlement> LeaveEntitlements { get; set; }
-        public DbSet<SalaryPayment> SalaryPayments { get; set; }
+        public DbSet<PaySlip> SalaryPayments { get; set; }
         #endregion
 
         private static void RegisterEntity<T>(ModelBuilder builder) where T : EntityBase
@@ -57,7 +57,7 @@ namespace HRData.Data
             RegisterEntity<Employee>(builder);
             RegisterEntity<Position>(builder);
 
-            RegisterEntity<SalaryPayment>(builder);
+            RegisterEntity<PaySlip>(builder);
             RegisterEntity<WorkingLog>(builder);
             RegisterEntity<TimeOffType>(builder);
             // RegisterEntity<LeaveEntitlement>(builder);
@@ -83,10 +83,22 @@ namespace HRData.Data
             #endregion
 
             #region Salary
-            builder.Entity<SalaryPayment>(sp =>
+            builder.Entity<PaySlip>(sp =>
             {
+                sp.Property(e => e.StartDate).HasColumnType(SQL_DATE);
+                sp.Property(e => e.EndDate).HasColumnType(SQL_DATE);
+                sp.Property(e => e.Status).HasConversion<string>();
                 sp.Property(e => e.Amount).HasColumnType(SQL_DECIMAL);
-                sp.Property(e => e.Period).HasColumnType(SQL_DATE);
+            });
+
+            builder.Entity<PayRoll>(pr =>
+            {
+                pr.Property(e => e.StartDate).HasColumnType(SQL_DATE);
+                pr.Property(e => e.EndDate).HasColumnType(SQL_DATE);
+                pr.Property(e => e.CreatedAt).HasColumnType(SQL_DATE);
+                pr.Property(e => e.Amount).HasColumnType(SQL_DECIMAL);
+                pr.Property(e => e.Status).HasConversion<string>();
+                
             });
 
             builder.Entity<WorkingLog>(wl =>
@@ -97,10 +109,11 @@ namespace HRData.Data
                 wl.Property(e => e.Type).HasConversion<string>();
             });
 
-            builder.Entity<Holiday>(hd => {
+            builder.Entity<Holiday>(hd =>
+            {
                 hd.Property(e => e.From).HasColumnType(SQL_DATE);
                 hd.Property(e => e.To).HasColumnType(SQL_DATE);
-            });;
+            }); ;
             #endregion
 
             #endregion
@@ -141,17 +154,14 @@ namespace HRData.Data
                 .HasMany(e => e.WorkingLogs)
                 .WithOne(wl => wl.TimeOffType);
 
-            // builder.Entity<Employee>()
-            //     .HasMany(e => e.TimeOffTypes)
-            //     .WithMany(t => t.Employees)
-            //     .UsingEntity<LeaveEntitlement>(
-            //         le => le.HasOne(le => le.TimeOffType).WithMany(t => t.LeaveEntitlements),
-            //         le => le.HasOne(le => le.Employee).WithMany(e => e.LeaveEntitlements)
-            //     );
-            
+
             builder.Entity<Employee>()
-                .HasMany(e => e.SalaryPayments)
+                .HasMany(e => e.PaySlips)
                 .WithOne(sp => sp.Employee);
+
+            builder.Entity<PayRoll>()
+                .HasMany(e => e.PaySlips)
+                .WithOne(e => e.PayRoll);
             #endregion
             #endregion
         }
