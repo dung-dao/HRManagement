@@ -152,7 +152,7 @@ namespace HRWebApplication.Controllers
             _salaryRepository.RemoveAttendance(log);
             _unitOfWork.Save();
 
-            return NoContent();
+            return Ok();
         }
         #endregion
 

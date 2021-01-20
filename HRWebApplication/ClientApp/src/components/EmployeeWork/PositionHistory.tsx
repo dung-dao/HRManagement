@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Modal, Timeline, Typography } from 'antd';
-import { PositionDTO } from 'services/ApiClient';
+import { EmployeeStatus, PositionDTO } from 'services/ApiClient';
 import moment from 'moment';
 import { WorkForm } from './WorkForm';
 
@@ -11,6 +11,8 @@ type PositionHistoryProps = {
 export function PositionHistory(props: PositionHistoryProps) {
   const { values } = props;
   const [detail, setDetail] = React.useState<PositionDTO>();
+
+  const contractTerminated = values.some((it) => it?.employee?.status === EmployeeStatus.Leaved);
 
   return (
     <div>
@@ -23,7 +25,10 @@ export function PositionHistory(props: PositionHistoryProps) {
         >
           {[...values].reverse().map((v, i) => {
             return (
-              <Timeline.Item color={i === 0 ? 'green' : 'red'} key={i}>
+              <Timeline.Item
+                color={contractTerminated ? 'black' : i === 0 ? 'green' : 'red'}
+                key={i}
+              >
                 <Button type="link" onClick={() => setDetail(v)} style={{ padding: 0 }}>
                   <Typography.Title level={5}>{v.jobTitle?.name}</Typography.Title>
                 </Button>

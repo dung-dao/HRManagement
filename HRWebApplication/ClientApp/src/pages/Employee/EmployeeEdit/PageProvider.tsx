@@ -15,6 +15,7 @@ type PageContextData = {
   modalVisible: boolean;
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
   onTerminateContract: (position: PositionDTO) => Promise<void>;
+  onAddPosition: (position: PositionDTO) => Promise<void>;
 };
 
 export const PageContext = React.createContext<PageContextData>(undefined as any);
@@ -63,11 +64,26 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
     fetchAll();
   }, [fetchAll]);
 
+  const updateEmployeeStatus = React.useCallback(
+    (newStatus: EmployeeStatus) => {
+      setEmployee({ ...employee, status: newStatus } as EmployeeDTO);
+      setCurPosition({
+        ...curPosition,
+        employee: {
+          ...curPosition?.employee,
+          status: newStatus,
+        } as EmployeeDTO,
+      } as PositionDTO);
+    },
+    [curPosition, employee],
+  );
+
   const onTerminateContract = React.useCallback(
     async (position: PositionDTO) => {
       try {
         await apiEmployees.employees_Leave(employee?.id!, position);
-        setEmployee({ ...employee, status: EmployeeStatus.Leaved } as EmployeeDTO);
+        updateEmployeeStatus(EmployeeStatus.Leaved);
+        setModalVisible(false);
         message.info('Cập nhật thành công');
       } catch (err) {
         message.info('Cập nhật thất bại');
@@ -75,7 +91,23 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
         throw err;
       }
     },
-    [employee],
+    [employee, updateEmployeeStatus],
+  );
+
+  const onAddPosition = React.useCallback(
+    async (position: PositionDTO) => {
+      try {
+        const newPosition = await apiEmployees.employees_AddToPosition(employee?.id!, position);
+        setPositions([newPosition, ...(positions || [])]);
+        updateEmployeeStatus(EmployeeStatus.Working);
+        message.info('Cập nhật thành công');
+      } catch (err) {
+        message.info('Cập nhật thất bại');
+        console.error(err);
+        throw err;
+      }
+    },
+    [employee, positions, updateEmployeeStatus],
   );
 
   return (
@@ -90,6 +122,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
         modalVisible,
         setModalVisible,
         onTerminateContract,
+        onAddPosition,
       }}
     >
       {children}

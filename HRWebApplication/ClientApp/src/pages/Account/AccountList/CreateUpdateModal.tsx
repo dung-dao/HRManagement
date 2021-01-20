@@ -18,7 +18,9 @@ const actionVietnamese = {
 
 const noun = 'tài khoản' as const;
 
-type FormType = RecordType;
+type FormType = Omit<RecordType, 'employee'> & {
+  employee: string;
+};
 
 export const CreateUpdateModal: React.FC<{}> = () => {
   const { modalVisibleType, setModalVisibleType, selectedRecord, onUpdate, onCreate } = usePage();
@@ -32,7 +34,7 @@ export const CreateUpdateModal: React.FC<{}> = () => {
   const [employeesReady, setEmployeesReady] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    const fetchTimeOffTypes = async () => {
+    const fetchEmployees = async () => {
       try {
         const data = await apiEmployees.employees_GetAll();
         setEmployees(data);
@@ -43,15 +45,21 @@ export const CreateUpdateModal: React.FC<{}> = () => {
         setEmployeesReady(true);
       }
     };
-    fetchTimeOffTypes();
+    fetchEmployees();
   }, []);
 
   const formTypeToRecordType = (formValues: FormType): RecordType => {
-    return formValues as RecordType;
+    return {
+      ...formValues,
+      employee: employees.find((it) => String(it.id) === formValues.employee),
+    } as RecordType;
   };
 
   const recordTypeToFormType = (record: RecordType): FormType => {
-    return record;
+    return {
+      ...record,
+      employee: String(record.employee?.id),
+    } as FormType;
   };
 
   const onSubmit = async (values: FormType) => {
@@ -99,9 +107,9 @@ export const CreateUpdateModal: React.FC<{}> = () => {
         form={form}
         initialValues={initialValues}
         labelAlign="left"
-        name="account-form"
-        id="account-form"
-        // onFinish={(formData) => onSubmit?.({ ...data, ...formData } as RecordType)}
+        name="create-update-form"
+        id="create-update-form"
+        onFinish={onSubmit}
         {...formItemLayout}
       >
         <Row gutter={40}>

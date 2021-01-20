@@ -3,6 +3,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, Space, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
+import { JobCategoryDTO } from 'services/ApiClient';
 import { usePage } from './PageProvider';
 import { RecordType } from './PageProvider';
 
@@ -19,6 +20,7 @@ export const columns: ColumnsType<RecordType> = [
     key: 'jobCategory',
     title: 'Loại hình nhân sự',
     dataIndex: 'jobCategory',
+    render: (value: JobCategoryDTO) => value.name,
     width: '25%',
   },
   {

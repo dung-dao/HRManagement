@@ -58,8 +58,8 @@ export function EmployeeWorkForm(props: EmployeeFormProps) {
       workType: workTypesRef.current.find((i) => i.id === Number(data.workType)),
       jobTitle: jobTitlesRef.current.find((i) => i.id === Number(data.jobTitle)),
       unit: organizationsRef.current.find((i) => i.id === Number(data.unit)),
-      startDate: data.startDate.toDate(),
-      endDate: data.endDate.toDate(),
+      startDate: data.startDate?.toDate(),
+      endDate: data.endDate?.toDate(),
       salary: toNumber(String(data.salary)),
     } as PositionDTO;
 
