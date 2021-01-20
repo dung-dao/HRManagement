@@ -61,7 +61,8 @@ namespace HRWebApplication.Controllers
                        Id = u.Id,
                        UserName = u.UserName,
                        Password = null,
-                       Email = u.Email
+                       Email = u.Email,
+                       Employee = _mapper.Map<EmployeeDTO>(u.Employee)
                    };
         }
 

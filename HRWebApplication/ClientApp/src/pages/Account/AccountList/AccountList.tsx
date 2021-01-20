@@ -1,9 +1,0 @@
-import React from 'react';
-
-type Props= {};
-
-export const AccountList: React.FC<Props> = (props) => {
-  const { } = props;
-
-  return <div>AccountManagement</div>;
-};

@@ -31,7 +31,7 @@ export const AccountForm: React.FC<Props> = (props) => {
         {...rest}
       >
         <Row gutter={40}>
-          <Col span={12}>
+          <Col span={24}>
             <fieldset>
               {displayLegend ? <legend>Thông tin tài khoản:</legend> : null}
               <Form.Item

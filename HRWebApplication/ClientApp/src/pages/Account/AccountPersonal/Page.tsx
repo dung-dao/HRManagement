@@ -1,11 +1,15 @@
-import { Skeleton } from 'antd';
+import { Col, Skeleton } from 'antd';
 import { AccountForm, EmployeeInfo, EmployeeWork, TabsPage } from 'components';
 import React from 'react';
 import { usePage, withPageProvider } from './PageProvider';
 
 const AccountFormWrapped: React.FC = () => {
   const { user, userReady } = usePage();
-  return <AccountForm data={user} dataReady={userReady} type="update" displayLegend />;
+  return (
+    <Col span="12">
+      <AccountForm data={user} dataReady={userReady} type="update" displayLegend />
+    </Col>
+  );
 };
 
 const EmployeeInfoWrapped: React.FC = () => {
