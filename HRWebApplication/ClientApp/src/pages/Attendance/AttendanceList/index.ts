@@ -1,1 +1,1 @@
-export * from './AttendanceList';
+export * from './Page';
