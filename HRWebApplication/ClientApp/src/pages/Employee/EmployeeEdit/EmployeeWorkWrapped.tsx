@@ -1,29 +1,23 @@
-import { message } from 'antd';
 import { EmployeeWork } from 'components';
 import React from 'react';
 import { PositionDTO } from 'services/ApiClient';
-import { apiEmployees } from 'services/ApiClient.singleton';
 import { EmployeeAction } from './EmployeeAction';
 import { usePage } from './PageProvider';
 
 export const EmployeeWorkWrapped: React.FC = () => {
-  const { curPosition, curPositionReady, positions, positionsReady, employee } = usePage();
+  const { curPosition, curPositionReady, positions, positionsReady, onAddPosition } = usePage();
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
   const onSubmit = React.useCallback(
     async (data: PositionDTO) => {
       try {
         setIsSubmitting(true);
-        await apiEmployees.employees_AddToPosition(employee?.id!, data);
-        message.info('Cập nhật thành công');
-      } catch (err) {
-        console.error(err);
-        message.info('Cập nhật thất bại');
+        await onAddPosition(data);
       } finally {
         setIsSubmitting(false);
       }
     },
-    [employee],
+    [onAddPosition],
   );
 
   const nonePositionYet = !curPosition && curPositionReady;

@@ -69,7 +69,7 @@ export const columns: ColumnsType<RecordType> = [
   },
   {
     key: 'duration',
-    title: 'Số công',
+    title: 'Số ngày công',
     dataIndex: 'duration',
     width: '15%',
   },

@@ -38,7 +38,7 @@ export const EmployeeWork: React.FC<Props> = (props) => {
       {data?.employee?.status === EmployeeStatus.Leaved ? (
         <Row gutter={40}>
           <Col span={12}>
-            <LeaveForm data={data} dataReady type="read-only" displayLegend labelAlign="left" />
+            <LeaveForm data={data} dataReady type="read-only" labelAlign="left" />
           </Col>
         </Row>
       ) : (

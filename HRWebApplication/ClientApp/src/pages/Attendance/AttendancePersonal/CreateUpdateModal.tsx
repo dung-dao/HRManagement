@@ -91,7 +91,7 @@ export const CreateUpdateModal: React.FC<{}> = () => {
             disabledDate={(date) => date.day() === 0 || date.day() === 6}
           />
         </Form.Item>
-        <Form.Item label="Số công" name={['duration']} rules={[required('Ngày')]}>
+        <Form.Item label="Số ngày công" name={['duration']} rules={[required('Ngày')]}>
           <Input />
         </Form.Item>
         <Form.Item label="Ghi chú" name={['note']}>

@@ -223,7 +223,7 @@ export const CreateUpdateModal: React.FC<{}> = () => {
           }
         </Form.Item>
 
-        <Form.Item label="Số công" name={['duration']} dependencies={['timeType', 'time']}>
+        <Form.Item label="Số ngày công" name={['duration']} dependencies={['timeType', 'time']}>
           <Input readOnly />
         </Form.Item>
         <Form.Item label="Ghi chú" name={['note']}>
