@@ -1,64 +1,49 @@
-import { Col, Skeleton } from 'antd';
-import { AccountForm, EmployeeInfo, EmployeeWork, TabsPage } from 'components';
+import { Col, Input, Row, Table } from 'antd';
+import { useSearchKeywork } from 'hooks/useSearchKeyword';
 import React from 'react';
-import { usePage, withPageProvider } from './PageProvider';
-
-const AccountFormWrapped: React.FC = () => {
-  const { user, userReady } = usePage();
-  return (
-    <Col span="12">
-      <AccountForm data={user} dataReady={userReady} type="update" displayLegend />
-    </Col>
-  );
-};
-
-const EmployeeInfoWrapped: React.FC = () => {
-  const { employee, employeeReady } = usePage();
-  return <EmployeeInfo data={employee} dataReady={employeeReady} type="read-only" displayLegend />;
-};
-
-const EmployeeWorkWrapped: React.FC = () => {
-  const { curPosition, curPositionReady, positions, positionsReady } = usePage();
-  return (
-    <EmployeeWork
-      data={curPosition}
-      dataReady={curPositionReady}
-      positions={positions}
-      positionsReady={positionsReady}
-      type="read-only"
-    />
-  );
-};
-
-const accountTabs = [
-  {
-    key: 'AccountForm',
-    label: 'Tài khoản',
-    Component: AccountFormWrapped,
-  },
-];
-
-const employeeTabs = [
-  {
-    key: 'EmployeeInfo',
-    label: 'Thông tin',
-    Component: EmployeeInfoWrapped,
-  },
-  {
-    key: 'FormWork',
-    label: 'Công việc',
-    Component: EmployeeWorkWrapped,
-  },
-];
+import { PaySlipDTO as RecordType } from 'services/ApiClient';
+import { apiPayroll } from 'services/ApiClient.singleton';
+import { columns } from './columns';
 
 type Props = {};
 
-export const PayrollPersonal: React.FC<Props> = withPageProvider((props) => {
-  const { user, userReady } = usePage();
+export const PayrollPersonal: React.FC<Props> = (props) => {
+  const [listData, setListData] = React.useState<RecordType[]>([]);
+  const [listDataReady, setListDataReady] = React.useState<boolean>(false);
 
-  if (!userReady) return <Skeleton />;
+  const { searchRegex, inputSearchProps } = useSearchKeywork();
 
-  if (user?.employee) return <TabsPage tabs={[...accountTabs, ...employeeTabs]} />;
+  const filterData = listData?.filter((it) => JSON.stringify(it).match(searchRegex));
 
-  return <TabsPage tabs={accountTabs} />;
-});
+  React.useEffect(() => {
+    apiPayroll
+      .getMyPayslips()
+      .then(setListData)
+      .finally(() => setListDataReady(true));
+  }, []);
+
+  return (
+    <div>
+      <Row gutter={[16, 16]}>
+        <Col span={6}>
+          <Input.Search
+            size="middle"
+            placeholder="Tìm kiếm"
+            enterButton
+            allowClear
+            {...inputSearchProps}
+          />
+        </Col>
+      </Row>
+      <Table<RecordType>
+        columns={columns}
+        dataSource={filterData}
+        loading={!listDataReady}
+        // pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: [5, 10, 20] }}
+        scroll={{ x: 'max-content' }}
+        locale={{ emptyText: 'Không tìm thấy dữ liệu nào' }}
+        rowKey={(record) => String(record.id)}
+      />
+    </div>
+  );
+};

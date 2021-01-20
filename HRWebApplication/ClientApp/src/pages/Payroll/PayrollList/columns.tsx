@@ -1,18 +1,24 @@
 // import { ActionRenderer } from './ActionRenderer';
-import { CheckCircleOutlined, DeleteOutlined, EyeOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CheckCircleOutlined,
+  CheckSquareOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { Button, Popconfirm, Space, Tag, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import moment from 'moment';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from 'routes';
-import { EmployeeDTO, LogStatus, PayRollStatus, PaySlipDTO } from 'services/ApiClient';
+import { EmployeeDTO, PayRollStatus } from 'services/ApiClient';
 import { formatCurrency } from 'utils';
 import { RecordType, usePage } from './PageProvider';
 
 export const mapProperties = {
-  logStatus: {
-    [PayRollStatus.Approved]: {
+  status: {
+    [PayRollStatus.Confirmed]: {
       color: 'success',
       icon: <CheckCircleOutlined />,
       children: 'Đã chốt lương',
@@ -31,10 +37,10 @@ export const columns: ColumnsType<RecordType> = [
     fixed: 'left',
     key: 'status',
     dataIndex: 'status',
-    render: (value: LogStatus, record: RecordType, index: number) => (
-      <Tag {...mapProperties.logStatus[value]} key={index} />
+    render: (value, record: RecordType, index: number) => (
+      <Tag {...mapProperties.status[value]} key={index} />
     ),
-    filters: Object.entries(mapProperties.logStatus).map(([k, v]) => ({
+    filters: Object.entries(mapProperties.status).map(([k, v]) => ({
       text: v.children,
       value: k,
     })),
@@ -43,7 +49,7 @@ export const columns: ColumnsType<RecordType> = [
       const mapPriority = {
         // the higher value should appear first
         [PayRollStatus.Pending]: 2,
-        [PayRollStatus.Approved]: 1,
+        [PayRollStatus.Confirmed]: 1,
       };
       return mapPriority[a.status!] - mapPriority[b.status!];
     },
@@ -106,10 +112,25 @@ export const columns: ColumnsType<RecordType> = [
 ];
 
 function ActionRenderer(value: any, record: RecordType, index: number) {
-  const { onDelete } = usePage();
+  const { onDelete, onConfirm } = usePage();
 
   return (
     <Space size="small">
+      <Popconfirm
+        placement="right"
+        title={'Bạn có chắc muốn chốt bảng lương?'}
+        onConfirm={() => onConfirm(record.id!)}
+        okText="Đồng ý"
+        cancelText="Không"
+        disabled={record.status === PayRollStatus.Confirmed}
+      >
+        <Tooltip title="Chốt lương">
+          <Button type="primary" size="small" disabled={record.status === PayRollStatus.Confirmed}>
+            <CheckSquareOutlined />
+          </Button>
+        </Tooltip>
+      </Popconfirm>
+
       <Link to={`${ROUTES.payrollEdit}/${record?.id}`}>
         <Tooltip title="Chi tiết">
           <Button type="primary" ghost size="small">
@@ -117,6 +138,7 @@ function ActionRenderer(value: any, record: RecordType, index: number) {
           </Button>
         </Tooltip>
       </Link>
+
       <Popconfirm
         placement="right"
         title={'Bạn có chắc muốn xoá?'}

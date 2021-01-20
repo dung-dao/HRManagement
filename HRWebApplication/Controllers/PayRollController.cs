@@ -34,11 +34,11 @@ namespace HRWebApplication.Controllers
         //Mine
         [HttpGet("Me/Payslips", Name = "GetMyPayslips")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
-        public ActionResult<IEnumerable<PayRollDTO>> GetMyPayslips()
+        public ActionResult<IEnumerable<PaySlipDTO>> GetMyPayslips()
         {
             var user = GetAuthorizedUser();
             List<PaySlip> payslips = _salaryRepository.GetPaySlips(user.Employee);
-            return _mapper.Map<List<PayRollDTO>>(payslips);
+            return _mapper.Map<List<PaySlipDTO>>(payslips);
         }
 
         //Employees
@@ -96,7 +96,7 @@ namespace HRWebApplication.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "ConfirmPayroll")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public IActionResult Confirm(int id)
         {

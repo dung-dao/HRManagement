@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import React from 'react';
-import { PayRollDTO } from 'services/ApiClient';
+import { PayRollDTO, PayRollStatus } from 'services/ApiClient';
 import { apiPayroll } from 'services/ApiClient.singleton';
 import { CreateUpdateModal } from './CreateUpdateModal';
 
@@ -14,6 +14,7 @@ type PageContextData = {
 
   onCreate: (dateStart: Date, dateEnd: Date) => Promise<void>;
   onDelete: (recordId: number) => Promise<void>;
+  onConfirm: (recordId: number) => Promise<void>;
 
   modalVisibleType: ModalType;
   setModalVisibleType: React.Dispatch<React.SetStateAction<ModalType>>;
@@ -64,6 +65,24 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
     [listData],
   );
 
+  const onConfirm = React.useCallback(
+    async (recordId: number) => {
+      try {
+        await apiClient.confirmPayroll(recordId);
+        setListData(
+          listData.map((it) =>
+            it.id === recordId ? ({ ...it, status: PayRollStatus.Confirmed } as RecordType) : it,
+          ),
+        );
+        message.info('Chốt lương thành công');
+      } catch (err) {
+        message.error('Chốt lương không thành công');
+        throw err;
+      }
+    },
+    [listData],
+  );
+
   const onDelete = React.useCallback(async (recordId: number) => {
     try {
       await apiClient.deletePayroll(recordId);
@@ -82,6 +101,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
         listDataReady,
         onCreate,
         onDelete,
+        onConfirm,
         modalVisibleType,
         setModalVisibleType,
       }}

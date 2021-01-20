@@ -2351,7 +2351,7 @@ export class PayRollClient extends ApiClientBase {
     /**
      * @return Success
      */
-    getMyPayslips(): Promise<PayRollDTO[]> {
+    getMyPayslips(): Promise<PaySlipDTO[]> {
         let url_ = this.baseUrl + "/api/PayRoll/Me/Payslips";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -2369,7 +2369,7 @@ export class PayRollClient extends ApiClientBase {
         });
     }
 
-    protected processGetMyPayslips(response: Response): Promise<PayRollDTO[]> {
+    protected processGetMyPayslips(response: Response): Promise<PaySlipDTO[]> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 404) {
@@ -2386,7 +2386,7 @@ export class PayRollClient extends ApiClientBase {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(PayRollDTO.fromJS(item));
+                    result200!.push(PaySlipDTO.fromJS(item));
             }
             return result200;
             });
@@ -2604,6 +2604,60 @@ export class PayRollClient extends ApiClientBase {
         } else if (status === 200) {
             return response.text().then((_responseText) => {
             return;
+            });
+        } else {
+            return response.text().then((_responseText) => {
+            let resultdefault: any = null;
+            let resultDatadefault = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            resultdefault = ProblemDetails.fromJS(resultDatadefault);
+            return throwException("Error", status, _responseText, _headers, resultdefault);
+            });
+        }
+    }
+
+    /**
+     * @return Success
+     */
+    confirmPayroll(id: number): Promise<void> {
+        let url_ = this.baseUrl + "/api/PayRoll/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "PUT",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processConfirmPayroll(_response);
+        });
+    }
+
+    protected processConfirmPayroll(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 204) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status === 404) {
+            return response.text().then((_responseText) => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = ProblemDetails.fromJS(resultData404);
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            });
+        } else if (status === 400) {
+            return response.text().then((_responseText) => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
             });
         } else {
             return response.text().then((_responseText) => {
@@ -4022,6 +4076,50 @@ export class UsersClient extends ApiClientBase {
     }
 
     /**
+     * @param password (optional) 
+     * @param newpassword (optional) 
+     * @return Success
+     */
+    changeOthersPassword(id: string | null, password: string | null | undefined, newpassword: string | null | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/Users/{id}/Password?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (password !== undefined && password !== null)
+            url_ += "password=" + encodeURIComponent("" + password) + "&";
+        if (newpassword !== undefined && newpassword !== null)
+            url_ += "newpassword=" + encodeURIComponent("" + newpassword) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "PUT",
+            headers: {
+            }
+        };
+
+        return this.transformOptions(options_).then(transformedOptions_ => {
+            return this.http.fetch(url_, transformedOptions_);
+        }).then((_response: Response) => {
+            return this.processChangeOthersPassword(_response);
+        });
+    }
+
+    protected processChangeOthersPassword(response: Response): Promise<void> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            return;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     profile(): Promise<UserDTO> {
@@ -4721,7 +4819,6 @@ export class JobTitleDTO implements IJobTitleDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
-    jobCategoryId?: number;
     jobCategory?: JobCategoryDTO;
 
     constructor(data?: IJobTitleDTO) {
@@ -4738,7 +4835,6 @@ export class JobTitleDTO implements IJobTitleDTO {
             this.id = _data["id"];
             this.name = _data["name"];
             this.description = _data["description"];
-            this.jobCategoryId = _data["jobCategoryId"];
             this.jobCategory = _data["jobCategory"] ? JobCategoryDTO.fromJS(_data["jobCategory"]) : <any>undefined;
         }
     }
@@ -4755,7 +4851,6 @@ export class JobTitleDTO implements IJobTitleDTO {
         data["id"] = this.id;
         data["name"] = this.name;
         data["description"] = this.description;
-        data["jobCategoryId"] = this.jobCategoryId;
         data["jobCategory"] = this.jobCategory ? this.jobCategory.toJSON() : <any>undefined;
         return data; 
     }
@@ -4765,7 +4860,6 @@ export interface IJobTitleDTO {
     id?: number;
     name?: string | undefined;
     description?: string | undefined;
-    jobCategoryId?: number;
     jobCategory?: JobCategoryDTO;
 }
 
@@ -4985,9 +5079,70 @@ export interface IHolidayDTO {
     to?: Date;
 }
 
+export enum PaySlipStatus {
+    Temporary = "Temporary",
+    Confirmed = "Confirmed",
+}
+
+export class PaySlipDTO implements IPaySlipDTO {
+    id?: number;
+    amount?: number;
+    startDate?: Date;
+    endDate?: Date;
+    status?: PaySlipStatus;
+    employee?: EmployeeDTO;
+
+    constructor(data?: IPaySlipDTO) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.amount = _data["amount"];
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+            this.status = _data["status"];
+            this.employee = _data["employee"] ? EmployeeDTO.fromJS(_data["employee"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PaySlipDTO {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaySlipDTO();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["amount"] = this.amount;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["status"] = this.status;
+        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IPaySlipDTO {
+    id?: number;
+    amount?: number;
+    startDate?: Date;
+    endDate?: Date;
+    status?: PaySlipStatus;
+    employee?: EmployeeDTO;
+}
+
 export enum PayRollStatus {
     Pending = "Pending",
-    Approved = "Approved",
+    Confirmed = "Confirmed",
 }
 
 export class PayRollDTO implements IPayRollDTO {
@@ -5056,67 +5211,6 @@ export interface IPayRollDTO {
     amount?: number;
     status?: PayRollStatus;
     author?: EmployeeDTO;
-}
-
-export enum PaySlipStatus {
-    Temporary = "Temporary",
-    Confirmed = "Confirmed",
-}
-
-export class PaySlipDTO implements IPaySlipDTO {
-    id?: number;
-    amount?: number;
-    startDate?: Date;
-    endDate?: Date;
-    status?: PaySlipStatus;
-    employee?: EmployeeDTO;
-
-    constructor(data?: IPaySlipDTO) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.amount = _data["amount"];
-            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
-            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
-            this.status = _data["status"];
-            this.employee = _data["employee"] ? EmployeeDTO.fromJS(_data["employee"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): PaySlipDTO {
-        data = typeof data === 'object' ? data : {};
-        let result = new PaySlipDTO();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["amount"] = this.amount;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["status"] = this.status;
-        data["employee"] = this.employee ? this.employee.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IPaySlipDTO {
-    id?: number;
-    amount?: number;
-    startDate?: Date;
-    endDate?: Date;
-    status?: PaySlipStatus;
-    employee?: EmployeeDTO;
 }
 
 export class IdentityRole implements IIdentityRole {

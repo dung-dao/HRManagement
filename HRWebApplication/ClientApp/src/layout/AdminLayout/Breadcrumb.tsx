@@ -9,7 +9,7 @@ const extractBreadcrumb = {
   employee: 'Nhân viên',
   'time-off': 'Nghỉ phép',
   attendance: 'Chấm công',
-  paycheck: 'Bảng tính lương',
+  payroll: 'Bảng tính lương',
   settings: 'Cài đặt',
   personal: 'Của tôi',
   team: 'Của nhóm',
