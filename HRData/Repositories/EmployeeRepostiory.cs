@@ -129,15 +129,6 @@ namespace HRData.Repositories
                 p => p.RecordStatus == RecordStatus.Active &&
                 p.StartDate <= DateTime.Now && (p.LeaveDate == null || p.LeaveDate >= DateTime.Now)
                 );
-            ////var pos = from p in employee.Positions
-            ////          where (
-            ////          (p.StartDate <= DateTime.Now && DateTime.Now <= p.EndDate && p.LeaveDate is null)
-            ////          || p.LeaveDate is not null && p.LeaveDate >= DateTime.Now && p.StartDate <= DateTime.Now && DateTime.Now <= p.EndDate)
-            ////          && p.RecordStatus == RecordStatus.Active
-            ////          select p;
-            //if (pos.Count() > 0)
-            //    return EmployeeStatus.Working;
-            //return EmployeeStatus.Leaved;
             return positions.Any() ? EmployeeStatus.Working : EmployeeStatus.Leaved;
         }
 

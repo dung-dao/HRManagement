@@ -16,6 +16,12 @@ namespace HRData.Models.SalaryModels
         public decimal Amount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+
+        public double Attendance { get; set; }
+        public double PaidTimeOff { get; set; }
+        public double HolidayTimeOff { get; set; }
+        public double UnpaidTimeOff { get; set; }
+
         public PaySlipStatus Status { get; set; }
         public virtual Employee Employee { get; set; }
 

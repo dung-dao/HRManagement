@@ -6,7 +6,7 @@ namespace HRData.Models.SalaryModels
     public enum PayRollStatus
     {
         Pending,
-        Approved
+        Confirmed
     }
     public class PayRoll : EntityBase
     {

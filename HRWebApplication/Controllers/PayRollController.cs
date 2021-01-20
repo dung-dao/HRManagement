@@ -95,5 +95,15 @@ namespace HRWebApplication.Controllers
             _unitOfWork.Save();
             return Ok();
         }
+
+        [HttpPut("{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
+        public IActionResult Confirm(int id)
+        {
+            PayRoll payroll = _salaryRepository.GetPayRoll(id);
+            _salaryRepository.ConfirmPayroll(payroll);
+            _unitOfWork.Save();
+            return NoContent();
+        }
     }
 }

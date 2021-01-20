@@ -166,6 +166,8 @@ namespace HRData.Data
             builder.Entity<PayRoll>()
                 .HasMany(e => e.PaySlips)
                 .WithOne(e => e.PayRoll);
+
+
             #endregion
             #endregion
         }

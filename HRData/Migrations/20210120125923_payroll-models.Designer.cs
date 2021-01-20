@@ -4,14 +4,16 @@ using HRData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HRData.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210120125923_payroll-models")]
+    partial class payrollmodels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,20 +296,11 @@ namespace HRData.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,6)");
 
-                    b.Property<double>("Attendance")
-                        .HasColumnType("float");
-
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("date");
-
-                    b.Property<double>("HolidayTimeOff")
-                        .HasColumnType("float");
-
-                    b.Property<double>("PaidTimeOff")
-                        .HasColumnType("float");
 
                     b.Property<int?>("PayRollId")
                         .HasColumnType("int");
@@ -321,9 +314,6 @@ namespace HRData.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("UnpaidTimeOff")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

@@ -40,7 +40,6 @@ namespace HRData.Repositories
         //Salary
         PayRoll CreatePayroll(DateTime startDate, DateTime endDate, Employee author);
         PaySlip CreatePayslip(Employee employee, DateTime startDate, DateTime endDate);
-        void ConfirmSalaryPayment(PaySlip salaryPayment);
 
         List<PayRoll> GetPayRoll();
         PayRoll GetPayRoll(int id);
@@ -53,6 +52,7 @@ namespace HRData.Repositories
         void RemoveAttendance(WorkingLog log);
         void RemoveMyTimeOff(WorkingLog log);
         List<PaySlip> GetPaySlips(PayRoll payroll);
+        void ConfirmPayroll(PayRoll payroll);
     }
     public class SalaryRepository : Repository, ISalaryRepository
     {
@@ -169,7 +169,23 @@ namespace HRData.Repositories
 
         public PaySlip CreatePayslip(Employee employee, DateTime startDate, DateTime endDate)
         {
-            double salaryTime = 0.0;
+            PaySlip payslip = new PaySlip()
+            {
+                Amount = 0,
+                StartDate = startDate,
+                EndDate = endDate,
+                Employee = employee,
+
+                Attendance = 0,
+                PaidTimeOff = 0,
+                HolidayTimeOff = 0,
+                UnpaidTimeOff = 0,
+
+                RecordStatus = RecordStatus.Active,
+                Status = PaySlipStatus.Temporary
+            };
+
+            double salaryDays = 0.0;
             var position = _employeeRepostiory.GetCurentPosition(employee);
             double positionSalary = position != null ? decimal.ToDouble(position.Salary) : 0.0;
 
@@ -190,55 +206,59 @@ namespace HRData.Repositories
                               wl.LogStatus == LogStatus.Approved &&
                               wl.Date >= startDate && wl.Date <= endDate &&
                               wl.TimeOffType.IsPaidTimeOff
-                              select wl.Duration;
+                              select wl;
+
+            var unPaidTimeOff = from wl in _context.WorkingLogs
+                              where wl.RecordStatus == RecordStatus.Active &&
+                              wl.Employee.Id == employee.Id &&
+                              wl.Type == WorkingLogType.TimeOff &&
+                              wl.LogStatus == LogStatus.Approved &&
+                              wl.Date >= startDate && wl.Date <= endDate &&
+                              wl.TimeOffType.IsPaidTimeOff == false
+                              select wl;
 
             var holidays = from hd in _context.Holidays
                            where hd.From >= startDate &&
                            hd.RecordStatus == RecordStatus.Active
                            select hd;
 
-            ////Caculate Attendance            
-            ////Nếu thời gian làm việc trong ngày lớn hơn 9h --> nhận 120% lương
-            ////Nếu thời gian làm việc trong ngày lớn hơn nhỏ hơn 4 tiếng --> nhận 70% lương
-
             //Attendance
             foreach (var e in attendanceTime)
             {
-                if (e.Duration < 4) //Làm ít quá
-                    salaryTime += e.Duration * 0.8;
-                else if (e.Duration <= 8) //Bình thường
-                    salaryTime += e.Duration;
-                else if (e.Duration > 8) //OT
-                    salaryTime += 8 + (e.Duration - 8) * 1.2;
+                salaryDays += e.Duration;
+                payslip.Attendance += e.Duration;
             }
+
 
             foreach (var e in paidTimeOff)
             {
-                salaryTime += e;
+                salaryDays += e.Duration;
+                payslip.PaidTimeOff += e.Duration;
+            }
+
+            foreach (var e in unPaidTimeOff)
+            {
+                payslip.UnpaidTimeOff += e.Duration;
             }
 
             //Holiday
             foreach (var h in holidays)
             {
                 if (h.To <= endDate)
-                    salaryTime += ((h.To - h.From).Days + 1) * 8;
+                {
+                    salaryDays += (h.To - h.From).Days + 1;
+                    payslip.HolidayTimeOff += (h.To - h.From).Days + 1;
+                }
                 else
-                    salaryTime += ((endDate - h.From).Days + 1) * 8;
+                {
+                    salaryDays += (endDate - h.From).Days + 1;
+                    payslip.HolidayTimeOff += (endDate - h.From).Days + 1;
+                }
+
             }
 
-            double TotalSalary = positionSalary / 23 * salaryTime;
-
-            PaySlip payslip = new PaySlip()
-            {
-                Amount = Convert.ToDecimal(TotalSalary),
-                StartDate = startDate,
-                EndDate = endDate,
-                Employee = employee,
-
-                RecordStatus = RecordStatus.Active,
-                Status = PaySlipStatus.Temporary
-            };
-
+            double totalSalary = positionSalary / 23 * salaryDays;
+            payslip.Amount = Convert.ToDecimal(totalSalary);
             _context.PaySlips.Add(payslip);
 
             return payslip;
@@ -257,7 +277,8 @@ namespace HRData.Repositories
                 EndDate = endDate,
                 RecordStatus = RecordStatus.Active,
                 Status = PayRollStatus.Pending,
-                EmployeeNo = 0
+                EmployeeNo = 0,
+                PaySlips = new List<PaySlip>()
             };
 
             foreach (var em in employees)
@@ -275,11 +296,6 @@ namespace HRData.Repositories
         public TimeOffType GetTimeOffTypeById(int id)
         {
             return _context.TimeOffTypes.Find(id);
-        }
-
-        public void ConfirmSalaryPayment(PaySlip salaryPayment)
-        {
-            salaryPayment.Status = PaySlipStatus.Confirmed;
         }
 
         public void RemoveAttendance(WorkingLog log)
@@ -321,13 +337,23 @@ namespace HRData.Repositories
 
         public List<PaySlip> GetPaySlips(PayRoll payroll)
         {
-            throw new NotImplementedException();
+            return payroll.PaySlips.Where(e => e.RecordStatus == RecordStatus.Active).ToList();
         }
 
         public void DeletePayroll(PayRoll payroll)
         {
             _context.PaySlips.RemoveRange(payroll.PaySlips);
             _context.PayRolls.Remove(payroll);
+        }
+
+        public void ConfirmPayroll(PayRoll payroll)
+        {
+            payroll.Status = PayRollStatus.Confirmed;
+            IEnumerable<PaySlip> payslips = this.GetPaySlips(payroll);
+            foreach (var ps in payslips)
+            {
+                ps.Status = PaySlipStatus.Confirmed;
+            }
         }
     }
 }

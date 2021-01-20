@@ -4,6 +4,7 @@ using HRData.Models.JobModels;
 using HRData.Models.Organization;
 using HRData.Models.SalaryModels;
 using HRWebApplication.DTO.Mapper;
+using HRWebApplication.DTO.Salary;
 using HRWebApplication.DTO.TimeSheet;
 
 namespace HRWebApplication.DTO
@@ -23,6 +24,8 @@ namespace HRWebApplication.DTO
             CreateIgnoreVirtualMap<WorkType, WorkTypeDTO>();
             CreateIgnoreVirtualMap<JobCategory, JobCategoryDTO>();
             CreateIgnoreVirtualMap<JobTitle, JobTitleDTO>();
+            CreateIgnoreVirtualMap<PayRoll, PayRollDTO>();
+            CreateIgnoreVirtualMap<PaySlip, PaySlipDTO>();
 
             CreateMap<Position, PositionDTO>().ReverseMap();
 
