@@ -39,7 +39,7 @@ export const WorkForm: React.FC<Props> = (props) => {
   if (type !== 'create' && !dataReady) return <Skeleton />;
 
   const initialValues =
-    type !== 'read-only'
+    type === 'create'
       ? undefined
       : {
           ...dateToMoment(data!),
@@ -61,6 +61,8 @@ export const WorkForm: React.FC<Props> = (props) => {
     } as FormDataType;
     onSubmit?.(submitData);
   };
+
+  console.log('>  ~ file: WorkForm.tsx ~ line 42 ~ initialValues', initialValues);
 
   return (
     <Form<FormDataType>
