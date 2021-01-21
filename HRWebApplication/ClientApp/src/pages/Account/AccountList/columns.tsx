@@ -6,6 +6,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from 'routes';
 import { EmployeeDTO } from 'services/ApiClient';
+import { roleLevel } from 'services/AuthService.util';
 import { RecordType, usePage } from './PageProvider';
 
 export const mapProperties = {
@@ -49,6 +50,15 @@ export const columns: ColumnsType<RecordType> = [
     dataIndex: 'role',
     width: '20%',
     render: (value) => mapProperties.role[value] || value,
+    filters: Object.entries(mapProperties.role).map(([k, v]) => ({
+      text: v,
+      value: k,
+    })),
+    onFilter: (value, record: RecordType) => record.role! === value,
+    sorter: (a: RecordType, b: RecordType) => {
+      return roleLevel[a.role!] - roleLevel[b.role!];
+    },
+    sortDirections: ['descend', 'ascend'],
   },
   {
     title: 'Thao tác',
