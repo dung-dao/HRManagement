@@ -255,7 +255,7 @@ namespace HRData.Repositories
 
             double totalSalary = positionSalary / 23 * salaryDays;
             payslip.Amount = Convert.ToDecimal(totalSalary);
-            _context.PaySlips.Add(payslip);
+            //_context.PaySlips.Add(payslip);
 
             return payslip;
         }

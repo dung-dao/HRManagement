@@ -145,14 +145,15 @@ namespace HRData.Repositories
         {
             var now = DateTime.Now;
 
-            return from e in _context.Employees
-                   join pos in _context.Positions on e.Id equals pos.Employee.Id
-                   where
-                       e.RecordStatus == RecordStatus.Active &&
-                       pos.StartDate < DateTime.Now &&
+            var query = from e in _context.Employees
+                        join pos in _context.Positions on e.Id equals pos.Employee.Id
+                        where
+                            e.RecordStatus == RecordStatus.Active &&
+                            pos.StartDate < DateTime.Now &&
 
-                       (pos.LeaveDate == null || pos.LeaveDate > now)
-                   select e;
+                            (pos.LeaveDate == null || pos.LeaveDate > now)
+                        select e;
+            return query.Distinct().ToList();
         }
     }
 }
