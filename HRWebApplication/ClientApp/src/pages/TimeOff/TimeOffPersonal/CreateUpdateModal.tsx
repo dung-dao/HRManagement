@@ -2,8 +2,8 @@ import { DatePicker, Form, Input, message, Modal, Radio, Select } from 'antd';
 import { useRerender } from 'hooks/useRerender';
 import moment from 'moment';
 import React from 'react';
-import { TimeOffTypeDTO } from 'services/ApiClient';
-import { apiTimeOffType } from 'services/ApiClient.singleton';
+import { HolidayDTO, TimeOffTypeDTO } from 'services/ApiClient';
+import { apiHoliday, apiTimeOffType } from 'services/ApiClient.singleton';
 import { addBusinessDays, calculateBusinessDays, required } from 'utils';
 import { RecordType, usePage } from './PageProvider';
 
@@ -52,6 +52,12 @@ export const CreateUpdateModal: React.FC<{}> = () => {
       }
     };
     fetchTimeOffTypes();
+  }, []);
+
+  const [holidays, setHolidays] = React.useState<HolidayDTO[]>([]);
+
+  React.useEffect(() => {
+    apiHoliday.holiday_GetAll().then(setHolidays);
   }, []);
 
   const formTypeToRecordType = (formValues: FormType): RecordType => {
@@ -203,7 +209,11 @@ export const CreateUpdateModal: React.FC<{}> = () => {
                 <DatePicker.RangePicker
                   style={{ width: '100%' }}
                   format="DD/MM/YYYY"
-                  disabledDate={(date) => date.day() === 0 || date.day() === 6}
+                  disabledDate={(date) =>
+                    date.day() === 0 ||
+                    date.day() === 6 ||
+                    holidays.some((it) => moment(it.from) < date && date < moment(it.to))
+                  }
                 />
               </Form.Item>
             ) : (
@@ -216,7 +226,11 @@ export const CreateUpdateModal: React.FC<{}> = () => {
                 <DatePicker
                   style={{ width: '100%' }}
                   format="DD/MM/YYYY"
-                  disabledDate={(date) => date.day() === 0 || date.day() === 6}
+                  disabledDate={(date) =>
+                    date.day() === 0 ||
+                    date.day() === 6 ||
+                    holidays.some((it) => moment(it.from) < date && date < moment(it.to))
+                  }
                 />
               </Form.Item>
             )

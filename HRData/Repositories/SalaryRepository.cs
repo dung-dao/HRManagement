@@ -206,6 +206,7 @@ namespace HRData.Repositories
                               wl.LogStatus == LogStatus.Approved &&
                               wl.Date >= startDate && wl.Date <= endDate &&
                               wl.TimeOffType.IsPaidTimeOff
+
                               select wl;
 
             var unPaidTimeOff = from wl in _context.WorkingLogs
@@ -233,21 +234,20 @@ namespace HRData.Repositories
 
             foreach (var e in paidTimeOff)
             {
-                salaryDays += e.Duration;
-                payslip.PaidTimeOff += e.Duration;
+                double offtime = IntersectDatetimeDuration(startDate, endDate, e.Date, e.Date.AddDays(e.Duration));
+                salaryDays += offtime;
+                payslip.PaidTimeOff += offtime;
             }
 
             foreach (var e in unPaidTimeOff)
             {
-                payslip.UnpaidTimeOff += e.Duration;
+                payslip.UnpaidTimeOff += IntersectDatetimeDuration(startDate, endDate, e.Date, e.Date.AddDays(e.Duration));
             }
 
             //Holiday
             foreach (var h in holidays)
             {
-                DateTime start = (h.From > startDate) ? h.From : startDate;
-                DateTime end = (h.To < endDate) ? h.To : endDate;
-                double dur = (end - start).Days + 1;
+                double dur = IntersectDatetimeDuration(startDate, endDate, h.From, h.To);
 
                 salaryDays += dur;
                 payslip.HolidayTimeOff += dur;
@@ -350,6 +350,27 @@ namespace HRData.Repositories
             {
                 ps.Status = PaySlipStatus.Confirmed;
             }
+        }
+
+
+        private double IntersectDatetimeDuration(DateTime from1, DateTime to1, DateTime from2, DateTime to2)
+        {
+            if (from1 < from2 && to1 < from2 || from1 > to2 && to1 > to2)
+                return 0;
+
+            DateTime from = (from1 > from2) ? from1 : from2;
+            DateTime to = (to1 < to2) ? to1 : to2;
+
+            double dur = 0;
+
+            for (DateTime iDate = from; iDate <= to; iDate = iDate.AddDays(1))
+            {
+                if(!(iDate.DayOfWeek ==  DayOfWeek.Saturday || iDate.DayOfWeek  == DayOfWeek.Sunday))
+                {
+                    dur += 1;
+                }
+            }
+            return dur;
         }
     }
 }

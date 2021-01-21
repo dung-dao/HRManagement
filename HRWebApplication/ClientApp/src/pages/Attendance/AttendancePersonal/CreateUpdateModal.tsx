@@ -1,6 +1,8 @@
 import { DatePicker, Form, Input, Modal } from 'antd';
 import moment from 'moment';
 import React from 'react';
+import { HolidayDTO } from 'services/ApiClient';
+import { apiHoliday, apiTimeOff } from 'services/ApiClient.singleton';
 import { dateToMoment, ModifyProp, momentToDate, required } from 'utils';
 import { RecordType, usePage } from './PageProvider';
 
@@ -21,6 +23,7 @@ type FormType = ModifyProp<RecordType, Date, moment.Moment>;
 export const CreateUpdateModal: React.FC<{}> = () => {
   const { modalVisibleType, setModalVisibleType, selectedRecord, onUpdate, onCreate } = usePage();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [holidays, setHolidays] = React.useState<HolidayDTO[]>([]);
 
   const [form] = Form.useForm<FormType>();
 
@@ -33,6 +36,10 @@ export const CreateUpdateModal: React.FC<{}> = () => {
   const recordTypeToFormType = (record: RecordType): FormType => {
     return dateToMoment(record);
   };
+
+  React.useEffect(() => {
+    apiHoliday.holiday_GetAll().then(setHolidays);
+  }, []);
 
   const onSubmit = async (values: FormType) => {
     try {
@@ -88,7 +95,11 @@ export const CreateUpdateModal: React.FC<{}> = () => {
           <DatePicker
             style={{ width: '100%' }}
             format="DD/MM/YYYY"
-            disabledDate={(date) => date.day() === 0 || date.day() === 6}
+            disabledDate={(date) =>
+              date.day() === 0 ||
+              date.day() === 6 ||
+              holidays.some((it) => moment(it.from) < date && date < moment(it.to))
+            }
           />
         </Form.Item>
         <Form.Item label="Số ngày công" name={['duration']} rules={[required('Ngày')]}>
