@@ -12,7 +12,7 @@ import moment from 'moment';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from 'routes';
-import { EmployeeDTO, LogStatus, TimeOffTypeDTO } from 'services/ApiClient';
+import { EmployeeDTO, LogStatus } from 'services/ApiClient';
 import { RecordType, usePage } from './PageProvider';
 
 export const mapProperties = {
@@ -81,6 +81,7 @@ export const columns: ColumnsType<RecordType> = [
     title: 'Ngày',
     dataIndex: 'date',
     render: (value: Date) => moment(value).format('DD/MM/YYYY'),
+    sorter: (a, b) => moment(a.date).unix() - moment(b.date).unix(),
   },
   {
     key: 'duration',

@@ -1,6 +1,6 @@
 // import { ActionRenderer } from './ActionRenderer';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, Space, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Menu, Popconfirm, Space, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -73,20 +73,27 @@ export const columns: ColumnsType<RecordType> = [
 function ActionRenderer(value: any, record: RecordType, index: number) {
   const { onDelete, setSelectedRecord, setModalVisibleType } = usePage();
 
-  return (
-    <Space size="small">
-      <Button
-        title="Chỉnh sửa"
-        size="small"
-        type="primary"
-        disabled={record.role === 'Admin'}
+  const menu = (
+    <Menu>
+      <Menu.Item
+        key="2"
         onClick={() => {
           setSelectedRecord(record);
-          setModalVisibleType('update');
+          setModalVisibleType('role');
         }}
       >
-        <EditOutlined />
-      </Button>
+        Đổi quyền
+      </Menu.Item>
+    </Menu>
+  );
+
+  return (
+    <Space size="small">
+      <Dropdown.Button
+        trigger={['click']}
+        overlay={menu}
+        disabled={record.role === 'Admin'}
+      ></Dropdown.Button>
       <Popconfirm
         placement="right"
         title={'Bạn có chắc muốn xoá?'}
@@ -95,7 +102,7 @@ function ActionRenderer(value: any, record: RecordType, index: number) {
         cancelText="Không"
         disabled={record.role === 'Admin'}
       >
-        <Button title="Xoá" size="small" danger>
+        <Button title="Xoá" size="small" danger disabled={record.role === 'Admin'}>
           <DeleteOutlined />
         </Button>
       </Popconfirm>

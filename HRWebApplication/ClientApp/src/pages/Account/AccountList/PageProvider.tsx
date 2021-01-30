@@ -2,18 +2,18 @@ import { message } from 'antd';
 import React from 'react';
 import { UserDTO } from 'services/ApiClient';
 import { apiUsers } from 'services/ApiClient.singleton';
+import { RoleNames } from 'services/AuthService.util';
 import { CreateUpdateModal } from './CreateUpdateModal';
 
 export const apiClient = apiUsers;
 export type RecordType = UserDTO;
-export type ModalType = 'create' | 'update' | 'hidden';
+export type ModalType = 'role' | 'hidden';
 
 type PageContextData = {
   listData: RecordType[] | undefined;
   listDataReady: boolean;
 
-  onCreate: (record: RecordType) => Promise<void>;
-  onUpdate: (record: RecordType) => Promise<void>;
+  onUpdateRole: (recordId: string, role: RoleNames) => Promise<void>;
   onDelete: (recordId: string) => Promise<void>;
 
   modalVisibleType: ModalType;
@@ -55,37 +55,18 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
     fetchAll();
   }, [fetchAll]);
 
-  const onCreate = React.useCallback(
-    async (record: RecordType) => {
-      try {
-        await apiClient.signUp(record);
-        await apiClient.addRoleForUser(record.userName, record.role);
-        setListData([...listData, record]);
-        message.info('Tạo mới thành công');
-      } catch (err) {
-        message.error('Tạo mới không thành công');
-        throw err;
-      }
-    },
-    [listData],
-  );
-
-  const onUpdate = React.useCallback(
-    async (record: RecordType) => {
-      try {
-        const updatedRecord = { ...selectedRecord, ...record } as RecordType;
-        // await apiClient.(updatedRecord.id!, updatedRecord);
-        setListData((data) =>
-          data?.map((it) => (it.id === updatedRecord.id! ? updatedRecord : it)),
-        );
-        message.info('Cập nhật thành công');
-      } catch (err) {
-        message.error('Cập nhật không thành công');
-        throw err;
-      }
-    },
-    [selectedRecord],
-  );
+  const onUpdateRole = React.useCallback(async (recordId: string, role: RoleNames) => {
+    try {
+      await apiClient.role(recordId, role);
+      setListData((data) =>
+        data?.map((it) => (it.id === recordId ? ({ ...it, role } as RecordType) : it)),
+      );
+      message.info('Cập nhật thành công');
+    } catch (err) {
+      message.error('Cập nhật không thành công');
+      throw err;
+    }
+  }, []);
 
   const onDelete = React.useCallback(async (recordId: string) => {
     try {
@@ -103,8 +84,7 @@ export const PageProvider: React.FC<{}> = (props: Props) => {
       value={{
         listData,
         listDataReady,
-        onCreate,
-        onUpdate,
+        onUpdateRole,
         onDelete,
         modalVisibleType,
         setModalVisibleType,

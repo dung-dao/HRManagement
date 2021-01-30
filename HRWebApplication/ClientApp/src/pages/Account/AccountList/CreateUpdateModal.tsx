@@ -18,59 +18,23 @@ const actionVietnamese = {
 
 const noun = 'tài khoản' as const;
 
-type FormType = Omit<RecordType, 'employee'> & {
-  employee: string;
+type FormType = {
+  role: RecordType['role'];
 };
 
 export const CreateUpdateModal: React.FC<{}> = () => {
-  const { modalVisibleType, setModalVisibleType, selectedRecord, onUpdate, onCreate } = usePage();
+  const { modalVisibleType, setModalVisibleType, selectedRecord, onUpdateRole } = usePage();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const [form] = Form.useForm<FormType>();
 
   const VerbNoun = actionVietnamese[modalVisibleType] + ' ' + noun;
 
-  const [employees, setEmployees] = React.useState<EmployeeDTO[]>([]);
-  const [employeesReady, setEmployeesReady] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const data = await apiEmployees.employees_GetAll();
-        setEmployees(data);
-      } catch (err) {
-        console.error(err);
-        message.error('Không thể tải dữ liệu');
-      } finally {
-        setEmployeesReady(true);
-      }
-    };
-    fetchEmployees();
-  }, []);
-
-  const formTypeToRecordType = (formValues: FormType): RecordType => {
-    return {
-      ...formValues,
-      employee: employees.find((it) => String(it.id) === formValues.employee),
-    } as RecordType;
-  };
-
-  const recordTypeToFormType = (record: RecordType): FormType => {
-    return {
-      ...record,
-      employee: String(record.employee?.id),
-    } as FormType;
-  };
-
   const onSubmit = async (values: FormType) => {
     try {
       setIsSubmitting(true);
-      const record = formTypeToRecordType(values);
-      console.log('>  ~ file: CreateUpdateModal.tsx ~ record', record);
-      if (modalVisibleType === 'update') {
-        await onUpdate(record);
-      } else if (modalVisibleType === 'create') {
-        await onCreate(record);
+      if (modalVisibleType === 'role') {
+        onUpdateRole(selectedRecord?.id!, form.getFieldValue('role'));
       }
       setModalVisibleType('hidden');
     } catch (err) {
@@ -81,7 +45,7 @@ export const CreateUpdateModal: React.FC<{}> = () => {
   };
 
   const initialValues = React.useMemo(
-    () => (modalVisibleType === 'update' ? recordTypeToFormType(selectedRecord!) : undefined),
+    () => (modalVisibleType === 'role' ? { role: selectedRecord?.role } : undefined),
     [modalVisibleType, selectedRecord],
   );
 
@@ -114,63 +78,10 @@ export const CreateUpdateModal: React.FC<{}> = () => {
       >
         <Row gutter={40}>
           <Col span={24}>
-            <Form.Item label="Tài khoản" name="userName" rules={[required('Tài khoản')]}>
-              <Input placeholder="user001" readOnly={modalVisibleType !== 'create'} />
-            </Form.Item>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                { required: true, message: 'Vui lòng nhập email' },
-                { type: 'email', message: 'Email không đúng định dạng' },
-              ]}
-            >
-              <Input placeholder="Email" readOnly={modalVisibleType !== 'create'} />
-            </Form.Item>
-
-            <Form.Item
-              label="Mật khẩu"
-              name="password"
-              rules={[
-                { required: true, message: 'Mật khẩu hiện tại không được bỏ trống' },
-                { min: 6, message: 'Mật khẩu phải dài ít nhất 6 ký tự' },
-              ]}
-            >
-              <Input.Password placeholder="password" />
-            </Form.Item>
-            {modalVisibleType === 'create' ? (
-              <Form.Item
-                label="Nhập lại mật khẩu"
-                name="confirmPassword"
-                dependencies={['password']}
-                rules={[
-                  { required: true, message: 'Mật khẩu hiện tại không được bỏ trống' },
-                  ({ getFieldValue }) => ({
-                    validator(rule, value) {
-                      if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject('Nhập lại mật khẩu không khớp');
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password placeholder="password" />
-              </Form.Item>
-            ) : null}
             <Form.Item label="Quyền" name="role" rules={[required('Quyền')]}>
               <Select placeholder="Chọn quyền">
                 <Select.Option value="Manager">Quản lý</Select.Option>
                 <Select.Option value="User">Nhân viên</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="Nhân viên" name="employee" hasFeedback={!employeesReady}>
-              <Select placeholder="Chọn nhân viên">
-                {employees.map((it) => (
-                  <Select.Option value={it.id!.toString()} key={it.id}>
-                    {it.firstName + ' ' + it.lastName}
-                  </Select.Option>
-                ))}
               </Select>
             </Form.Item>
           </Col>

@@ -2,6 +2,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Input, Row, Table } from 'antd';
 import { useSearchKeywork } from 'hooks/useSearchKeyword';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
+import { ROUTES } from 'routes';
 import { columns } from './columns';
 import { RecordType, usePage, withPageProvider } from './PageProvider';
 
@@ -14,6 +16,8 @@ export const AccountList: React.FC<Props> = withPageProvider((props) => {
   });
 
   const filterData = listData?.filter((it) => JSON.stringify(it).match(searchRegex));
+
+  const history = useHistory();
 
   return (
     <div>
@@ -33,7 +37,7 @@ export const AccountList: React.FC<Props> = withPageProvider((props) => {
             type="primary"
             size="middle"
             icon={<PlusOutlined />}
-            onClick={() => setModalVisibleType('create')}
+            onClick={() => history.push(ROUTES.employeeNew)}
           >
             Thêm mới
           </Button>

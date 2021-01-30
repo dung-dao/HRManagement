@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import React from 'react';
-import { LogStatus, AttendanceDTO } from 'services/ApiClient';
+import { AttendanceDTO, LogStatus } from 'services/ApiClient';
 import { apiAttendance } from 'services/ApiClient.singleton';
 
 export const apiClient = apiAttendance;
@@ -105,10 +105,14 @@ export function usePage() {
   return React.useContext(PageContext);
 }
 
-export function withPageProvider<T>(Component: React.FC<T>) {
+export function withPageProvider<T extends {}>(Component: React.FC<T>) {
+  // React's Manager: "That React Component Right Under Your Context Provider Should Probably Use React.memo"
+  // https://twitter.com/sophiebits/status/1228942768543686656
+  const MemoComponent = React.memo<T>(Component);
+
   return (props: T) => (
     <PageProvider>
-      <Component {...props} />
+      <MemoComponent {...props} />
     </PageProvider>
   );
 }
